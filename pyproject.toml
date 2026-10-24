@@ -24,6 +24,8 @@ dependencies = [
     "lxml>=5.3",
     "alembic>=1.14",
     "pgvector>=0.3",
+    "cryptography>=43",
+    "dnspython>=2.6",
 ]
 
 [project.optional-dependencies]
