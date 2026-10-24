@@ -1,0 +1,313 @@
+{
+  "built_at": "2026-10-24T11:30:27Z",
+  "insurers": 33,
+  "holidays": 33,
+  "specialties_added": 0,
+  "facilities": 25349,
+  "practitioners": 14777,
+  "roles": 10783,
+  "prices": 187,
+  "sources": {
+    "abdalihospital_doctors": {
+      "title": "Abdali Hospital — Doctors directory and hospital details",
+      "license": "public-web (facts)",
+      "retrieved_at": "2026-10-24T09:14:58Z",
+      "record_count": 124,
+      "disabled": null
+    },
+    "ammansurgicalhospital_doctors": {
+      "title": "Amman Surgical Hospital — doctor directory (not found)",
+      "license": "unknown",
+      "retrieved_at": "2026-10-24T09:26:25Z",
+      "record_count": 0,
+      "disabled": null
+    },
+    "arabmedicalcenter_doctors": {
+      "title": "Arab Medical Center — doctors and hospital details",
+      "license": "public-web (facts)",
+      "retrieved_at": "2026-10-24T09:25:26Z",
+      "record_count": 2,
+      "disabled": null
+    },
+    "biolab_branches": {
+      "title": "Biolab — Branch locations",
+      "license": "public-web (facts)",
+      "retrieved_at": "2026-10-24T09:05:00Z",
+      "record_count": 28,
+      "disabled": null
+    },
+    "gardenshospital_doctors": {
+      "title": "Gardens Hospital (Amman) — doctor directory (not found)",
+      "license": "unknown",
+      "retrieved_at": "2026-10-24T09:26:25Z",
+      "record_count": 0,
+      "disabled": null
+    },
+    "gig_jordan_network": {
+      "title": "GIG Jordan (Arab Orient Insurance) — medical network (e-services 'Medical Network' map)",
+      "license": "public-web (facts)",
+      "retrieved_at": "2026-10-24T09:40:16Z",
+      "record_count": 4832,
+      "disabled": null
+    },
+    "globemed_crossborder_2022": {
+      "title": "GlobeMed Qatar — Cross Border Network, Jordan section (01/07/2022)",
+      "license": "unknown",
+      "retrieved_at": "2026-10-24T09:47:37Z",
+      "record_count": 2396,
+      "disabled": null
+    },
+    "hcac_accredited": {
+      "title": "Health Care Accreditation Council (HCAC) - Accredited Organizations",
+      "license": "public-web (facts)",
+      "retrieved_at": "2026-10-24T09:22:12Z",
+      "record_count": 370,
+      "disabled": null
+    },
+    "hia_contracted_private": {
+      "title": "Health Insurance Administration (Civil Health Insurance) — contracted private hospitals, dialysis units and dental centres",
+      "license": "public-web (facts)",
+      "retrieved_at": "2026-10-24T09:22:02Z",
+      "record_count": 145,
+      "disabled": null
+    },
+    "hiba_doctors": {
+      "title": "Hiba Hospital (Amman, maternity & gynaecology) — doctors page + facility pages",
+      "license": "public-web (facts)",
+      "retrieved_at": "2026-10-24T12:12:00Z",
+      "record_count": 5,
+      "disabled": null
+    },
+    "holidays_jo": {
+      "title": "Jordan official public holidays 2026 (announced) and 2027 (expected)",
+      "license": "public-web (facts)",
+      "retrieved_at": "2026-10-24T09:18:56Z",
+      "record_count": 33,
+      "disabled": null
+    },
+    "ibnalhaytham_doctors": {
+      "title": "Ibn Al-Haytham Hospital — Our Doctors, Anesthesia Doctors and hospital details",
+      "license": "public-web (facts)",
+      "retrieved_at": "2026-10-24T09:27:43Z",
+      "record_count": 46,
+      "disabled": null
+    },
+    "insurers_jo": {
+      "title": "Health insurers, TPAs and public health-coverage schemes in Jordan",
+      "license": "public-web (facts)",
+      "retrieved_at": "2026-10-24T09:18:56Z",
+      "record_count": 33,
+      "disabled": null
+    },
+    "islamic_hospital": {
+      "title": "Islamic Hospital (Amman) — facility pages",
+      "license": "public-web (facts)",
+      "retrieved_at": "2026-10-24T12:30:00Z",
+      "record_count": 1,
+      "disabled": null
+    },
+    "islamic_insurance_network": {
+      "title": "Islamic Insurance Company — Medical Network directory",
+      "license": "public-web (facts)",
+      "retrieved_at": "2026-10-24T09:17:22Z",
+      "record_count": 3701,
+      "disabled": null
+    },
+    "istiklal_doctors": {
+      "title": "Istiklal Hospital (Amman) — doctors by clinic + facility pages",
+      "license": "public-web (facts)",
+      "retrieved_at": "2026-10-24T12:20:00Z",
+      "record_count": 73,
+      "disabled": null
+    },
+    "istisharihospital_doctors": {
+      "title": "Istishari Hospital — doctor list and hospital details",
+      "license": "public-web (facts)",
+      "retrieved_at": "2026-10-24T09:25:26Z",
+      "record_count": 7,
+      "disabled": null
+    },
+    "jma_fees": {
+      "title": "Jordan Medical Association physician fee schedules (2008 Gazette schedule, 2024 Gazette schedule)",
+      "license": "public-web (facts)",
+      "retrieved_at": "2026-10-24T09:18:56Z",
+      "record_count": 165,
+      "disabled": null
+    },
+    "jordanhospital_doctors": {
+      "title": "Jordan Hospital — Doctors directory and hospital details",
+      "license": "public-web (facts)",
+      "retrieved_at": "2026-10-24T09:00:59Z",
+      "record_count": 101,
+      "disabled": null
+    },
+    "juh_doctors": {
+      "title": "Jordan University Hospital — doctors by department/section, clinicians directory and doctor detail pages",
+      "license": "public-web (facts)",
+      "retrieved_at": "2026-10-24T12:25:00Z",
+      "record_count": 281,
+      "disabled": null
+    },
+    "kauh_doctors": {
+      "title": "King Abdullah University Hospital (Irbid) — Our Doctors directory + facility pages",
+      "license": "public-web (facts)",
+      "retrieved_at": "2026-10-24T12:15:00Z",
+      "record_count": 222,
+      "disabled": null
+    },
+    "khalidihospital_doctors": {
+      "title": "Al Khalidi Hospital & Medical Center — doctors listed on khmc.jo and hospital details",
+      "license": "public-web (facts)",
+      "retrieved_at": "2026-10-24T09:19:56Z",
+      "record_count": 62,
+      "disabled": null
+    },
+    "khcc_doctors": {
+      "title": "King Hussein Cancer Center — Our Doctors directory + facility pages",
+      "license": "public-web (facts)",
+      "retrieved_at": "2026-10-24T12:10:00Z",
+      "record_count": 159,
+      "disabled": null
+    },
+    "medlabs_branches": {
+      "title": "MedLabs Laboratories — Jordan branches",
+      "license": "public-web (facts)",
+      "retrieved_at": "2026-10-24T09:03:48Z",
+      "record_count": 63,
+      "disabled": null
+    },
+    "mednet_network": {
+      "title": "MedNet Jordan — Medical Network (Find a Provider map)",
+      "license": "public-web (facts)",
+      "retrieved_at": "2026-10-24T09:45:05Z",
+      "record_count": 3249,
+      "disabled": null
+    },
+    "moh_fees": {
+      "title": "Ministry of Health treatment fees and Civil Health Insurance cost-sharing (Jordan)",
+      "license": "public-web (facts)",
+      "retrieved_at": "2026-10-24T09:18:56Z",
+      "record_count": 22,
+      "disabled": null
+    },
+    "moh_hospitals": {
+      "title": "Ministry of Health - hospitals directory (المستشفيات), Arabic and English list pages",
+      "license": "public-web (facts)",
+      "retrieved_at": "2026-10-24T09:22:12Z",
+      "record_count": 115,
+      "disabled": null
+    },
+    "moh_licensed_clinics": {
+      "title": "Ministry of Health — licensed doctor, dentist and general clinics (اسماء العيادات و المراكز الطبية و المؤسسات الصحية المرخصة)",
+      "license": "public-web (facts)",
+      "retrieved_at": "2026-10-24T09:11:33Z",
+      "record_count": 5120,
+      "disabled": null
+    },
+    "moh_licensed_hospitals": {
+      "title": "Ministry of Health — licensed hospitals (مستشفى خاص / مستشفى عام licence lists)",
+      "license": "public-web (facts)",
+      "retrieved_at": "2026-10-24T09:11:33Z",
+      "record_count": 75,
+      "disabled": null
+    },
+    "moh_licensed_register": {
+      "title": "Ministry of Health — Names of licensed clinics, medical centres and health institutions (اسماء العيادات و المراكز الطبية و المؤسسات الصحية المرخصة)",
+      "license": "public-web (facts)",
+      "retrieved_at": "2026-10-24T09:11:33Z",
+      "record_count": 6300,
+      "disabled": null
+    },
+    "moh_pharmacies_duty_list": {
+      "title": "Ministry of Health — Pharmacies directory (الصيدليات): 24-hour and 12-hour pharmacies",
+      "license": "public-web (facts)",
+      "retrieved_at": "2026-10-24T09:08:07Z",
+      "record_count": 524,
+      "disabled": null
+    },
+    "moh_phc_centers": {
+      "title": "Ministry of Health — Health centres directory (المراكز الصحية)",
+      "license": "public-web (facts)",
+      "retrieved_at": "2026-10-24T09:02:43Z",
+      "record_count": 599,
+      "disabled": null
+    },
+    "moh_statbook_2024": {
+      "title": "Ministry of Health Annual Statistical Report 2024 (التقرير الإحصائي السنوي 2024) - hospital beds by governorate and sector, Tables 2:1-2:12 and 2:16",
+      "license": "public-web (facts)",
+      "retrieved_at": "2026-10-24T09:22:12Z",
+      "record_count": 123,
+      "disabled": null
+    },
+    "nathealth_network": {
+      "title": "NatHealth — NatHealth Network (Find your healthcare provider)",
+      "license": "public-web (facts)",
+      "retrieved_at": "2026-10-24T09:00:44Z",
+      "record_count": 6698,
+      "disabled": null
+    },
+    "osm": {
+      "title": "OpenStreetMap — health-tagged features in Jordan",
+      "license": "ODbL-1.0",
+      "retrieved_at": "2026-10-24T08:56:12Z",
+      "record_count": 768,
+      "disabled": null
+    },
+    "pha_members": {
+      "title": "Private Hospitals Association (Jordan) - member hospitals by region",
+      "license": "public-web (facts)",
+      "retrieved_at": "2026-10-24T09:22:12Z",
+      "record_count": 57,
+      "disabled": null
+    },
+    "rms_hospitals": {
+      "title": "Jordanian Royal Medical Services - hospitals and medical centres pages",
+      "license": "public-web (facts)",
+      "retrieved_at": "2026-10-24T09:21:59Z",
+      "record_count": 15,
+      "disabled": null
+    },
+    "solidarity_network": {
+      "title": "Solidarity First Insurance — Medical Network (الشبكة الطبية)",
+      "license": "public-web (facts)",
+      "retrieved_at": "2026-10-24T09:35:49Z",
+      "record_count": 4605,
+      "disabled": null
+    },
+    "specialties_jmc": {
+      "title": "Jordan Medical Council recognised specialties (الإختصاصات الطبية)",
+      "license": "public-web (facts)",
+      "retrieved_at": "2026-10-24T09:18:56Z",
+      "record_count": 68,
+      "disabled": null
+    },
+    "specialtyhospital_doctors": {
+      "title": "The Specialty Hospital — Doctors directory and hospital details",
+      "license": "public-web (facts)",
+      "retrieved_at": "2026-10-24T11:26:58Z",
+      "record_count": 210,
+      "disabled": null
+    },
+    "unrwa_health_centres": {
+      "title": "UNRWA — Jordan camp profiles (health centres per camp)",
+      "license": "public-web (facts)",
+      "retrieved_at": "2026-10-24T08:58:30Z",
+      "record_count": 11,
+      "disabled": true
+    },
+    "wikidata": {
+      "title": "Wikidata — hospitals in Jordan",
+      "license": "CC0-1.0",
+      "retrieved_at": "2026-10-24T09:26:31Z",
+      "record_count": 45,
+      "disabled": null
+    },
+    "wikidata_hospitals": {
+      "title": "Wikidata - items instance of (subclass of) hospital (Q16917) with country Jordan (Q810)",
+      "license": "CC0-1.0",
+      "retrieved_at": "2026-10-24T09:22:12Z",
+      "record_count": 45,
+      "disabled": true
+    }
+  }
+}
