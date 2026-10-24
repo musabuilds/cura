@@ -9,6 +9,8 @@ cura db upgrade             apply pending schema migrations
 cura db seed                load data/*.jsonl into the API database
 cura db export-changes      API edits → sources/staging/cura_api.jsonl, merges → sources/curation/
 cura embed sync             embed records whose version moved (--watch to keep running)
+cura demo seed|reset        the pitch's demo accounts and records (idempotent / removed cleanly)
+cura serve-demo             migrate, seed the demo and serve on 0.0.0.0:8000 with a persisted secret
 """
 
 from __future__ import annotations
@@ -51,6 +53,18 @@ def main(argv: list[str] | None = None) -> int:
     p_embed.add_argument("--limit", type=int)
     p_embed.add_argument("--rebuild", action="store_true", help="recheck every record, not only changed ones")
     p_embed.add_argument("--watch", type=float, metavar="SECONDS", help="keep syncing at this interval")
+    p_demo = sub.add_parser("demo", help="demo accounts and records for the mobile app and the pitch")
+    p_demo.add_argument("task", choices=("seed", "reset"))
+    p_serve = sub.add_parser("serve-demo", help="migrate, seed the demo, serve the API for the phone app")
+    p_serve.add_argument("--host", default="0.0.0.0")
+    p_serve.add_argument("--port", type=int, default=8000)
+    p_serve.add_argument("--public-url", help="the URL the phone reaches (sets CURA_PUBLIC_BASE_URL)")
+    p_serve.add_argument(
+        "--seed-registry",
+        choices=("auto", "always", "never"),
+        default="auto",
+        help="load data/*.jsonl first: auto = only when the database holds fewer records than the dataset",
+    )
     args = parser.parse_args(argv)
 
     if args.cmd == "collect":
@@ -89,6 +103,14 @@ def main(argv: list[str] | None = None) -> int:
         _print(admin.run(args.task, email=args.email, password=args.password, message=args.message))
     elif args.cmd == "embed":
         _embed(args)
+    elif args.cmd == "demo":
+        from cura.api import demo_data
+
+        _print(demo_data.seed() if args.task == "seed" else demo_data.reset())
+    elif args.cmd == "serve-demo":
+        from cura.api import serve
+
+        return serve.run(host=args.host, port=args.port, public_url=args.public_url, seed_registry=args.seed_registry)
     return 0
 
 
