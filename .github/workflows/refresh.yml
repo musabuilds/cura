@@ -1,17 +1,12 @@
 name: refresh
 
-# Scripted sources daily; the LLM agent weekly. Nothing is pushed to main directly:
-# every refresh opens a pull request that CI validates and a maintainer merges.
+# Scripted, non-AI sources (OpenStreetMap, Wikidata) daily. Nothing is pushed to main directly: every
+# refresh opens a pull request that CI validates and a maintainer merges. Facilities and doctors keep
+# their own records current through the API; their edits outrank every scripted source at merge.
 on:
   schedule:
-    - cron: "17 2 * * *"   # daily 02:17 UTC (05:17 Amman): scripted sources
-    - cron: "43 3 * * 5"   # Fridays 03:43 UTC: scripted sources + LLM agent
+    - cron: "17 2 * * *"   # daily 02:17 UTC (05:17 Amman)
   workflow_dispatch:
-    inputs:
-      agent:
-        description: "Run the LLM refresh agent too"
-        type: boolean
-        default: false
 
 permissions:
   contents: write
@@ -22,9 +17,6 @@ jobs:
     runs-on: ubuntu-latest
     env:
       PYTHONUTF8: "1"
-      CURA_LLM_BASE_URL: ${{ secrets.CURA_LLM_BASE_URL }}
-      CURA_LLM_MODEL: ${{ vars.CURA_LLM_MODEL || 'Qwen/Qwen2.5-7B-Instruct' }}
-      CURA_LLM_API_KEY: ${{ secrets.CURA_LLM_API_KEY }}
     steps:
       - uses: actions/checkout@v4
       - uses: astral-sh/setup-uv@v5
@@ -33,9 +25,6 @@ jobs:
         run: |
           uv run cura collect osm
           uv run cura collect wikidata
-      - name: LLM agent (Fridays, or on demand)
-        if: ${{ inputs.agent || github.event.schedule == '43 3 * * 5' }}
-        run: uv run cura agent run --limit 60
       - name: Merge + validate
         run: |
           uv run cura merge
@@ -47,6 +36,6 @@ jobs:
           commit-message: "data: scheduled refresh"
           title: "data: scheduled refresh"
           body: |
-            Automated refresh (scripted sources; the LLM agent on Fridays or when dispatched).
+            Automated refresh of scripted sources (OSM, Wikidata).
             Review `data/manifest.json` counts and the diff before merging. CI re-validates.
           labels: data

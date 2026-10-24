@@ -2,6 +2,12 @@
 
 All notable changes to the code and the dataset. Dataset counts live in `data/STATS.md`.
 
+## [Unreleased]
+
+### Removed
+- The LLM refresh agent and its weekly schedule. Facilities and doctors now keep their own records
+  current through the API; scripted, non-AI collectors (OSM, Wikidata) still run daily.
+
 ## [0.1.0] — 2026-10-24
 
 ### Added

@@ -1,6 +1,6 @@
 # Staging format
 
-Every collector — scripted or human/agent-assisted — writes **staging records**, never the canonical
+Every collector — scripted or human-assisted — writes **staging records**, never the canonical
 dataset directly. The pipeline (`cura pipeline merge`) normalizes, geocodes, deduplicates and assigns
 identifiers. Keeping collection and canonicalisation apart means a bad source can be dropped and the
 dataset rebuilt without it.

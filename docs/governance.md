@@ -1,7 +1,7 @@
 # Governance: who can change what
 
-Cura grows from three directions — scripted sources, the refresh agent, and people using apps built on
-the API. All three are untrusted until proven otherwise, and every change is attributable.
+Cura grows from two directions — scripted sources and the people who run the places: doctors and
+facility admins using apps built on the API. Both are untrusted until proven otherwise, and every change is attributable.
 
 ## Accounts and roles
 

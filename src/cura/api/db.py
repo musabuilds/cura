@@ -174,7 +174,7 @@ class Change(Base):
     auto_applied: Mapped[bool] = mapped_column(Boolean, default=False)
     author_id: Mapped[str | None] = mapped_column(ForeignKey("users.id"), index=True)
     client_id: Mapped[str | None] = mapped_column(String(64))
-    source: Mapped[str] = mapped_column(String(32), default="cura_api")  # cura_api | agent
+    source: Mapped[str] = mapped_column(String(32), default="cura_api")  # cura_api | import
     reviewed_by: Mapped[str | None] = mapped_column(String(36))
     review_note: Mapped[str | None] = mapped_column(Text)
     base_version: Mapped[int | None] = mapped_column(Integer)

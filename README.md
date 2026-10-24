@@ -18,7 +18,6 @@ Current coverage is in [`data/STATS.md`](data/STATS.md), regenerated on every bu
 │ networks · OSM · Wikidata · JMA fees       │    │ trust-weighted fusion    │    │ SQLite · API    │
 └────────────────────────────────────────────┘    │ stable IDs · validation  │    └────────┬────────┘
         ▲                                         └──────────────────────────┘             │
-        │  open-weight LLM agent re-reads facility sites weekly (evidence-checked)         │
         └───────────── verified doctors & facility admins edit through the API ◀───────────┘
 ```
 
@@ -61,16 +60,13 @@ Production-like stack (Postgres + API): `docker compose up -d --build`, then
 * **Stable, meaningful IDs** (`JO-AM-HSP-00042`) that never change or get reused
   ([rules](docs/identifiers.md)).
 * **Trust-weighted fusion**: ministry lists outrank a hospital's own site, which outranks insurer
-  networks, OSM, Wikidata and the LLM agent.
+  networks, OSM and Wikidata.
 * **CI**: lint, tests, schema validation, and a check that the committed dataset rebuilds exactly
   from the committed sources.
 
 ## How it stays current
 
 * **Scripted collectors** (OSM, Wikidata) run daily and open a PR ([refresh.yml](.github/workflows/refresh.yml)).
-* **The refresh agent** ([docs/agent.md](docs/agent.md)) runs an open-weight model (Qwen2.5 / Llama 3.1
-  via any OpenAI-compatible endpoint) over facilities' own websites every week. It keeps a value only
-  when the model quotes the page verbatim. Its output is a proposal, never a direct write.
 * **People**: doctors and facility admins claim their records and update schedules, fees and
   insurance through any app built on the API. Their edits flow back into the open dataset with
   attribution ([governance](docs/governance.md)).
@@ -86,8 +82,7 @@ src/cura/
   collectors/        scripted sources (osm, wikidata)
   pipeline/          merge (entity resolution + fusion), validate, export, stats
   api/               FastAPI app: registry, OAuth 2.0 server, contributions, moderation
-  agent/             LLM refresh agent
-docs/                data model, identifiers, API, governance, agent
+docs/                data model, identifiers, API, governance
 ```
 
 ## License

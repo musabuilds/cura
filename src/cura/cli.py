@@ -7,7 +7,6 @@ cura export                 dist/: JSON Schema, GeoJSON, CSV, SQLite
 cura api                    run the HTTP API
 cura db seed                load data/*.jsonl into the API database
 cura db export-changes      API edits → sources/staging/cura_api.jsonl (feeds the next merge)
-cura agent run              the LLM-assisted refresh agent (proposes, never writes canonical data)
 """
 
 from __future__ import annotations
@@ -43,10 +42,6 @@ def main(argv: list[str] | None = None) -> int:
     p_db.add_argument("task", choices=("init", "seed", "export-changes", "create-admin"))
     p_db.add_argument("--email")
     p_db.add_argument("--password")
-    p_agent = sub.add_parser("agent", help="LLM refresh agent")
-    p_agent.add_argument("task", choices=("run",))
-    p_agent.add_argument("--limit", type=int, default=25)
-    p_agent.add_argument("--dry-run", action="store_true")
     args = parser.parse_args(argv)
 
     if args.cmd == "collect":
@@ -83,10 +78,6 @@ def main(argv: list[str] | None = None) -> int:
         from cura.api import admin
 
         _print(admin.run(args.task, email=args.email, password=args.password))
-    elif args.cmd == "agent":
-        from cura.agent import runner
-
-        _print(runner.run(limit=args.limit, dry_run=args.dry_run))
     return 0
 
 

@@ -104,7 +104,7 @@ Practitioners merge only on an identical normalised full name plus a compatible 
 names ("Ahmad Ali") only merge within the same facility, because they collide across a country.
 
 **Fusion** — each source has a trust prior (`merge.trust`: official ministry lists 0.95, a facility's
-own site 0.9, insurer networks 0.75, OSM 0.7, Wikidata 0.6, the LLM agent 0.6, verified API edits 0.97).
+own site 0.9, insurer networks 0.75, OSM 0.7, Wikidata 0.6, verified API edits 0.97).
 Scalar fields take the most trusted non-null value; coordinates prefer surveyed points (OSM, API);
 lists are unioned and de-duplicated. Every contributing record stays in `sources`.
 
