@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="referrer" content="no-referrer">
+<link rel="icon" href="data:,">
 <title>Our doctors</title>
 <style nonce="__NONCE__">
 :root{
@@ -164,14 +165,14 @@ footer .wrap{display:flex;justify-content:space-between;align-items:center;gap:1
     en: {nav_doctors:"Our doctors",nav_departments:"Departments",nav_visit:"Visit us",call:"Call to book",s_doctors:"Doctors",
       s_available:"Available now",s_depts:"Departments",doctors_title:"Our doctors",doctors_sub:"Schedules and availability straight from each doctor, updated live.",
       visit_title:"Visit us",address:"Address",hours:"Hours",phone:"Phone",powered:"Powered by Cura API",search:"Search by name or specialty",
-      all:"All",available:"Available now",busy:"Busy",unavailable:"Not available",unknown:"See hours",er_open:"Emergency open 24/7",
+      all:"All",available:"Available now",busy:"Busy",unavailable:"Not available",unknown:"See hours",off_hours:"Outside clinic hours",er_open:"Emergency open 24/7",
       er_closed:"Emergency closed",er_div:"Emergency diverting",schedule:"Schedule",fee:"Consultation",languages:"Languages",until:"until",
       live:"Live from the Cura registry",updated:"updated",ago:"ago",justnow:"just now",offline:"Reconnecting…",none:"No doctors match.",
       private_hospital:"Private hospital",hospital:"Hospital",clinic:"Clinic",always:"Open 24 hours",unknownHours:"Hours not published",lang:"عربي"},
     ar: {nav_doctors:"أطباؤنا",nav_departments:"الأقسام",nav_visit:"زورونا",call:"اتصل للحجز",s_doctors:"طبيب",s_available:"متاح الآن",
       s_depts:"قسم",doctors_title:"أطباؤنا",doctors_sub:"المواعيد والتوفر من كل طبيب مباشرة، تُحدَّث لحظياً.",visit_title:"زورونا",
       address:"العنوان",hours:"ساعات العمل",phone:"الهاتف",powered:"مدعوم من Cura API",search:"ابحث بالاسم أو التخصص",all:"الكل",
-      available:"متاح الآن",busy:"مشغول",unavailable:"غير متاح",unknown:"راجع المواعيد",er_open:"الطوارئ مفتوحة على مدار الساعة",
+      available:"متاح الآن",busy:"مشغول",unavailable:"غير متاح",unknown:"راجع المواعيد",off_hours:"خارج ساعات العيادة",er_open:"الطوارئ مفتوحة على مدار الساعة",
       er_closed:"الطوارئ مغلقة",er_div:"الطوارئ تحوّل الحالات",schedule:"المواعيد",fee:"الكشفية",languages:"اللغات",until:"حتى",
       live:"مباشر من سجل Cura",updated:"آخر تحديث",ago:"",justnow:"الآن",offline:"جارٍ إعادة الاتصال…",none:"لا يوجد أطباء مطابقون.",
       private_hospital:"مستشفى خاص",hospital:"مستشفى",clinic:"عيادة",always:"مفتوح على مدار الساعة",unknownHours:"لم تُنشر ساعات العمل",lang:"English"},
@@ -250,7 +251,7 @@ footer .wrap{display:flex;justify-content:space-between;align-items:center;gap:1
   function statusPill(a) {
     const state = ["available", "busy", "unavailable"].includes(a?.state) ? a.state : "unknown";
     const pill = el("span", `pill ${state}`); pill.append(el("i"));
-    let text = t(state);
+    let text = state === "unavailable" && a?.source === "schedule" ? t("off_hours") : t(state);
     if (a?.until && state !== "unknown") text += ` · ${t("until")} ${fmtUntil(a.until)}`;
     pill.append(document.createTextNode(text));
     return pill;

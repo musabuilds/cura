@@ -46,6 +46,38 @@ def _dataset_size() -> int:
         return sum(1 for _ in fh)
 
 
+def _rebuildable() -> bool:
+    """Only a database nobody has written to through the API may be thrown away and rebuilt."""
+    from sqlalchemy import func, select
+
+    from cura.api import db
+    from cura.api.db import Change, Claim, FacilityRow, PractitionerRow, RoleRow, User
+    from cura.api.settings import settings
+
+    if not settings().database_url.startswith("sqlite"):
+        return False
+    with db.new_session() as s:
+        if any(s.scalar(select(func.count()).select_from(t)) for t in (User, Claim, Change)):
+            return False
+        return not any(
+            s.scalar(select(func.count()).select_from(t).where(t.dirty))
+            for t in (FacilityRow, PractitionerRow, RoleRow)
+        )
+
+
+def _move_aside() -> Path:
+    import time
+
+    from cura.api import db
+    from cura.api.settings import settings
+
+    db.reset_engine()
+    path = Path(settings().database_url.removeprefix("sqlite:///"))
+    backup = path.with_name(f"{path.name}.bak-{time.strftime('%Y%m%d-%H%M%S')}")
+    path.rename(backup)
+    return backup
+
+
 def run(*, host: str, port: int, public_url: str | None, seed_registry: str) -> int:
     ensure_secret()
     if os.environ.get("CURA_ENVIRONMENT", "development") == "production":
@@ -56,6 +88,7 @@ def run(*, host: str, port: int, public_url: str | None, seed_registry: str) -> 
         os.environ["CURA_PUBLIC_BASE_URL"] = public_url.rstrip("/")
 
     from sqlalchemy import func, select
+    from sqlalchemy.exc import IntegrityError
 
     from cura.api import admin, db, demo_data
     from cura.api.db import FacilityRow
@@ -69,7 +102,22 @@ def run(*, host: str, port: int, public_url: str | None, seed_registry: str) -> 
     want = _dataset_size()
     if seed_registry == "always" or (seed_registry == "auto" and have < want):
         print(f"Loading the registry from data/ ({have} facilities in the database, {want} in the dataset)…")
-        print(admin.seed())
+        try:
+            print(admin.seed())
+        except IntegrityError:
+            # An older build whose ids no longer line up with the dataset cannot be updated in place.
+            if not _rebuildable():
+                print(
+                    "The database is from an older build and holds API edits; not touching it. "
+                    "Run with --seed-registry never, or migrate it by hand.",
+                    file=sys.stderr,
+                )
+                return 1
+            backup = _move_aside()
+            print(f"The database was an older build with no API edits; moved it to {backup} and rebuilding…")
+            db.reset_engine()
+            db.init()
+            print(admin.seed())
     ids = demo_data.seed()
     base = settings().public_base_url
     print("\nCura demo is ready.")
