@@ -57,6 +57,18 @@ def parse_api_key(key: str) -> str | None:
     return parts[1] if len(parts) == 3 and parts[0] == "cura" else None
 
 
+def new_facility_key() -> tuple[str, str, str]:
+    """A facility website's read-only key: `curafk_<prefix>_<secret>`. Returns (key, prefix, sha256)."""
+    prefix = secrets.token_hex(6)
+    key = f"curafk_{prefix}_{secrets.token_urlsafe(32)}"
+    return key, prefix, sha256(key)
+
+
+def parse_facility_key(key: str) -> str | None:
+    parts = key.split("_", 2)
+    return parts[1] if len(parts) == 3 and parts[0] == "curafk" and len(parts[1]) == 12 else None
+
+
 def constant_eq(a: str, b: str) -> bool:
     return hmac.compare_digest(a.encode(), b.encode())
 
@@ -80,13 +92,17 @@ def issue_access_token(user_id: str, client_id: str, scope: str, role: str) -> t
 
 def decode_access_token(token: str) -> dict:
     s = settings()
+    # The algorithm is pinned (no "none", no RS/HS confusion); iss, aud, exp, iat and sub are required.
+    header = jwt.get_unverified_header(token)
+    if header.get("alg") != "HS256":
+        raise jwt.InvalidAlgorithmError("unexpected algorithm")
     return jwt.decode(
         token,
         s.jwt_secret,
         algorithms=["HS256"],
         audience="cura-api",
         issuer=s.jwt_issuer,
-        options={"require": ["exp", "sub", "iss", "aud"]},
+        options={"require": ["exp", "iat", "sub", "iss", "aud"]},
     )
 
 

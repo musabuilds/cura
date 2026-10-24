@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from fastapi import FastAPI, Request
+from fastapi.encoders import jsonable_encoder
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 from starlette.exceptions import HTTPException as StarletteHTTPException
@@ -22,7 +23,9 @@ def _response(status: int, title: str, detail: str, request: Request, headers=No
         "instance": request.url.path,
         **extra,
     }
-    return JSONResponse(body, status_code=status, headers=headers, media_type="application/problem+json")
+    return JSONResponse(
+        jsonable_encoder(body), status_code=status, headers=headers, media_type="application/problem+json"
+    )
 
 
 def install(app: FastAPI) -> None:
