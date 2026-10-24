@@ -1,0 +1,338 @@
+<!doctype html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="referrer" content="no-referrer">
+<title>Our doctors</title>
+<style nonce="__NONCE__">
+:root{
+  --ink:#0d1b2a; --ink-2:#3b4a5c; --ink-3:#6b7a8c; --line:#e3e8ef; --paper:#ffffff; --wash:#f5f7fa;
+  --brand:#0b5d6b; --brand-2:#0e7c8c; --brand-soft:#e4f3f4; --accent:#c8553d;
+  --ok:#1a7f4b; --ok-soft:#e3f5ea; --busy:#a66300; --busy-soft:#fdf1dc; --off:#a1323b; --off-soft:#fbe7e8;
+  --unk:#6b7a8c; --unk-soft:#eef1f5; --radius:16px; --shadow:0 1px 2px rgba(13,27,42,.06),0 8px 24px rgba(13,27,42,.06);
+  --font:"Segoe UI Variable","Segoe UI",-apple-system,BlinkMacSystemFont,"Helvetica Neue",Tahoma,Arial,sans-serif;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;font-family:var(--font);color:var(--ink);background:var(--paper);-webkit-font-smoothing:antialiased;line-height:1.5}
+a{color:inherit}
+.wrap{max-width:1180px;margin:0 auto;padding:0 24px}
+.topbar{background:var(--ink);color:#cfd8e3;font-size:13px}
+.topbar .wrap{display:flex;gap:18px;align-items:center;justify-content:space-between;min-height:38px;flex-wrap:wrap}
+.topbar .left{display:flex;gap:18px;align-items:center;flex-wrap:wrap}
+.er{display:inline-flex;align-items:center;gap:8px;color:#fff;font-weight:600}
+.er .dot{width:8px;height:8px;border-radius:50%;background:#3ddc84;box-shadow:0 0 0 0 rgba(61,220,132,.6);animation:pulse 2s infinite}
+.er.closed .dot{background:#ff6b6b;animation:none}
+.lang{background:transparent;border:1px solid #3a4b5f;color:#fff;border-radius:999px;padding:3px 12px;font:inherit;cursor:pointer}
+header.nav{position:sticky;top:0;z-index:20;background:rgba(255,255,255,.92);backdrop-filter:saturate(1.4) blur(10px);border-bottom:1px solid var(--line)}
+header.nav .wrap{display:flex;align-items:center;justify-content:space-between;min-height:72px;gap:16px}
+.brand{display:flex;align-items:center;gap:12px;text-decoration:none}
+.mark{width:42px;height:42px;border-radius:12px;background:linear-gradient(135deg,var(--brand),var(--brand-2));display:grid;place-items:center;color:#fff;font-weight:700;letter-spacing:.5px;flex:none}
+.brand b{display:block;font-size:17px;line-height:1.2}
+.brand small{display:block;color:var(--ink-3);font-size:12.5px}
+nav.links{display:flex;gap:26px;font-size:15px;color:var(--ink-2)}
+nav.links a{text-decoration:none}
+nav.links a:hover{color:var(--brand)}
+.cta{display:inline-flex;align-items:center;gap:8px;background:var(--brand);color:#fff;text-decoration:none;font-weight:600;border-radius:999px;padding:10px 18px;font-size:14.5px;white-space:nowrap}
+.cta:hover{background:var(--brand-2)}
+.hero{position:relative;overflow:hidden;background:radial-gradient(1200px 400px at 85% -10%,#d7eef0 0,transparent 60%),linear-gradient(180deg,#f3f9fa,#fff)}
+.hero .wrap{padding:64px 24px 48px;display:grid;grid-template-columns:1.25fr .75fr;gap:40px;align-items:end}
+.eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:13px;font-weight:600;color:var(--brand);background:var(--brand-soft);padding:6px 12px;border-radius:999px}
+.hero h1{font-size:clamp(34px,4.6vw,56px);line-height:1.06;letter-spacing:-.02em;margin:18px 0 10px}
+.hero h1 .ar{display:block;font-size:.5em;color:var(--ink-3);font-weight:600;letter-spacing:0;margin-top:10px}
+.hero p.lede{font-size:18px;color:var(--ink-2);max-width:56ch;margin:0}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.stat{background:#fff;border:1px solid var(--line);border-radius:var(--radius);padding:16px;box-shadow:var(--shadow)}
+.stat b{display:block;font-size:28px;letter-spacing:-.02em}
+.stat span{color:var(--ink-3);font-size:13px}
+.livebar{display:flex;align-items:center;gap:10px;margin-top:22px;color:var(--ink-3);font-size:13px}
+.livebar .dot{width:8px;height:8px;border-radius:50%;background:var(--ok);animation:pulse 2s infinite}
+.livebar.off .dot{background:var(--unk);animation:none}
+section{padding:56px 0}
+.section-head{display:flex;align-items:end;justify-content:space-between;gap:16px;margin-bottom:24px;flex-wrap:wrap}
+.section-head h2{font-size:30px;letter-spacing:-.01em;margin:0}
+.section-head p{margin:4px 0 0;color:var(--ink-3)}
+.search{display:flex;align-items:center;gap:8px;border:1px solid var(--line);border-radius:999px;padding:8px 14px;min-width:260px;background:#fff}
+.search input{border:0;outline:0;font:inherit;font-size:15px;width:100%;background:transparent;color:var(--ink)}
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:24px}
+.chip{border:1px solid var(--line);background:#fff;border-radius:999px;padding:7px 14px;font:inherit;font-size:14px;color:var(--ink-2);cursor:pointer}
+.chip[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:#fff}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:18px}
+.card{position:relative;background:#fff;border:1px solid var(--line);border-radius:var(--radius);padding:20px;box-shadow:var(--shadow);display:flex;flex-direction:column;gap:14px;transition:transform .2s,box-shadow .2s}
+.card:hover{transform:translateY(-2px);box-shadow:0 2px 4px rgba(13,27,42,.06),0 14px 32px rgba(13,27,42,.09)}
+.card.flash{animation:flash 2.4s ease-out}
+.card .who{display:flex;gap:14px;align-items:center}
+.avatar{width:56px;height:56px;border-radius:50%;display:grid;place-items:center;font-weight:700;color:#fff;flex:none;overflow:hidden;font-size:18px}
+.avatar img{width:100%;height:100%;object-fit:cover}
+.card h3{margin:0;font-size:17px;line-height:1.25}
+.card .ar{color:var(--ink-3);font-size:14px;margin-top:2px}
+.card .spec{color:var(--brand);font-weight:600;font-size:13.5px;margin-top:4px}
+.pill{display:inline-flex;align-items:center;gap:7px;font-size:13px;font-weight:600;border-radius:999px;padding:5px 11px;width:max-content}
+.pill i{width:7px;height:7px;border-radius:50%;background:currentColor}
+.pill.available{color:var(--ok);background:var(--ok-soft)}
+.pill.busy{color:var(--busy);background:var(--busy-soft)}
+.pill.unavailable{color:var(--off);background:var(--off-soft)}
+.pill.unknown{color:var(--unk);background:var(--unk-soft)}
+.meta{display:grid;gap:7px;font-size:14px;color:var(--ink-2);border-top:1px dashed var(--line);padding-top:12px}
+.meta div{display:flex;justify-content:space-between;gap:12px}
+.meta span:first-child{color:var(--ink-3)}
+.meta span:last-child{text-align:end}
+.note{font-size:13px;color:var(--ink-3);margin-top:-6px}
+.empty{padding:40px;text-align:center;color:var(--ink-3);border:1px dashed var(--line);border-radius:var(--radius)}
+.visit{background:var(--wash)}
+.visit .cols{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.panel{background:#fff;border:1px solid var(--line);border-radius:var(--radius);padding:22px}
+.panel h4{margin:0 0 8px;font-size:15px;color:var(--ink-3);font-weight:600;text-transform:uppercase;letter-spacing:.06em}
+.panel p{margin:0;font-size:16px}
+footer{background:var(--ink);color:#aab6c4;font-size:14px}
+footer .wrap{display:flex;justify-content:space-between;align-items:center;gap:16px;min-height:84px;flex-wrap:wrap}
+.powered{display:inline-flex;align-items:center;gap:10px;color:#fff;text-decoration:none;border:1px solid #2b3c50;border-radius:999px;padding:8px 14px}
+.powered .c{width:22px;height:22px;border-radius:6px;background:linear-gradient(135deg,#3ddc84,#0e7c8c);display:grid;place-items:center;color:#06231f;font-weight:800;font-size:13px}
+.toast{position:fixed;inset-inline-end:24px;bottom:24px;z-index:50;background:var(--ink);color:#fff;border-radius:14px;padding:12px 16px;font-size:14px;box-shadow:0 12px 32px rgba(0,0,0,.25);display:flex;gap:10px;align-items:center;transform:translateY(16px);opacity:0;transition:all .3s;max-width:min(420px,calc(100vw - 48px))}
+.toast.show{transform:none;opacity:1}
+.toast .dot{width:8px;height:8px;border-radius:50%;background:#3ddc84;flex:none}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(26,127,75,.45)}70%{box-shadow:0 0 0 8px rgba(26,127,75,0)}100%{box-shadow:0 0 0 0 rgba(26,127,75,0)}}
+@keyframes flash{0%{box-shadow:0 0 0 3px var(--brand-2),0 18px 40px rgba(14,124,140,.28);transform:translateY(-3px)}60%{box-shadow:0 0 0 3px rgba(14,124,140,.35),var(--shadow)}100%{box-shadow:var(--shadow);transform:none}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+@media (max-width:900px){.hero .wrap{grid-template-columns:1fr}.visit .cols{grid-template-columns:1fr}nav.links{display:none}}
+@media (max-width:520px){.wrap{padding:0 16px}.stats{grid-template-columns:repeat(3,1fr)}.stat{padding:12px}.stat b{font-size:22px}.search{min-width:0;width:100%}.cta span{display:none}}
+[dir="rtl"] body{font-family:"Segoe UI",Tahoma,"Noto Sans Arabic",Arial,sans-serif}
+</style>
+</head>
+<body>
+<div class="topbar"><div class="wrap">
+  <div class="left">
+    <span class="er" id="er"><span class="dot"></span><span id="er-text">Emergency</span></span>
+    <span id="top-phone"></span>
+  </div>
+  <button class="lang" id="lang" type="button">عربي</button>
+</div></div>
+
+<header class="nav"><div class="wrap">
+  <a class="brand" href="#top"><span class="mark" id="mark">·</span><span><b id="brand-name">Loading…</b><small id="brand-sub"></small></span></a>
+  <nav class="links"><a href="#doctors" data-t="nav_doctors">Our doctors</a><a href="#departments" data-t="nav_departments">Departments</a><a href="#visit" data-t="nav_visit">Visit us</a></nav>
+  <a class="cta" id="call" href="#visit"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2z"/></svg><span data-t="call">Call to book</span></a>
+</div></header>
+
+<main id="top">
+  <section class="hero"><div class="wrap">
+    <div>
+      <span class="eyebrow" id="eyebrow">Private hospital</span>
+      <h1 id="hero-title">&nbsp;<span class="ar" id="hero-ar"></span></h1>
+      <p class="lede" id="lede"></p>
+      <div class="livebar off" id="livebar"><span class="dot"></span><span id="live-text">Connecting to the Cura registry…</span></div>
+    </div>
+    <div class="stats">
+      <div class="stat"><b id="s-doctors">–</b><span data-t="s_doctors">Doctors</span></div>
+      <div class="stat"><b id="s-available">–</b><span data-t="s_available">Available now</span></div>
+      <div class="stat"><b id="s-depts">–</b><span data-t="s_depts">Departments</span></div>
+    </div>
+  </div></section>
+
+  <section id="doctors"><div class="wrap">
+    <div class="section-head">
+      <div><h2 data-t="doctors_title">Our doctors</h2><p data-t="doctors_sub">Schedules and availability straight from each doctor, updated live.</p></div>
+      <label class="search"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6b7a8c" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg><input id="q" type="search" autocomplete="off" placeholder="Search by name or specialty"></label>
+    </div>
+    <div class="chips" id="departments" role="toolbar" aria-label="Departments"></div>
+    <div class="grid" id="grid"></div>
+  </div></section>
+
+  <section class="visit" id="visit"><div class="wrap">
+    <div class="section-head"><div><h2 data-t="visit_title">Visit us</h2></div></div>
+    <div class="cols">
+      <div class="panel"><h4 data-t="address">Address</h4><p id="v-address">–</p></div>
+      <div class="panel"><h4 data-t="hours">Hours</h4><p id="v-hours">–</p></div>
+      <div class="panel"><h4 data-t="phone">Phone</h4><p id="v-phone">–</p></div>
+    </div>
+  </div></section>
+</main>
+
+<footer><div class="wrap">
+  <span id="copy">&copy;</span>
+  <a class="powered" href="/docs" target="_blank" rel="noopener"><span class="c">C</span><span data-t="powered">Powered by Cura API</span></a>
+</div></footer>
+<div class="toast" id="toast" role="status" aria-live="polite"><span class="dot"></span><span id="toast-text"></span></div>
+
+<script nonce="__NONCE__">
+(() => {
+  "use strict";
+  const CONFIG = __CONFIG__;
+  const $ = (id) => document.getElementById(id);
+  const T = {
+    en: {nav_doctors:"Our doctors",nav_departments:"Departments",nav_visit:"Visit us",call:"Call to book",s_doctors:"Doctors",
+      s_available:"Available now",s_depts:"Departments",doctors_title:"Our doctors",doctors_sub:"Schedules and availability straight from each doctor, updated live.",
+      visit_title:"Visit us",address:"Address",hours:"Hours",phone:"Phone",powered:"Powered by Cura API",search:"Search by name or specialty",
+      all:"All",available:"Available now",busy:"Busy",unavailable:"Not available",unknown:"See hours",er_open:"Emergency open 24/7",
+      er_closed:"Emergency closed",er_div:"Emergency diverting",schedule:"Schedule",fee:"Consultation",languages:"Languages",until:"until",
+      live:"Live from the Cura registry",updated:"updated",ago:"ago",justnow:"just now",offline:"Reconnecting…",none:"No doctors match.",
+      private_hospital:"Private hospital",hospital:"Hospital",clinic:"Clinic",always:"Open 24 hours",unknownHours:"Hours not published",lang:"عربي"},
+    ar: {nav_doctors:"أطباؤنا",nav_departments:"الأقسام",nav_visit:"زورونا",call:"اتصل للحجز",s_doctors:"طبيب",s_available:"متاح الآن",
+      s_depts:"قسم",doctors_title:"أطباؤنا",doctors_sub:"المواعيد والتوفر من كل طبيب مباشرة، تُحدَّث لحظياً.",visit_title:"زورونا",
+      address:"العنوان",hours:"ساعات العمل",phone:"الهاتف",powered:"مدعوم من Cura API",search:"ابحث بالاسم أو التخصص",all:"الكل",
+      available:"متاح الآن",busy:"مشغول",unavailable:"غير متاح",unknown:"راجع المواعيد",er_open:"الطوارئ مفتوحة على مدار الساعة",
+      er_closed:"الطوارئ مغلقة",er_div:"الطوارئ تحوّل الحالات",schedule:"المواعيد",fee:"الكشفية",languages:"اللغات",until:"حتى",
+      live:"مباشر من سجل Cura",updated:"آخر تحديث",ago:"",justnow:"الآن",offline:"جارٍ إعادة الاتصال…",none:"لا يوجد أطباء مطابقون.",
+      private_hospital:"مستشفى خاص",hospital:"مستشفى",clinic:"عيادة",always:"مفتوح على مدار الساعة",unknownHours:"لم تُنشر ساعات العمل",lang:"English"},
+  };
+  const PALETTE = ["#0b5d6b","#7a4fb5","#c8553d","#2f6fb0","#1a7f4b","#a66300","#b5446e","#3d5a80"];
+  let lang = "en", facility = null, roster = [], labels = {}, dept = null, lastUpdate = null, previous = new Map();
+
+  const t = (k) => (T[lang][k] ?? T.en[k] ?? k);
+  const el = (tag, cls, text) => { const n = document.createElement(tag); if (cls) n.className = cls; if (text != null) n.textContent = text; return n; };
+  const nameOf = (n) => (n ? (lang === "ar" ? (n.ar || n.en) : (n.en || n.ar)) : "") || "";
+  const otherName = (n) => (n ? (lang === "ar" ? n.en : n.ar) : "") || "";
+  const initials = (n) => (n.en || n.ar || "?").replace(/^(dr\.?|د\.)\s*/i, "").split(/\s+/).filter(Boolean).slice(0, 2).map((w) => w[0]).join("").toUpperCase();
+  const colorFor = (id) => PALETTE[[...id].reduce((a, c) => a + c.charCodeAt(0), 0) % PALETTE.length];
+  const specLabel = (code) => (code && labels[code] ? (lang === "ar" ? labels[code].ar : labels[code].en) : (code || "").replace(/_/g, " "));
+  const pretty = (p) => { if (!p) return ""; const m = p.match(/^\+962(7\d)(\d{3})(\d{4})$/) || p.match(/^\+962(\d)(\d{3})(\d{4})$/); return m ? `+962 ${m[1]} ${m[2]} ${m[3]}` : p; };
+  const fmtUntil = (iso) => { try { return new Date(iso).toLocaleString(lang === "ar" ? "ar-JO" : "en-GB", {weekday:"short", hour:"2-digit", minute:"2-digit"}); } catch { return ""; } };
+
+  async function getJSON(url) { const r = await fetch(url, {headers: {"Accept": "application/json"}}); if (!r.ok) throw new Error(r.status); return r.json(); }
+
+  async function load(changedHint) {
+    const doc = await getJSON(`/v1/facilities/${encodeURIComponent(CONFIG.facilityId)}?expand=practitioners`);
+    facility = doc;
+    roster = (doc.practitioners || []).filter((x) => x.practitioner);
+    lastUpdate = Date.now();
+    render(changedHint);
+  }
+
+  function cardKey(x) {
+    const r = x.role, a = r.availability || {};
+    return JSON.stringify([x.practitioner.name, x.practitioner.photo_url, x.practitioner.title, r.specialty, (r.hours || {}).opening_hours,
+      r.consultation_fee, a.state, a.note, a.until, a.reason]);
+  }
+
+  function render(changedHint) {
+    const f = facility; if (!f) return;
+    document.title = `${t("nav_doctors")} · ${nameOf(f.name)}`;
+    $("brand-name").textContent = nameOf(f.name);
+    $("brand-sub").textContent = [f.address?.neighborhood, f.address?.city].filter(Boolean).join(", ");
+    $("mark").textContent = initials(f.name);
+    $("hero-title").firstChild.textContent = nameOf(f.name);
+    $("hero-ar").textContent = otherName(f.name);
+    $("eyebrow").textContent = f.ownership === "private" && f.type === "hospital" ? t("private_hospital") : t(f.type === "hospital" ? "hospital" : "clinic");
+    const specs = new Set(roster.map((x) => x.role.specialty || x.practitioner.specialty).filter(Boolean));
+    $("lede").textContent = lang === "ar"
+      ? `${roster.length} طبيباً في ${specs.size} تخصصاً${f.address?.neighborhood ? "، " + f.address.neighborhood : ""}.`
+      : `${roster.length} doctors across ${specs.size} specialties${f.address?.neighborhood ? ", in " + f.address.neighborhood : ""}. Book directly with the doctor you choose.`;
+    const live = f.live || {};
+    const er = $("er");
+    er.classList.toggle("closed", live.er === "closed" || live.state === "closed");
+    $("er-text").textContent = f.emergency ? (live.er === "closed" ? t("er_closed") : live.er === "diverting" ? t("er_div") : t("er_open")) : (live.state === "closed" ? t("er_closed") : nameOf(f.name));
+    const phone = (f.contact?.phones || [])[0];
+    $("top-phone").textContent = phone ? pretty(phone) : "";
+    $("v-phone").textContent = phone ? pretty(phone) : "–";
+    $("call").href = phone ? `tel:${phone}` : "#visit";
+    $("v-address").textContent = f.address?.text || [f.address?.street, f.address?.neighborhood, f.address?.city].filter(Boolean).join(", ") || "–";
+    $("v-hours").textContent = f.hours?.always_open ? t("always") : (f.hours?.opening_hours || t("unknownHours"));
+    $("copy").textContent = `© ${new Date().getFullYear()} ${nameOf(f.name)}`;
+    const depts = (f.departments && f.departments.length ? f.departments : [...specs].map(specLabel));
+    $("s-doctors").textContent = roster.length;
+    $("s-available").textContent = roster.filter((x) => x.role.availability?.state === "available").length;
+    $("s-depts").textContent = depts.length;
+    renderChips(specs);
+    renderGrid(changedHint);
+    $("q").placeholder = t("search");
+    document.querySelectorAll("[data-t]").forEach((n) => { n.textContent = t(n.dataset.t); });
+    $("lang").textContent = t("lang");
+  }
+
+  function renderChips(specs) {
+    const box = $("departments"); box.replaceChildren();
+    const make = (code, label) => { const b = el("button", "chip", label); b.type = "button"; b.setAttribute("aria-pressed", String(dept === code)); b.addEventListener("click", () => { dept = code; render(); }); return b; };
+    box.append(make(null, t("all")));
+    [...specs].sort((a, b) => specLabel(a).localeCompare(specLabel(b))).forEach((s) => box.append(make(s, specLabel(s))));
+  }
+
+  function statusPill(a) {
+    const state = ["available", "busy", "unavailable"].includes(a?.state) ? a.state : "unknown";
+    const pill = el("span", `pill ${state}`); pill.append(el("i"));
+    let text = t(state);
+    if (a?.until && state !== "unknown") text += ` · ${t("until")} ${fmtUntil(a.until)}`;
+    pill.append(document.createTextNode(text));
+    return pill;
+  }
+
+  function renderGrid(changedHint) {
+    const grid = $("grid"); grid.replaceChildren();
+    const q = $("q").value.trim().toLowerCase();
+    const list = roster
+      .filter((x) => !dept || (x.role.specialty || x.practitioner.specialty) === dept)
+      .filter((x) => !q || [x.practitioner.name?.en, x.practitioner.name?.ar, specLabel(x.role.specialty || x.practitioner.specialty)].join(" ").toLowerCase().includes(q))
+      .sort((a, b) => (a.role.availability?.state === "available" ? 0 : 1) - (b.role.availability?.state === "available" ? 0 : 1) || nameOf(a.practitioner.name).localeCompare(nameOf(b.practitioner.name)));
+    if (!list.length) { grid.append(el("div", "empty", t("none"))); return; }
+    const seen = new Map();
+    for (const x of list) {
+      const p = x.practitioner, r = x.role, a = r.availability || {};
+      const card = el("article", "card"); card.dataset.role = r.id;
+      const who = el("div", "who");
+      const av = el("div", "avatar");
+      if (p.photo_url) { const img = el("img"); img.alt = ""; img.src = p.photo_url; av.append(img); } else { av.textContent = initials(p.name); av.style.setProperty("background", colorFor(p.id)); }
+      const id = el("div");
+      id.append(el("h3", null, `${p.title && !/^dr/i.test(nameOf(p.name)) ? p.title + " " : ""}${nameOf(p.name)}`));
+      if (otherName(p.name)) { const ar = el("div", "ar", otherName(p.name)); ar.dir = lang === "ar" ? "ltr" : "rtl"; id.append(ar); }
+      id.append(el("div", "spec", specLabel(r.specialty || p.specialty)));
+      who.append(av, id); card.append(who, statusPill(a));
+      if (a.note) card.append(el("div", "note", a.note));
+      const meta = el("div", "meta");
+      const row = (k, v) => { if (!v) return; const d = el("div"); d.append(el("span", null, t(k)), el("span", null, v)); meta.append(d); };
+      row("schedule", r.hours?.opening_hours || (r.hours?.always_open ? t("always") : ""));
+      row("fee", r.consultation_fee ? `${r.consultation_fee.amount} ${r.consultation_fee.currency}` : "");
+      row("languages", (p.languages || []).map((l) => ({ar: lang === "ar" ? "العربية" : "Arabic", en: lang === "ar" ? "الإنجليزية" : "English"})[l] || l).join(", "));
+      if (meta.childNodes.length) card.append(meta);
+      const key = cardKey(x); seen.set(r.id, key);
+      const before = previous.get(r.id);
+      if ((before !== undefined && before !== key) || (changedHint && changedHint.has(r.id) && before !== undefined)) card.classList.add("flash");
+      grid.append(card);
+    }
+    roster.forEach((x) => { if (!seen.has(x.role.id)) seen.set(x.role.id, cardKey(x)); });
+    previous = seen;
+  }
+
+  function toast(text) {
+    const n = $("toast"); $("toast-text").textContent = text; n.classList.add("show");
+    clearTimeout(toast.t); toast.t = setTimeout(() => n.classList.remove("show"), 4200);
+  }
+
+  function tick() {
+    const bar = $("livebar");
+    if (!lastUpdate) return;
+    const s = Math.round((Date.now() - lastUpdate) / 1000);
+    const when = s < 5 ? t("justnow") : s < 60 ? `${s}s ${t("ago")}` : `${Math.round(s / 60)}m ${t("ago")}`;
+    if (!bar.classList.contains("off")) $("live-text").textContent = `${t("live")} · ${t("updated")} ${when}`;
+  }
+
+  function connect() {
+    const es = new EventSource(`/v1/stream?facility_id=${encodeURIComponent(CONFIG.facilityId)}`);
+    es.addEventListener("hello", () => { $("livebar").classList.remove("off"); tick(); });
+    let pending = null, hint = new Set();
+    es.addEventListener("change", (e) => {
+      let msg = {}; try { msg = JSON.parse(e.data); } catch {}
+      if (msg.summary) toast(msg.summary);
+      roster.forEach((x) => { if (x.role.id === msg.id || x.practitioner.id === msg.practitioner_id || x.practitioner.id === msg.id) hint.add(x.role.id); });
+      clearTimeout(pending);
+      pending = setTimeout(() => { const h = hint; hint = new Set(); load(h).catch(() => {}); }, 150);
+    });
+    es.addEventListener("resync", () => load().catch(() => {}));
+    es.onerror = () => { $("livebar").classList.add("off"); $("live-text").textContent = t("offline"); };
+    es.onopen = () => { $("livebar").classList.remove("off"); load().catch(() => {}); };
+  }
+
+  $("q").addEventListener("input", () => renderGrid());
+  $("lang").addEventListener("click", () => {
+    lang = lang === "en" ? "ar" : "en";
+    document.documentElement.lang = lang; document.documentElement.dir = lang === "ar" ? "rtl" : "ltr";
+    previous = new Map(roster.map((x) => [x.role.id, cardKey(x)]));
+    render(); tick();
+  });
+  setInterval(tick, 1000);
+  Promise.all([getJSON("/v1/reference/specialties").then((r) => { (r.data || []).forEach((s) => { labels[s.code] = {en: s.name_en, ar: s.name_ar}; }); }).catch(() => {}), load()])
+    .then(() => { render(); connect(); })
+    .catch(() => { $("brand-name").textContent = "Unavailable"; $("live-text").textContent = t("offline"); connect(); });
+})();
+</script>
+</body>
+</html>
