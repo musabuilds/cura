@@ -98,6 +98,7 @@ curl -X POST $CURA/v1/roles -H "authorization: Bearer $AT" -H 'content-type: app
 ```
 
 Availability, rosters, invitations and onboarding: **[live.md](live.md)**. Search: **[search.md](search.md)**.
+Phone sign-in, verification, webhooks, the live stream and website keys: **[mobile.md](mobile.md)**.
 
 `PATCH` bodies are RFC 7396 merge patches. A `200` means applied; a `202` means queued for a
 moderator (`GET /v1/proposals` shows your own). Errors are RFC 9457 `application/problem+json`.

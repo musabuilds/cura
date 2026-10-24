@@ -29,6 +29,7 @@ Current coverage is in [`data/STATS.md`](data/STATS.md), regenerated on every bu
 | a spreadsheet / a map / SQL | `uv run cura export` → `dist/*.csv`, `dist/facilities.geojson`, `dist/cura.sqlite` |
 | live queries from an app | the API, see [docs/api.md](docs/api.md) |
 | a doctor or facility app (availability, rosters, onboarding) | [docs/live.md](docs/live.md) |
+| the mobile app, verification, webhooks, live stream, website keys | [docs/mobile.md](docs/mobile.md) |
 | natural-language / semantic search | `GET /v1/search`, see [docs/search.md](docs/search.md) |
 | the schema | [`schema/*.schema.json`](schema) (JSON Schema 2020-12) and [docs/data-model.md](docs/data-model.md) |
 

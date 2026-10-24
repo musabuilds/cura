@@ -5,6 +5,14 @@ All notable changes to the code and the dataset. Dataset counts live in `data/ST
 ## [Unreleased]
 
 ### Added
+- **Mobile and sync** ([ADR 0005](docs/adr/0005-phone-identity-and-instant-onboarding.md),
+  [docs/mobile.md](docs/mobile.md)): phone sign-in for the first-party app with hashed, rate-limited
+  one-time codes; instant claims on a unique phone match; facility verification by registered phone
+  (SMS/voice), work email, website token (SSRF-guarded fetch or DNS TXT) or documents; create-new that
+  is never blocked (owned, `unverified`, merge case); private doctor contact kept outside the record;
+  signed webhooks with retries, an SSE stream fed by a change bus on every commit, facility API keys,
+  the activity feed; an audit log; security headers, body limits and stricter JWT checks; a demo
+  hospital website (`/demo/site/{id}`); `cura demo seed|reset` and `cura serve-demo`.
 - **Live state** ([ADR 0001](docs/adr/0001-live-state-beside-the-record.md)): availability events for
   doctors (everywhere or per workplace) and facilities (open / limited / closed, ER state, affected
   departments), resolved on every read with the schedule; `open_now` honours closures; load samples;
