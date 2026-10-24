@@ -1,10 +1,10 @@
-# Local production-like stack: Postgres + API.
+# Local production-like stack: Postgres (with pgvector) + migrations + API + embedding worker.
 #   docker compose up -d --build
 #   docker compose exec api cura db seed
 #   docker compose exec api cura db create-admin --email you@example.com --password '...'
 services:
   db:
-    image: postgres:16-alpine
+    image: pgvector/pgvector:pg16  # Postgres 16 + the vector extension
     environment:
       POSTGRES_USER: cura
       POSTGRES_PASSWORD: cura
@@ -34,7 +34,29 @@ services:
       CURA_JWT_SECRET: ${CURA_JWT_SECRET:?set CURA_JWT_SECRET in .env}
       CURA_PUBLIC_BASE_URL: ${CURA_PUBLIC_BASE_URL:-http://localhost:8000}
       CURA_ENVIRONMENT: production
+      CURA_EMBED_PROVIDER: ${CURA_EMBED_PROVIDER:-none}
+      CURA_EMBED_BASE_URL: ${CURA_EMBED_BASE_URL:-http://host.docker.internal:11434/v1}
+      CURA_EMBED_MODEL: ${CURA_EMBED_MODEL:-bge-m3}
+      CURA_EMBED_API_KEY: ${CURA_EMBED_API_KEY:-}
+    extra_hosts: ["host.docker.internal:host-gateway"]  # reach an embedding server on the host
     ports: ["8000:8000"]
+
+  # Keeps the semantic index current: embeds records whose version moved. Writes never wait on it.
+  # Off unless CURA_EMBED_PROVIDER is set (e.g. openai + an Ollama/vLLM/TEI endpoint serving bge-m3).
+  embedder:
+    build: .
+    profiles: ["search"]
+    depends_on:
+      migrate: { condition: service_completed_successfully }
+    environment:
+      CURA_DATABASE_URL: postgresql+psycopg://cura:cura@db:5432/cura
+      CURA_EMBED_PROVIDER: ${CURA_EMBED_PROVIDER:-openai}
+      CURA_EMBED_BASE_URL: ${CURA_EMBED_BASE_URL:-http://host.docker.internal:11434/v1}
+      CURA_EMBED_MODEL: ${CURA_EMBED_MODEL:-bge-m3}
+      CURA_EMBED_API_KEY: ${CURA_EMBED_API_KEY:-}
+    extra_hosts: ["host.docker.internal:host-gateway"]
+    command: ["cura", "embed", "sync", "--watch", "30"]
+    restart: unless-stopped
 
 volumes:
   pgdata:

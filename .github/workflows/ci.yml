@@ -30,3 +30,28 @@ jobs:
         run: |
           uv run cura merge > /dev/null
           git diff --stat --exit-code -- data/facilities.jsonl data/practitioners.jsonl data/roles.jsonl
+
+  postgres:
+    # The same suite on the production database: Postgres 16 + pgvector, schema built by the migrations.
+    runs-on: ubuntu-latest
+    services:
+      db:
+        image: pgvector/pgvector:pg16
+        env:
+          POSTGRES_USER: cura
+          POSTGRES_PASSWORD: cura
+          POSTGRES_DB: cura_test
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U cura" --health-interval 5s --health-timeout 5s --health-retries 10
+    env:
+      PYTHONUTF8: "1"
+      CURA_TEST_POSTGRES_URL: postgresql+psycopg://cura:cura@localhost:5432/cura_test
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+      - run: uv sync --frozen --extra dev
+      - name: API tests on Postgres + pgvector
+        run: uv run pytest
