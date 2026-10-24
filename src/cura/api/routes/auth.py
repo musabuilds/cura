@@ -12,15 +12,15 @@ from datetime import timedelta
 from typing import Annotated
 from urllib.parse import urlencode
 
-from fastapi import APIRouter, Depends, Form, Query
+from fastapi import APIRouter, Depends, Form, Request
 from fastapi.responses import HTMLResponse, RedirectResponse
 from pydantic import BaseModel, EmailStr, Field
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from cura.api import security
-from cura.api.db import App, AuthCode, Claim, RefreshToken, User, get_session, new_uuid, utcnow
-from cura.api.deps import Principal, owned_subjects, require_user
+from cura.api import guard, security
+from cura.api.db import App, AuthCode, RefreshToken, User, get_session, new_uuid, utcnow
+from cura.api.deps import Principal, require_user
 from cura.api.errors import Problem
 from cura.api.settings import settings
 
@@ -60,11 +60,21 @@ class AppIn(BaseModel):
 # --- helpers -------------------------------------------------------------------------------------
 
 
-def _user_scopes(user: User) -> list[str]:
+def user_scopes(user: User) -> list[str]:
     return [*USER_SCOPES, "moderation"] if user.role in ("moderator", "admin") else list(USER_SCOPES)
 
 
-def _issue(db: Session, user: User, client_id: str, scope: str, family_id: str | None = None) -> TokenOut:
+_user_scopes = user_scopes
+
+
+def issue_tokens(
+    db: Session,
+    user: User,
+    client_id: str,
+    scope: str,
+    family_id: str | None = None,
+    device_name: str | None = None,
+) -> dict:
     access, ttl = security.issue_access_token(user.id, client_id, scope, user.role)
     refresh = security.opaque_token()
     db.add(
@@ -75,13 +85,25 @@ def _issue(db: Session, user: User, client_id: str, scope: str, family_id: str |
             client_id=client_id,
             scope=scope,
             expires_at=utcnow() + timedelta(seconds=settings().refresh_token_ttl_s),
+            device_name=device_name,
         )
     )
     db.commit()
-    return TokenOut(access_token=access, expires_in=ttl, refresh_token=refresh, scope=scope)
+    return TokenOut(access_token=access, expires_in=ttl, refresh_token=refresh, scope=scope).model_dump()
+
+
+def _issue(db: Session, user: User, client_id: str, scope: str, family_id: str | None = None) -> dict:
+    return issue_tokens(db, user, client_id, scope, family_id)
+
+
+def revoke_family(db: Session, family_id: str) -> None:
+    for t in db.scalars(select(RefreshToken).where(RefreshToken.family_id == family_id)):
+        t.revoked = True
 
 
 def _authenticate(db: Session, email: str, password: str) -> User:
+    if email.lower().startswith("phone:"):
+        raise Problem(401, "Invalid credentials", "Email or password is incorrect.")
     user = db.scalar(select(User).where(User.email == email.lower()))
     if user is None:
         security.verify_password(security.hash_password("timing-equaliser"), password)  # no user enumeration
@@ -99,7 +121,8 @@ def _aware(dt):
 
 
 @router.post("/v1/auth/register", status_code=201, tags=["auth"])
-def register(body: RegisterIn, db: Session = Depends(get_session)) -> dict:
+def register(body: RegisterIn, request: Request, db: Session = Depends(get_session)) -> dict:
+    guard.throttle(f"auth:register:ip:{guard.client_ip(request)}", 10, 600, "sign-ups from this network")
     email = body.email.lower()
     if db.scalar(select(User).where(User.email == email)):
         raise Problem(409, "Email already registered", "Sign in instead, or reset your password.")
@@ -110,28 +133,17 @@ def register(body: RegisterIn, db: Session = Depends(get_session)) -> dict:
 
 
 @router.post("/v1/auth/login", tags=["auth"])
-def login(body: LoginIn, db: Session = Depends(get_session)) -> TokenOut:
+def login(body: LoginIn, request: Request, db: Session = Depends(get_session)) -> dict:
     """First-party sign-in (Cura's own dashboard and the CLI). Third-party apps must use /oauth/authorize."""
-    user = _authenticate(db, body.email, body.password)
+    guard.throttle(f"auth:login:ip:{guard.client_ip(request)}", 20, 600, "sign-in attempts from this network")
+    guard.throttle(f"auth:login:email:{body.email.lower()}", 10, 600, "sign-in attempts for this account")
+    try:
+        user = _authenticate(db, body.email, body.password)
+    except Problem:
+        guard.audit(db, "auth.password.failed", request=request)
+        db.commit()
+        raise
     return _issue(db, user, FIRST_PARTY, " ".join(_user_scopes(user)))
-
-
-@router.get("/v1/me", tags=["auth"])
-def me(p: Principal = Depends(require_user("profile")), db: Session = Depends(get_session)) -> dict:
-    claims = db.scalars(select(Claim).where(Claim.user_id == p.user.id).order_by(Claim.created_at)).all()
-    owned = owned_subjects(db, p.user)
-    return {
-        "id": p.user.id,
-        "email": p.user.email,
-        "display_name": p.user.display_name,
-        "role": p.user.role,
-        "scopes": sorted(p.scopes),
-        "client_id": p.client_id,
-        "owns": {k: sorted(v) for k, v in owned.items()},
-        "claims": [
-            {"id": c.id, "subject_type": c.subject_type, "subject_id": c.subject_id, "status": c.status} for c in claims
-        ],
-    }
 
 
 # --- apps ----------------------------------------------------------------------------------------
@@ -313,8 +325,11 @@ def authorize_submit(
     scope: str = Form("profile"),
     state: str = Form(""),
     code_challenge_method: str = Form("S256"),
+    request: Request = None,
     db: Session = Depends(get_session),
 ):
+    if request is not None and decision == "allow":
+        guard.throttle(f"auth:authorize:ip:{guard.client_ip(request)}", 20, 600, "sign-in attempts from this network")
     app, scopes = _validate_authorize(
         db, client_id, redirect_uri, response_type, scope, code_challenge, code_challenge_method
     )
@@ -362,8 +377,11 @@ def token(
     code_verifier: str = Form(""),
     refresh_token: str = Form(""),
     client_secret: str = Form(""),
+    request: Request = None,
     db: Session = Depends(get_session),
-) -> TokenOut:
+) -> dict:
+    if request is not None:
+        guard.throttle(f"auth:token:ip:{guard.client_ip(request)}", 60, 60, "token requests")
     first_party = client_id == FIRST_PARTY and grant_type == "refresh_token"
     app = None if first_party else _client(db, client_id)
     if (
@@ -388,8 +406,8 @@ def token(
             raise Problem(400, "invalid_grant", "Unknown refresh token.")
         if row.rotated or row.revoked:
             # Replay of a rotated token means it leaked: kill the whole family.
-            for t in db.scalars(select(RefreshToken).where(RefreshToken.family_id == row.family_id)):
-                t.revoked = True
+            revoke_family(db, row.family_id)
+            guard.audit(db, "auth.refresh.reuse", actor_id=row.user_id, family=row.family_id[:8])
             db.commit()
             raise Problem(400, "invalid_grant", "Refresh token reuse detected; the session has been revoked.")
         if _aware(row.expires_at) < utcnow():
@@ -400,11 +418,6 @@ def token(
         row.rotated = True
         return _issue(db, user, client_id, row.scope, family_id=row.family_id)
     raise Problem(400, "unsupported_grant_type", "Use authorization_code or refresh_token.")
-
-
-@router.post("/v1/auth/refresh", tags=["auth"])
-def first_party_refresh(refresh_token: Annotated[str, Query()], db: Session = Depends(get_session)) -> TokenOut:
-    return token(grant_type="refresh_token", client_id=FIRST_PARTY, refresh_token=refresh_token, db=db)
 
 
 @router.post("/oauth/revoke", status_code=200, tags=["oauth"])

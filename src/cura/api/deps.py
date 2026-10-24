@@ -13,7 +13,7 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from cura.api import security
-from cura.api.db import App, Claim, User, get_session
+from cura.api.db import App, Claim, FacilityApiKey, User, get_session, utcnow
 from cura.api.errors import Problem
 from cura.api.settings import settings
 
@@ -21,6 +21,7 @@ from cura.api.settings import settings
 @dataclass
 class Principal:
     app: App | None = None
+    facility_key: FacilityApiKey | None = None  # a facility website's read-only key
     user: User | None = None
     scopes: set[str] = field(default_factory=set)
     client_id: str | None = None
@@ -64,6 +65,21 @@ def _app_from_key(db: Session, key: str) -> App | None:
     return None
 
 
+def _facility_key(db: Session, key: str) -> FacilityApiKey | None:
+    prefix = security.parse_facility_key(key)
+    if not prefix:
+        return None
+    row = db.scalar(select(FacilityApiKey).where(FacilityApiKey.prefix == prefix))
+    if row is None or row.revoked_at is not None or not security.constant_eq(row.key_hash, security.sha256(key)):
+        return None
+    now = utcnow()
+    last = row.last_used_at
+    if last is None or (now - (last if last.tzinfo else last.replace(tzinfo=now.tzinfo))).total_seconds() > 300:
+        row.last_used_at = now  # at most one write per key per five minutes
+        db.commit()
+    return row
+
+
 def principal(
     request: Request,
     db: Session = Depends(get_session),
@@ -71,7 +87,11 @@ def principal(
     authorization: str | None = Header(default=None),
 ) -> Principal:
     p = Principal()
-    if x_api_key:
+    if x_api_key and x_api_key.startswith("curafk_"):
+        p.facility_key = _facility_key(db, x_api_key)
+        if p.facility_key is None:
+            raise Problem(401, "Invalid API key", "The X-API-Key header does not match an active key.")
+    elif x_api_key:
         p.app = _app_from_key(db, x_api_key)
         if p.app is None:
             raise Problem(401, "Invalid API key", "The X-API-Key header does not match an active app.")
@@ -82,9 +102,16 @@ def principal(
             raise Problem(401, "Invalid authorization header", "Use `Authorization: Bearer <access_token>`.")
         try:
             claims = security.decode_access_token(token)
+        except jwt.ExpiredSignatureError as exc:
+            raise Problem(
+                401, "Access token expired", "Refresh it.", headers={"WWW-Authenticate": 'Bearer error="invalid_token"'}
+            ) from exc
         except jwt.PyJWTError as exc:
             raise Problem(
-                401, "Invalid access token", str(exc), headers={"WWW-Authenticate": 'Bearer error="invalid_token"'}
+                401,
+                "Invalid access token",
+                "The token is malformed, not signed by Cura, or not meant for this API.",
+                headers={"WWW-Authenticate": 'Bearer error="invalid_token"'},
             ) from exc
         user = db.get(User, claims["sub"])
         if user is None or user.disabled:
@@ -96,11 +123,12 @@ def principal(
         p.client_id = claims.get("azp")
 
     s = settings()
-    key, quota = (
-        (f"app:{p.app.id}", s.rate_app_per_min)
-        if p.app
-        else (f"ip:{request.client.host if request.client else '?'}", s.rate_anonymous_per_min)
-    )
+    if p.app:
+        key, quota = f"app:{p.app.id}", s.rate_app_per_min
+    elif p.facility_key:
+        key, quota = f"fkey:{p.facility_key.id}", s.rate_app_per_min
+    else:
+        key, quota = f"ip:{request.client.host if request.client else '?'}", s.rate_anonymous_per_min
     if p.user:
         key, quota = f"user:{p.user.id}", max(quota, s.rate_app_per_min)
     allowed, remaining = limiter.hit(key, quota)

@@ -122,7 +122,10 @@ def registry(tmp_path, monkeypatch):
         _fresh_postgres(POSTGRES)
     monkeypatch.setenv("CURA_DATABASE_URL", POSTGRES or f"sqlite:///{(tmp_path / 't.db').as_posix()}")
     monkeypatch.setenv("CURA_EMBED_PROVIDER", "hashing")
+    monkeypatch.setenv("CURA_BACKGROUND_WORKERS", "0")  # change fan-out and webhooks run inline
+    monkeypatch.setenv("CURA_DEMO_PHONES", "0790000001,0790000002,0790000003")
     settings.cache_clear()
+    _reset_limits()
     db.reset_engine()
     db.init()
     with next(db.get_session()) as s:
@@ -138,6 +141,16 @@ def registry(tmp_path, monkeypatch):
     db.reset_engine()
     settings.cache_clear()
     search._embedder.cache_clear()
+
+
+def _reset_limits() -> None:
+    from cura.api import deps, guard, messaging
+
+    guard.windows.reset()
+    deps.limiter._buckets.clear()
+    messaging.sms.cache_clear()
+    messaging.email.cache_clear()
+    messaging.console().outbox.clear()
 
 
 class Actors:
@@ -173,7 +186,7 @@ class Actors:
             json={"subject_type": subject_type, "subject_id": subject_id, "evidence": {"license_number": "x"}},
             headers=headers,
         )
-        assert claim.status_code == 202, claim.text
+        assert claim.status_code == 201, claim.text
         decided = self.client.post(f"/v1/claims/{claim.json()['id']}/approve", json={}, headers=self.moderator)
         assert decided.json()["status"] == "approved"
         return headers
