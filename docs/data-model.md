@@ -48,7 +48,7 @@ render that as "no ER". Ratings, busy hours and prices start `null` and fill as 
 | `prices` | `{item, category, price | min/max, effective_from, source}` |
 | `amenities` | `wheelchair`, `parking`, `delivery`, `home_visits` … tri-state |
 | `rating` | aggregate of Cura's own reviews: `overall`, `count`, per-dimension means ([`review_dimensions.csv`](../data/reference/review_dimensions.csv)) |
-| `busy_hours` | `{day, hour, level 0–1}` — reserved; filled from check-ins/reviews, never scraped |
+| `busy_hours` | `{day, hour, level 0–1}` — the facility's own declared busy times; reported load is in `/patterns` |
 | `identifiers` | crosswalk to every source ID: `{"osm": "way/123", "wikidata": "Q…", "moh_statbook_2024": "…"}` |
 | `sources` | provenance: `{source, ref, url, retrieved_at}` per contributing record |
 | `quality` | `completeness` (share of 10 core fields known), `confidence` (corroboration), `last_verified_at` |
@@ -66,7 +66,22 @@ professionally. No personal phone numbers, home addresses, national IDs or photo
 ## Role
 
 `practitioner_id`, `facility_id`, `specialty` at that place, `hours`, `consultation_fee` (`{amount,
-currency}`), `insurance`, `phones` (clinic), `profile_url`, `active`.
+currency}`), `insurance`, `phones` (clinic), `profile_url`, `active`, `period` (`{start, end}` — a role
+that ended keeps its record), `confirmation` (`confirmed`, `pending_facility`, `pending_practitioner`,
+`declined`; public rosters list confirmed, active roles).
+
+## Live state, history and the semantic index
+
+Kept beside the records, not inside them:
+
+| table | what | read through |
+|---|---|---|
+| `availability_events` | time-bounded overrides of schedules (leave, closures, limited service) | `live`/`availability` on every record, `/v1/availability` |
+| `load_samples` | how busy a facility is, reported by staff | `/v1/facilities/{id}/patterns` |
+| `record_versions` | every version of every record, with its validity interval | `/v1/{collection}/{id}/history` |
+| `embeddings` | one vector per record (pgvector) | `/v1/search` |
+
+See [live.md](live.md), [search.md](search.md) and the [ADRs](adr/).
 
 ## Reference data
 

@@ -16,6 +16,7 @@ curl "$CURA/v1/reference/specialties"                # governorates, facility_ty
 curl "$CURA/v1/prices?category=consultation"
 ```
 
+List and record endpoints accept `fields=name,location` to return only what a screen draws.
 Lists return `{data, next_cursor, count}`; pass `cursor=<next_cursor>` for the next page (`limit` ≤ 200).
 Geo queries (`near=`) return `distance_m` on each item and sort nearest first.
 
@@ -29,7 +30,8 @@ curl "$CURA/v1/changes?since=2026-10-01T00:00:00Z"
 # → {data: [{kind, id, version, updated_at, doc}], next_since}
 ```
 
-Store `next_since` and poll with it. Or download the full release (`facilities.jsonl`, CSV, GeoJSON,
+Store `next_since` and poll with it. Availability has its own feed:
+`GET /v1/availability/changes?since=`. Every record's past versions: `GET /v1/{collection}/{id}/history`. Or download the full release (`facilities.jsonl`, CSV, GeoJSON,
 SQLite) and then poll changes.
 
 ## Register an app
@@ -94,6 +96,8 @@ curl -X PATCH $CURA/v1/roles/JO-ROL-0001288 -H "authorization: Bearer $AT" -H 'I
 curl -X POST $CURA/v1/roles -H "authorization: Bearer $AT" -H 'content-type: application/json' \
   -d '{"record":{"practitioner_id":"JO-PRC-000317","facility_id":"JO-AM-HSP-00042"}}'
 ```
+
+Availability, rosters, invitations and onboarding: **[live.md](live.md)**. Search: **[search.md](search.md)**.
 
 `PATCH` bodies are RFC 7396 merge patches. A `200` means applied; a `202` means queued for a
 moderator (`GET /v1/proposals` shows your own). Errors are RFC 9457 `application/problem+json`.

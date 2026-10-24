@@ -4,6 +4,30 @@ All notable changes to the code and the dataset. Dataset counts live in `data/ST
 
 ## [Unreleased]
 
+### Added
+- **Live state** ([ADR 0001](docs/adr/0001-live-state-beside-the-record.md)): availability events for
+  doctors (everywhere or per workplace) and facilities (open / limited / closed, ER state, affected
+  departments), resolved on every read with the schedule; `open_now` honours closures; load samples;
+  idempotent writes; an availability change feed.
+- **History** ([ADR 0002](docs/adr/0002-nothing-is-overwritten.md)): every version of every record with
+  validity intervals, `/history` and `?as_of=`; `/patterns` features (absence by month and weekday,
+  seasonal hours, busy profile).
+- **Rosters and onboarding** ([ADR 0004](docs/adr/0004-identity-onboarding-and-duplicates.md)): role
+  `period` and two-sided `confirmation`; facility admins add, confirm and end roles; one-time
+  invitations that let a facility onboard its doctors; candidate matching for doctors and facilities;
+  duplicate checks on create; moderator merges replayed by the pipeline
+  (`sources/curation/merges.jsonl`); review reports.
+- **Semantic search** ([ADR 0003](docs/adr/0003-vectors-in-postgres.md)): pgvector index in the same
+  Postgres, BGE-M3 via any OpenAI-compatible endpoint, hybrid lexical + vector ranking (`/v1/search`),
+  `cura embed sync`.
+- Alembic migrations; production refuses to boot on an unmigrated schema. Sparse fieldsets (`fields=`).
+- CI runs the suite on Postgres + pgvector as well as SQLite.
+
+### Changed
+- Owner edits that set `hours.opening_hours` re-derive the parsed `weekly` spans.
+- `busy_hours` is owner-editable; `confirmation` is system-managed.
+- Every role in the dataset now carries `period` and `confirmation`.
+
 ### Removed
 - The LLM refresh agent and its weekly schedule. Facilities and doctors now keep their own records
   current through the API; scripted, non-AI collectors (OSM, Wikidata) still run daily.

@@ -28,12 +28,16 @@ Current coverage is in [`data/STATS.md`](data/STATS.md), regenerated on every bu
 | the whole dataset | `data/facilities.jsonl`, `data/practitioners.jsonl`, `data/roles.jsonl` (one JSON record per line) |
 | a spreadsheet / a map / SQL | `uv run cura export` → `dist/*.csv`, `dist/facilities.geojson`, `dist/cura.sqlite` |
 | live queries from an app | the API, see [docs/api.md](docs/api.md) |
+| a doctor or facility app (availability, rosters, onboarding) | [docs/live.md](docs/live.md) |
+| natural-language / semantic search | `GET /v1/search`, see [docs/search.md](docs/search.md) |
 | the schema | [`schema/*.schema.json`](schema) (JSON Schema 2020-12) and [docs/data-model.md](docs/data-model.md) |
 
 ```bash
 curl "$CURA/v1/facilities?near=31.9539,35.9106&radius_km=2&type=pharmacy&open_now=true"
 curl "$CURA/v1/facilities?type=hospital&specialty=cardiology&insurer=mednet&governorate=AM"
 curl "$CURA/v1/practitioners?q=خالد&specialty=pediatrics"
+curl "$CURA/v1/practitioners/JO-PRC-000317/availability"     # where is this doctor available now
+curl "$CURA/v1/search?q=طبيب قلب في إربد يقبل ميدنت"            # hybrid lexical + semantic
 ```
 
 `null` means **unknown**, never "no". See [the data model](docs/data-model.md#unknown-is-not-no).
@@ -45,11 +49,12 @@ uv sync --extra dev
 uv run pytest                       # unit + end-to-end API tests
 uv run cura merge                   # sources/staging → data/
 uv run cura validate                # schema + referential integrity
-uv run cura db seed && uv run cura api   # http://127.0.0.1:8000/docs
+uv run cura db upgrade && uv run cura db seed && uv run cura api   # http://127.0.0.1:8000/docs
 ```
 
-Production-like stack (Postgres + API): `docker compose up -d --build`, then
-`docker compose exec api cura db seed`.
+Production-like stack (Postgres + pgvector, migrations, API): `docker compose up -d --build`, then
+`docker compose exec api cura db seed`. Add `--profile search` for the embedding worker.
+Run the tests against Postgres with `CURA_TEST_POSTGRES_URL=postgresql+psycopg://…`.
 
 ## How it stays clean
 
@@ -67,8 +72,12 @@ Production-like stack (Postgres + API): `docker compose up -d --build`, then
 ## How it stays current
 
 * **Scripted collectors** (OSM, Wikidata) run daily and open a PR ([refresh.yml](.github/workflows/refresh.yml)).
-* **People**: doctors and facility admins claim their records and update schedules, fees and
-  insurance through any app built on the API. Their edits flow back into the open dataset with
+* **People** are the source of truth now: doctors and facility admins claim their records, run their
+  rosters, and set what is happening — leave, closures, busy times — through any app built on the
+  API. Live state never waits for a moderator ([ADR 0001](docs/adr/0001-live-state-beside-the-record.md)).
+* **Nothing is overwritten**: every version of every record, every availability event and load sample
+  is kept, and exposed as history and as patterns a forecaster can learn from
+  ([ADR 0002](docs/adr/0002-nothing-is-overwritten.md)). Their edits flow back into the open dataset with
   attribution ([governance](docs/governance.md)).
 
 ## Repository layout
@@ -81,8 +90,13 @@ schema/              generated JSON Schemas
 src/cura/
   collectors/        scripted sources (osm, wikidata)
   pipeline/          merge (entity resolution + fusion), validate, export, stats
-  api/               FastAPI app: registry, OAuth 2.0 server, contributions, moderation
-docs/                data model, identifiers, API, governance
+  api/               FastAPI app: registry, OAuth 2.0 server, contributions, moderation,
+                     live state, rosters, identity matching, history; migrations/ (Alembic)
+  search/            embedding text, embedders, hybrid search (pgvector)
+  availability.py    how schedule + events resolve to "available now"
+  patterns.py        features from history (absence, seasonal hours, busy profile)
+sources/curation/    human decisions the pipeline replays (moderator merges)
+docs/                data model, identifiers, API, live state, search, governance; adr/ decisions
 ```
 
 ## License
