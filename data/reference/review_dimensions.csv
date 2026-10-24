@@ -1,0 +1,8 @@
+code,name_en,name_ar,scale,description
+overall,Overall,التقييم العام,1-5,Overall experience
+cleanliness,Cleanliness,النظافة,1-5,Cleanliness of rooms bathrooms and waiting areas
+wait_time,Waiting time,وقت الانتظار,1-5,5 = seen on time; 1 = very long wait
+staff,Staff attitude,تعامل الطاقم,1-5,Courtesy and respect of reception nursing and doctors
+communication,Communication,التواصل والشرح,1-5,How well the condition and plan were explained
+value,Value for money,القيمة مقابل السعر,1-5,Price fairness and transparency
+accessibility,Accessibility,سهولة الوصول,1-5,Parking wheelchair access signage

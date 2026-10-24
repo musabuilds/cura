@@ -1,0 +1,13 @@
+code,iso_3166_2,name_en,name_ar,region,capital_en,capital_ar,landline_prefix
+AM,JO-AM,Amman,العاصمة (عمّان),central,Amman,عمّان,06
+BA,JO-BA,Balqa,البلقاء,central,Salt,السلط,05
+AZ,JO-AZ,Zarqa,الزرقاء,central,Zarqa,الزرقاء,05
+MD,JO-MD,Madaba,مادبا,central,Madaba,مادبا,05
+IR,JO-IR,Irbid,إربد,north,Irbid,إربد,02
+MA,JO-MA,Mafraq,المفرق,north,Mafraq,المفرق,02
+JA,JO-JA,Jerash,جرش,north,Jerash,جرش,02
+AJ,JO-AJ,Ajloun,عجلون,north,Ajloun,عجلون,02
+KA,JO-KA,Karak,الكرك,south,Karak,الكرك,03
+AT,JO-AT,Tafilah,الطفيلة,south,Tafilah,الطفيلة,03
+MN,JO-MN,Ma'an,معان,south,Ma'an,معان,03
+AQ,JO-AQ,Aqaba,العقبة,south,Aqaba,العقبة,03

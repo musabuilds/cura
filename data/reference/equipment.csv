@@ -1,0 +1,22 @@
+code,name_en,name_ar,category,aliases
+mri,MRI scanner,جهاز رنين مغناطيسي,imaging,magnetic resonance;رنين
+ct,CT scanner,جهاز تصوير طبقي,imaging,computed tomography;CT scan;طبقي
+pet_ct,PET-CT scanner,جهاز التصوير المقطعي بالإصدار البوزيتروني,imaging,PET;PET/CT
+xray,X-ray,أشعة سينية,imaging,radiography;أشعة
+ultrasound,Ultrasound,تصوير بالموجات فوق الصوتية,imaging,sonar;echo;ألتراساوند
+mammography,Mammography,تصوير الثدي الشعاعي,imaging,mammogram;ماموجرام
+fluoroscopy,Fluoroscopy,تنظير شعاعي,imaging,
+dexa,Bone densitometry (DEXA),قياس كثافة العظام,imaging,DXA;bone density
+angiography,Angiography / cath lab,قسطرة,cardiology,cath lab;catheterization;قسطرة قلبية
+echocardiography,Echocardiography,تخطيط صدى القلب,cardiology,echo
+linac,Linear accelerator (radiotherapy),مسرع خطي,oncology,LINAC;radiotherapy
+gamma_camera,Gamma camera / SPECT,كاميرا جاما,nuclear_medicine,SPECT;nuclear medicine
+lithotripsy,Lithotripsy (ESWL),تفتيت الحصى,urology,ESWL
+dialysis_machine,Haemodialysis machine,جهاز غسيل كلى,nephrology,hemodialysis
+ventilator,Mechanical ventilator,جهاز تنفس اصطناعي,critical_care,
+icu,Intensive care unit,عناية مركزة,critical_care,ICU
+nicu,Neonatal intensive care unit,عناية مركزة لحديثي الولادة,critical_care,NICU;حضانة
+hyperbaric,Hyperbaric oxygen chamber,غرفة أكسجين عالي الضغط,other,HBOT
+robotic_surgery,Robotic surgery system,نظام الجراحة الروبوتية,surgery,da Vinci
+endoscopy,Endoscopy suite,تنظير,gastroenterology,colonoscopy;gastroscopy;مناظير
+ivf_lab,IVF laboratory,مختبر أطفال الأنابيب,reproductive,IVF;أطفال أنابيب

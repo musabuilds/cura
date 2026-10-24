@@ -1,0 +1,15 @@
+code,id_segment,name_en,name_ar,osm_tags,fhir_location_type,description
+hospital,HSP,Hospital,مستشفى,amenity=hospital,HOSP,Inpatient facility with beds and (usually) emergency care
+clinic,CLN,Clinic / medical centre,مركز طبي,amenity=clinic;healthcare=centre,OF,Outpatient polyclinic or medical centre with several practitioners
+primary_care_center,PHC,Primary health care centre,مركز صحي,healthcare=clinic + operator MoH,PC,Government comprehensive / primary / village health centre
+doctor_office,DOC,Doctor's clinic,عيادة طبيب,amenity=doctors,PROFF,Private office of one practitioner or a small group
+dental_clinic,DEN,Dental clinic,عيادة أسنان,amenity=dentist,DENT,Dental practice
+pharmacy,PHR,Pharmacy,صيدلية,amenity=pharmacy,PHARM,Community or hospital outpatient pharmacy
+laboratory,LAB,Medical laboratory,مختبر طبي,healthcare=laboratory;healthcare=sample_collection,MBL,Clinical laboratory or sample-collection branch
+imaging_center,IMG,Imaging / radiology centre,مركز أشعة,healthcare=radiology,RADDX,Diagnostic imaging (X-ray, CT, MRI, ultrasound)
+blood_bank,BLB,Blood bank,بنك دم,healthcare=blood_bank;healthcare=blood_donation,BLDBNK,Blood collection and storage
+rehabilitation,REH,Rehabilitation / physiotherapy,مركز علاج طبيعي وتأهيل,healthcare=physiotherapist;healthcare=rehabilitation,RH,Physiotherapy and rehabilitation
+optician,OPT,Optician / optometry,بصريات,shop=optician;healthcare=optometrist,OPTC,Eye-test and eyewear
+dialysis_center,DIA,Dialysis centre,مركز غسيل كلى,healthcare=dialysis,HD,Haemodialysis unit outside a hospital
+emergency_medical_service,EMS,Ambulance / EMS station,مركز إسعاف,emergency=ambulance_station,AMB,Pre-hospital emergency service base
+other,OTH,Other health facility,منشأة صحية أخرى,healthcare=*,,Anything health-related that fits none of the above

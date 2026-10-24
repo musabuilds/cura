@@ -1,0 +1,9 @@
+code,sector,name_en,name_ar,description
+moh,public,Ministry of Health,وزارة الصحة,Facilities run by the Jordanian Ministry of Health
+rms,public,Royal Medical Services,الخدمات الطبية الملكية,Armed forces medical services (military hospitals and centres)
+university,public,University hospital,مستشفى جامعي,Teaching hospitals owned by public universities (JUH / KAUH)
+other_gov,public,Other government,جهة حكومية أخرى,Government-owned but not MoH/RMS/university or the operator is not stated
+private,private,Private,خاص,Privately owned for-profit facilities
+ngo,non_profit,Non-profit / charity,جمعية / غير ربحي,Charities and non-profits (e.g. KHCC foundation-run; Islamic Hospital)
+unrwa,international,UNRWA,الأونروا,UN Relief and Works Agency health centres
+unknown,unknown,Unknown,غير معروف,Not stated by any source
