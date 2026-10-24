@@ -1,0 +1,26 @@
+{
+  "title": "UNRWA — Jordan camp profiles (health centres per camp)",
+  "publisher": "UNRWA",
+  "urls": [
+    "https://www.unrwa.org/where-we-work/jordan",
+    "https://www.unrwa.org/where-we-work/jordan/amman-new-camp",
+    "https://www.unrwa.org/where-we-work/jordan/baqaa-camp",
+    "https://www.unrwa.org/where-we-work/jordan/husn-camp",
+    "https://www.unrwa.org/where-we-work/jordan/irbid-camp",
+    "https://www.unrwa.org/where-we-work/jordan/jabal-el-hussein-camp",
+    "https://www.unrwa.org/where-we-work/jordan/jerash-camp",
+    "https://www.unrwa.org/where-we-work/jordan/marka-camp",
+    "https://www.unrwa.org/where-we-work/jordan/souf-camp",
+    "https://www.unrwa.org/where-we-work/jordan/talbieh-camp",
+    "https://www.unrwa.org/where-we-work/jordan/zarqa-camp"
+  ],
+  "retrieved_at": "2026-10-24T08:58:30Z",
+  "method": "scrape",
+  "license": "public-web (facts)",
+  "robots_respected": false,
+  "notes": "robots.txt allows these paths but sets Crawl-delay: 10; the 11 page loads were ~2.5 s apart, so the delay was NOT honoured (hence robots_respected=false). PARTIAL. UNRWA states it runs 25 health centres in Jordan (unrwa.org/where-we-work/jordan: \"25 Primary Health Facilities\"), but no public page lists them by name/address. The 10 official camp profiles each state how many health centres serve the camp (Baqa'a: two; others: one) -> 11 records. Names are DESCRIPTIVE (built from the camp name; extra.name_is_descriptive=true), no address/phone/coordinates are published; the quoted sentence is in extra.source_quote. The remaining ~14 centres outside camps are not covered. The MoH health-centre list has a \"وكالة الغوث\" filter, but its rows are mostly MoH/prison centres, so it was NOT used here (see moh_phc_centers). unrwa.org is behind a Cloudflare JS check; pages were read in a real browser at human pace.",
+  "source": "unrwa_health_centres",
+  "record_count": 11,
+  "disabled": true,
+  "disabled_reason": "Crawl-delay 10 not honoured during collection; records are descriptive per-camp placeholders. Re-collect at the published delay before enabling."
+}

@@ -1,0 +1,21 @@
+{
+  "source": "arabmedicalcenter_doctors",
+  "retrieved_at": "2026-10-24T09:25:26Z",
+  "robots_respected": true,
+  "record_count": 2,
+  "title": "Arab Medical Center — doctors and hospital details",
+  "publisher": "Arab Medical Center",
+  "urls": [
+    "https://amc-hospital.com/doctors/",
+    "https://amc-hospital.com/portfolio/dr-kamal-akl/",
+    "https://amc-hospital.com/about-us/",
+    "https://amc-hospital.com/contact/",
+    "https://amc-hospital.com/insurance/",
+    "https://amc-hospital.com/medical-tourism-amc-accreditations-quality-standards/",
+    "https://amc-hospital.com/cardiology-cath-lab/",
+    "https://amc-hospital.com/radiology-3/"
+  ],
+  "method": "scrape",
+  "license": "public-web (facts)",
+  "notes": "AMC publishes NO doctor directory: /doctors/ (\"Clinics\", linked as DOCTORS SEARCH) lists 27 clinic specialties only, and every \"find a doctor\" link on department pages points back to it. The only named physician page is one WordPress portfolio item (Dr. Kamal Akl). Facility record is rich (beds, ORs, ICU/CCU, cath labs, accreditations, 43 insurer logos transcribed). Homepage \"Mon-Fri 8:30-17:00 / Saturday 9:30-13:00 / Sunday Closed\" box appears to be theme placeholder text and was not used."
+}

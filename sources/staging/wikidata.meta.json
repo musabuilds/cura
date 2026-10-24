@@ -1,0 +1,14 @@
+{
+  "source": "wikidata",
+  "title": "Wikidata — hospitals in Jordan",
+  "publisher": "Wikidata contributors",
+  "urls": [
+    "https://query.wikidata.org/sparql"
+  ],
+  "retrieved_at": "2026-10-24T09:26:31Z",
+  "method": "api",
+  "license": "CC0-1.0",
+  "robots_respected": true,
+  "notes": "Coordinates on Wikidata are often city-level; the merge treats them as approximate.",
+  "record_count": 45
+}

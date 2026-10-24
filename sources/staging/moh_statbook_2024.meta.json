@@ -1,0 +1,14 @@
+{
+  "source": "moh_statbook_2024",
+  "title": "Ministry of Health Annual Statistical Report 2024 (التقرير الإحصائي السنوي 2024) - hospital beds by governorate and sector, Tables 2:1-2:12 and 2:16",
+  "publisher": "Ministry of Health, Hashemite Kingdom of Jordan",
+  "urls": [
+    "https://moh.gov.jo/ebv4.0/root_storage/ar/eb_list_page/%D8%A7%D9%84%D8%AA%D9%82%D8%B1%D9%8A%D8%B1_%D8%A7%D9%84%D8%A7%D8%AD%D8%B5%D8%A7%D8%A6%D9%8A_%D8%A7%D9%84%D8%B3%D9%86%D9%88%D9%8A-2024_(1).pdf"
+  ],
+  "retrieved_at": "2026-10-24T09:22:12Z",
+  "method": "pdf_extract",
+  "license": "public-web (facts)",
+  "robots_respected": true,
+  "record_count": 123,
+  "notes": "Data year 2024 (report published 2025). Tables 2:1-2:12 list every hospital in the Kingdom by governorate in four sector columns (MoH, Royal Medical Services, university, and a combined \"private + NGO/charity\" column) with bed counts. Tables are images-with-text in a designed PDF; names were transcribed from the rendered pages (Arabic only, the report gives no English hospital names) and every governorate sum was asserted against Table 2:13 (Kingdom total 16,316 beds). Names are the short forms printed in the table (e.g. \"الأردن\" = Jordan Hospital, \"الإسلامي\" = Islamic Hospital) and must be matched downstream. Ownership is set only for MoH/RMS/university; the private+NGO column is left without ownership (it mixes e.g. KHCC, Red Crescent, Maqased with private hospitals). Two entries are marked \"مغلق\" (closed) with no beds: فلسطين / البيادر (Amman) and الرازي الجديد (Zarqa). RMS rows include centres inside King Hussein Medical City and two small military centres (مركز الرعاية النفسية 37, مركز طبي القويرة العسكري 5) because the table counts them. MoH departments come from Table 2:16 (beds by hospital and department, extracted from the PDF text layer by coordinates; each row asserted to sum to its total). The 2021 table from opendata.gov.jo (same structure, no sectors) is kept as raw only under sources/raw/moh_opendata_beds/ for cross-checks."
+}

@@ -1,0 +1,16 @@
+{
+  "source": "solidarity_network",
+  "title": "Solidarity First Insurance — Medical Network (الشبكة الطبية)",
+  "publisher": "Solidarity First Insurance Co. (Jordan)",
+  "urls": [
+    "https://www.solidarity.com.jo/الشبكة-الطبية",
+    "https://www.solidarity.com.jo/api/CPAPI/api/Integrations/ExecuteSequanceTransaction"
+  ],
+  "retrieved_at": "2026-10-24T09:35:49Z",
+  "method": "api",
+  "license": "public-web (facts)",
+  "robots_respected": true,
+  "record_count": 4605,
+  "effective_date": null,
+  "notes": "Data from the JSON behind the public network search form (ExecuteSequanceTransaction, sequence 859), driven through a headless browser session. The endpoint caps results at 1000 rows, so Doctors and Pharmacies were re-queried per city (42 cities) and Doctors in Amman per area (89 areas); all results unioned by provider ID. Provider categories 8 'Non Network' and 11 'TPA' were excluded. Person vs facility is decided by the source's HOID code (JOR-P-* = practitioner, JOR-F-* = facility); dentists are mostly JOR-P and therefore practitioner records. name_en = NAME1 with its segment-code prefix removed. Every record is STATUS 'Active' with a contract start/end date (mostly 2019-07-01 → 2050-12-31); no network-wide effective date is published. Practitioner mobiles and personal emails omitted; the insurer's own customerservice@solidarity.com.jo placeholder email dropped. Coordinates outside Jordan's bounding box (e.g. -100,-100 placeholders) dropped. Category 12 'Emergency centres' and 6 'Specialised eye centres' mapped to clinic, 13 'Medical suppliers' to other. Counts: {\"practitioner\": 2792, \"pharmacy\": 1103, \"other\": 58, \"rehabilitation\": 135, \"hospital\": 57, \"laboratory\": 246, \"optician\": 52, \"imaging_center\": 68, \"clinic\": 64, \"dental_clinic\": 30}"
+}

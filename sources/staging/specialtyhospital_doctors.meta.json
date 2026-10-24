@@ -1,0 +1,18 @@
+{
+  "source": "specialtyhospital_doctors",
+  "retrieved_at": "2026-10-24T11:26:58Z",
+  "robots_respected": true,
+  "record_count": 210,
+  "title": "The Specialty Hospital — Doctors directory and hospital details",
+  "publisher": "The Specialty Hospital",
+  "urls": [
+    "https://www.specialty-hospital.com/ar/specialty/48/الاطباء",
+    "https://www.specialty-hospital.com//pages/ajax/ajax_paginationDoctors.php (POST, the page's own pagination XHR)",
+    "https://www.specialty-hospital.com/en/doctors/<id>/<slug>",
+    "https://www.specialty-hospital.com/en/contact/",
+    "https://www.specialty-hospital.com/en/certificated/"
+  ],
+  "method": "scrape",
+  "license": "public-web (facts)",
+  "notes": "robots.txt sets Crawl-delay: 30 - every request to this host was spaced >=30 s. Directory paged through the site's own XHR (ajax_paginationDoctors.php) for lang ar+en and location=inside(1)/outside(0): 209 doctors (84 listed as inside the hospital, 125 as outside / affiliated - kept in extra.location_filter). EN and AR names/specialties joined on the site doctor id. EN profile pages (209 fetched) give headline (grade only when it says Consultant/Specialist), certificates, languages, conditions treated, memberships. AR profile pages not fetched (crawl-delay budget); name_ar/specialty_ar come from the AR listing. Telephone on profiles is the switchboard +962 (6) 200 1111 for everyone, so not copied per doctor."
+}

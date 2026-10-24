@@ -1,0 +1,21 @@
+{
+  "source": "istisharihospital_doctors",
+  "retrieved_at": "2026-10-24T09:25:26Z",
+  "robots_respected": true,
+  "record_count": 7,
+  "title": "Istishari Hospital — doctor list and hospital details",
+  "publisher": "Istishari Hospital",
+  "urls": [
+    "https://www.istisharihospital.com/en/doctors/",
+    "https://www.istisharihospital.com/en/patients-and-visitors/find-a-physician/",
+    "https://www.istisharihospital.com/en/book-an-appointment/",
+    "https://www.istisharihospital.com/",
+    "https://www.istisharihospital.com/en/contact-us/",
+    "https://www.istisharihospital.com/en/about-us/welcome/",
+    "https://www.istisharihospital.com/en/about-us/international-accreditations-and-awards/",
+    "https://www.istisharihospital.com/en/departments/imaging-radiology/"
+  ],
+  "method": "scrape",
+  "license": "public-web (facts)",
+  "notes": "The site has NO working doctor directory: /en/doctors/ returns HTTP 500, /en/patients-and-visitors/find-a-physician/ says \"*text pending*\", the \"department doctors\" carousels on every department page are empty, and the individual doctor pages listed in sitemap.xml (2022) return 404. The only doctor names published are the 6 in the Doctor dropdown of the Book-an-appointment form (EN; the AR form dropdown is empty) - names only, no specialty, so practitioner records are sparse. Facility facts from department/about/contact pages. Insurer names transcribed from logo images (see facility extra)."
+}

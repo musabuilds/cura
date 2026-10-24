@@ -1,0 +1,15 @@
+{
+  "source": "rms_hospitals",
+  "title": "Jordanian Royal Medical Services - hospitals and medical centres pages",
+  "publisher": "Jordanian Royal Medical Services (jrms.jaf.mil.jo)",
+  "urls": [
+    "https://jrms.jaf.mil.jo/Contents/Hospitals_and_Servicesar.aspx",
+    "https://jrms.jaf.mil.jo/Contents/King_Hussein_Medical_Centerar.aspx"
+  ],
+  "retrieved_at": "2026-10-24T09:21:59Z",
+  "method": "scrape",
+  "license": "public-web (facts)",
+  "robots_respected": true,
+  "record_count": 15,
+  "notes": "jrms.gov.jo (the URL in older references) now serves an IIS default page; the live site is jrms.jaf.mil.jo (no robots.txt - 404). Fetched the hospitals menu, each hospital page and its about / departments / contact sub-pages (Arabic), 1.1 s between requests; raw HTML under sources/raw/rms_hospitals/. Records: King Hussein Medical City (as a complex) + the five hospitals/centres the KHMC page lists as hospitals (non-hospital units - research lab centre, amputee rehab, eye centre, nuclear medicine, academy - only named in extra.components_ar), and the 10 hospitals in the \"المستشفيات\" menu. The \"Princess Aisha Medical Complex\" page lists only a psychiatric care centre, a nursing college, a recruitment medical committee and an emergency training centre, so it is not emitted; the 12 RMS comprehensive medical centres (Qweira, Shobak, Ma'an, Madaba, Marka, Mafraq, Azraq, etc.) were not collected. Bed counts are what each hospital page says, usually the capacity at opening and undated - each carries extra.beds_note with the MoH 2024 figure for comparison; prefer moh_statbook_2024. Departments are the Arabic lists as published (spelling kept, including colloquial forms like \"الاذنية\" = ENT). Phones are as printed (internal 5-digit extensions put in extra only). governorate is set only where the page text says \"في محافظة ...\"; otherwise the city from the menu label is in city. English names are the site's own (incl. \"latrun\", \"HayaBint\"); the Aqaba hospital's English label duplicates the Zarqa one, so its name_en is omitted. ownership = rms for all."
+}

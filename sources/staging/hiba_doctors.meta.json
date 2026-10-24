@@ -1,0 +1,18 @@
+{
+  "source": "hiba_doctors",
+  "title": "Hiba Hospital (Amman, maternity & gynaecology) — doctors page + facility pages",
+  "publisher": "Hiba Hospital",
+  "urls": [
+    "https://hibahospital.com/doctors",
+    "https://hibahospital.com/",
+    "https://hibahospital.com/about",
+    "https://hibahospital.com/departments",
+    "https://hibahospital.com/contact"
+  ],
+  "retrieved_at": "2026-10-24T12:12:00Z",
+  "method": "scrape",
+  "license": "public-web (facts)",
+  "robots_respected": true,
+  "record_count": 5,
+  "notes": "The site claims 50+ doctors but its doctors page publishes only 4 profiles; all 4 captured. Arabic only: ?lang=En returns the same Arabic HTML (language is client/cookie side), so no name_en. Profiles give name, department and a one-line position; no specialty field set (position kept in extra.position_ar). Accreditations are from home-page badges ('JCI Standards', 'ISO 9001', MoH) with no year/status detail. Contact page mobiles are the hospital's published lines."
+}

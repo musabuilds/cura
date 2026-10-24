@@ -1,0 +1,20 @@
+{
+  "source": "abdalihospital_doctors",
+  "retrieved_at": "2026-10-24T09:14:58Z",
+  "robots_respected": true,
+  "record_count": 124,
+  "title": "Abdali Hospital — Doctors directory and hospital details",
+  "publisher": "Abdali Hospital",
+  "urls": [
+    "https://www.abdalihospital.com/doctors",
+    "https://www.abdalihospital.com/doctor/<slug>",
+    "https://www.abdalihospital.com/ar/doctor/<slug>",
+    "https://www.abdalihospital.com/about-us",
+    "https://www.abdalihospital.com/contact-us",
+    "https://www.abdalihospital.com/insurance-partners",
+    "https://www.abdalihospital.com/department/radiology"
+  ],
+  "method": "scrape",
+  "license": "public-web (facts)",
+  "notes": "Directory /doctors (4 pages, 123 profiles, matching the 123-name dropdown). Each EN profile fetched plus its /ar/ twin (hreflang). grade derived only from the published headline wording (Consultant/Specialist/General Practitioner). Per-doctor accepted insurers kept in extra.insurance_accepted. Missing AR twins (404): /doctor/dr-tariq-nasser. No schedules or fees published. Emails were Cloudflare-obfuscated and decoded from data-cfemail. robots.txt only disallows admin/core paths."
+}

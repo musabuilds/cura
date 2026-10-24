@@ -1,0 +1,22 @@
+{
+  "source": "ibnalhaytham_doctors",
+  "retrieved_at": "2026-10-24T09:27:43Z",
+  "robots_respected": true,
+  "record_count": 46,
+  "title": "Ibn Al-Haytham Hospital — Our Doctors, Anesthesia Doctors and hospital details",
+  "publisher": "Ibn Al-Haytham Hospital",
+  "urls": [
+    "https://www.ihh.com.jo/Doctors/Index",
+    "https://www.ihh.com.jo/Doctors/Details/<id>",
+    "https://www.ihh.com.jo/AnesthesiaDoctor/Index",
+    "https://www.ihh.com.jo/About/Index",
+    "https://www.ihh.com.jo/Contact/Index",
+    "https://www.ihh.com.jo/Insurance/Index",
+    "https://www.ihh.com.jo/Department/Index",
+    "https://www.ihh.com.jo/Specialtie/Index",
+    "https://www.ihh.com.jo/Department/Details/<id>"
+  ],
+  "method": "scrape",
+  "license": "public-web (facts)",
+  "notes": "Official site is ihh.com.jo (ibnalhaytham.com does not answer). /Doctors/Index lists 39 doctors on one page (name, headline, phone extension) + 39 detail pages (only repeat the headline); /AnesthesiaDoctor/Index lists 6 more. English only: the Arabic switch (/Language/Arabic) returns 403 to scripted clients, so no name_ar. specialty = published headline verbatim; grade only where headline says Consultant/Specialist. clinic_phones = switchboard +962 6 520 5555 with the published extension (one card shows a full number in the extension field - kept in extra only). Per-doctor WhatsApp mobile links on the site were deliberately NOT collected (possible personal mobiles). No fees/schedules published. robots.txt allows all but /admin/ and /temp/."
+}

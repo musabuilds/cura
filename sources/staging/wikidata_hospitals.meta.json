@@ -1,0 +1,15 @@
+{
+  "source": "wikidata_hospitals",
+  "title": "Wikidata - items instance of (subclass of) hospital (Q16917) with country Jordan (Q810)",
+  "publisher": "Wikidata / Wikimedia Foundation",
+  "urls": [
+    "https://query.wikidata.org/sparql"
+  ],
+  "retrieved_at": "2026-10-24T09:22:12Z",
+  "method": "api",
+  "license": "CC0-1.0",
+  "robots_respected": true,
+  "record_count": 45,
+  "notes": "DISABLED in favour of the scripted `wikidata` collector (same query family, refreshed daily; its SUPPRESS list carries this file's Al-Bashir correction). Kept for the record. SPARQL: ?item wdt:P31/wdt:P279* wd:Q16917 ; wdt:P17 wd:Q810, with en/ar labels, P625 coordinates, P6801 beds, P571 inception, P856 website, P137 operator, P131 location. Query saved as sources/raw/wikidata_hospitals/q.rq, response as result.json. 45 items - Wikidata coverage of Jordan is thin (no operator statements at all, beds on 6 items, coordinates on ~11). Bed counts and inception dates are whatever Wikidata holds (often old/unsourced); prefer moh_statbook_2024 for beds. located_in is the P131 label as given (mixes city and governorate). Several items are duplicates of each other (Q35544289 and Q115234110 both \"Italian Hospital\"; Q43895160 \"Farah\" vs Q35544337 \"Farah maternity\"; Q12242600 vs Q4704208 Khalidi). Al-Bashir (Q22689891) carries Khalidi's website on Wikidata - dropped and noted in extra. One Arabic label uses underscores (Q84847179), kept as is. A broader query (items whose P131 chain reaches Jordan but without P17 Jordan) returned only West Bank / Jerusalem hospitals and was excluded.",
+  "disabled": true
+}

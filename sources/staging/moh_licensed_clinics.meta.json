@@ -1,0 +1,20 @@
+{
+  "title": "Ministry of Health — licensed doctor, dentist and general clinics (اسماء العيادات و المراكز الطبية و المؤسسات الصحية المرخصة)",
+  "publisher": "Ministry of Health, Jordan (licensing)",
+  "urls": [
+    "https://www.moh.gov.jo/AR/Pages/%D8%A7%D8%B3%D9%85%D8%A7%D8%A1_%D8%A7%D9%84%D8%B9%D9%8A%D8%A7%D8%AF%D8%A7%D8%AA_%D9%88_%D8%A7%D9%84%D9%85%D8%B1%D8%A7%D9%83%D8%B2_%D8%A7%D9%84%D8%B7%D8%A8%D9%8A%D8%A9_%D9%88_%D8%A7%D9%84%D9%85%D8%A4%D8%B3%D8%B3%D8%A7%D8%AA_%D8%A7%D9%84%D8%B5%D8%AD%D9%8A%D8%A9_%D8%A7%D9%84%D9%85%D8%B1%D8%AE%D8%B5%D8%A9",
+    "https://www.moh.gov.jo/EBV4.0/Root_Storage/AR/license_announcemment/طب_إختصاص.pdf",
+    "https://www.moh.gov.jo/EBV4.0/Root_Storage/AR/license_announcemment/طب_إختصاص_جمعيات.pdf",
+    "https://www.moh.gov.jo/EBV4.0/Root_Storage/AR/license_announcemment/طب_عام.pdf",
+    "https://www.moh.gov.jo/EBV4.0/Root_Storage/AR/license_announcemment/طب_عام_جمعيات.pdf",
+    "https://www.moh.gov.jo/EBV4.0/Root_Storage/AR/license_announcemment/عيادة_أسنان.pdf",
+    "https://www.moh.gov.jo/EBV4.0/Root_Storage/AR/license_announcemment/عيادة_عامة.pdf"
+  ],
+  "retrieved_at": "2026-10-24T09:11:33Z",
+  "method": "pdf_extract",
+  "license": "public-web (facts)",
+  "robots_respected": true,
+  "notes": "Licence categories طب إختصاص, طب إختصاص جمعيات, طب عام, طب عام جمعيات, عيادة أسنان, عيادة عامة (lic_03..lic_08). Counts: {'mobiles_dropped': 1969, 'practitioner': 5058, 'practitioner_lic_03': 1001, 'skipped_empty_name': 6, 'facility': 62, 'facility_lic_03': 1, 'practitioner_lic_04': 10, 'facility_lic_04': 3, 'practitioner_lic_05': 647, 'practitioner_lic_06': 17, 'facility_lic_06': 26, 'mobile_column_dropped': 2536, 'practitioner_lic_07': 3224, 'facility_lic_07': 2, 'facility_lic_08': 30, 'practitioner_lic_08': 159}. Same extraction as moh_licensed_register (glyph-level Arabic repair + right-to-left cell rebuild; see raw/moh_licensed_register/licpdf.py); number placement inside addresses may differ from print. PDFs print NO licence number, so source_ref = file#page/row. One row per licence -> one record; a practitioner with several licensed clinics appears several times. Mixed kinds: a practitioner record is emitted when the trade name names a person - for individual licences (طب إختصاص, طب عام, عيادة أسنان) the trade name is the licensee's name; for charity/institutional categories only when a segment is prefixed د. / الدكتور / دكتور. Rows naming no identifiable doctor become facility records (clinic / dental_clinic). The trade name is split on \"/\": for specialist licences any remaining segments after the name are the specialty, otherwise a segment starting اختصاصي/استشاري/طب/امراض/جراح... is the specialty (as printed); a segment starting with عيادة/مركز/جمعية/مؤسسة/الهيئة... is facility_name; the full printed string is kept in extra.trade_name_as_printed. Specialist rows whose trade name carries no specialty segment have no specialty (the category only says \"specialist medicine\"). grade: consultant/specialist only from the printed word (استشاري/اختصاصي), general_practitioner for the طب عام categories; dentists have no grade. Dentist specialty = the licence الاختصاص column, else \"Dentistry\". Title \"Dr.\" only when printed. The honorific prefix was removed from name_ar. Gender is NOT set (not stated, even where الدكتورة is printed). Phones: landlines only - numbers matching 07[789]xxxxxxx (printed without the 0) are treated as personal mobiles and dropped, as is the dental MOBILE_NO column; Excel-notation numbers (E+) dropped. Landlines are printed without area code. practitioner records carry address and governorate (ISO code) in data per coordinator instruction, for the pipeline's doctor_office derivation.",
+  "source": "moh_licensed_clinics",
+  "record_count": 5120
+}

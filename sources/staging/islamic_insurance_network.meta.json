@@ -1,0 +1,16 @@
+{
+  "source": "islamic_insurance_network",
+  "title": "Islamic Insurance Company — Medical Network directory",
+  "publisher": "Islamic Insurance Company (Jordan)",
+  "urls": [
+    "https://www.islamicinsurance.jo/en/medical-network",
+    "https://www.islamicinsurance.jo/ar/medical-network"
+  ],
+  "retrieved_at": "2026-10-24T09:17:22Z",
+  "method": "scrape",
+  "license": "public-web (facts)",
+  "robots_respected": true,
+  "record_count": 3701,
+  "effective_date": null,
+  "notes": "Directory has no publication/effective date; treat as current at retrieval. Network is Islamic Insurance's own (medical approvals in-house, tel 06-566-1300). name_ar joined from the /ar listing by page+position, only when the phone on both rows matches. Governorate mapped from the 'X GOVERNORATE/CITY/AREA' location string (CAPITAL -> Amman). Doctor names are published mostly in Arabic with specialty suffixes (e.g. 'د.محمد ... / جهاز هضمي') and kept verbatim. Doctor mobile numbers (07x) omitted per the professional-data rule; landlines kept. Counts: {\"rehabilitation\": 103, \"practitioner\": 2015, \"pharmacy\": 1017, \"laboratory\": 337, \"imaging_center\": 83, \"optician\": 92, \"hospital\": 54}"
+}

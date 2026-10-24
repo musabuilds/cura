@@ -1,0 +1,16 @@
+{
+  "title": "Ministry of Health — licensed hospitals (مستشفى خاص / مستشفى عام licence lists)",
+  "publisher": "Ministry of Health, Jordan (licensing)",
+  "urls": [
+    "https://www.moh.gov.jo/AR/Pages/%D8%A7%D8%B3%D9%85%D8%A7%D8%A1_%D8%A7%D9%84%D8%B9%D9%8A%D8%A7%D8%AF%D8%A7%D8%AA_%D9%88_%D8%A7%D9%84%D9%85%D8%B1%D8%A7%D9%83%D8%B2_%D8%A7%D9%84%D8%B7%D8%A8%D9%8A%D8%A9_%D9%88_%D8%A7%D9%84%D9%85%D8%A4%D8%B3%D8%B3%D8%A7%D8%AA_%D8%A7%D9%84%D8%B5%D8%AD%D9%8A%D8%A9_%D8%A7%D9%84%D9%85%D8%B1%D8%AE%D8%B5%D8%A9",
+    "https://www.moh.gov.jo/EBV4.0/Root_Storage/AR/license_announcemment/مستشفى_خاص.pdf",
+    "https://www.moh.gov.jo/EBV4.0/Root_Storage/AR/license_announcemment/مستشفى_عام.pdf"
+  ],
+  "retrieved_at": "2026-10-24T09:11:33Z",
+  "method": "pdf_extract",
+  "license": "public-web (facts)",
+  "robots_respected": true,
+  "notes": "Two licence-list PDFs from the MoH licensing page. No licence number is printed, so source_ref = file#row index. Columns: trade name, hospital type (خاص / عام), specialty (e.g. إختصاص عيون; \"---\" for general), address, governorate, phone. The type column is ambiguous (\"خاص\" appears to mean specialised vs \"عام\" general, not ownership - e.g. الشميساني, المحبه are listed as عام), so ownership is left unknown and the raw value kept in extra.hospital_kind_ar. Names are short trade names as printed (e.g. \"الامل للتوليد\"), often without the word مستشفى. Phones printed without area code; mobiles dropped. Same glyph-level Arabic repair as moh_licensed_register.",
+  "source": "moh_licensed_hospitals",
+  "record_count": 75
+}

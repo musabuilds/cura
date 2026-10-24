@@ -1,0 +1,14 @@
+{
+  "source": "osm",
+  "title": "OpenStreetMap — health-tagged features in Jordan",
+  "publisher": "OpenStreetMap contributors",
+  "urls": [
+    "https://www.openstreetmap.org/relation/184818"
+  ],
+  "retrieved_at": "2026-10-24T08:56:12Z",
+  "method": "api",
+  "license": "ODbL-1.0",
+  "robots_respected": true,
+  "notes": "Overpass snapshot, osm_base=2026-10-24T08:54:51Z. Unnamed features are kept; the merge step decides whether they are publishable.",
+  "record_count": 768
+}

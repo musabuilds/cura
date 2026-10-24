@@ -1,0 +1,14 @@
+{
+  "title": "Ministry of Health — Health centres directory (المراكز الصحية)",
+  "publisher": "Ministry of Health, Jordan",
+  "urls": [
+    "https://www.moh.gov.jo/AR/List/%D8%A7%D9%84%D9%85%D8%B1%D8%A7%D9%83%D8%B2_%D8%A7%D9%84%D8%B5%D8%AD%D9%8A%D8%A9"
+  ],
+  "retrieved_at": "2026-10-24T09:02:43Z",
+  "method": "scrape",
+  "license": "public-web (facts)",
+  "robots_respected": true,
+  "notes": "Scraped the paginated ASP.NET list once per category filter (أمومة وطفولة / خدمات طبية ملكية / وكالة الغوث / فرعي / شامل / أولي) and once unfiltered; 599 unfiltered rows, deduplicated on name+governorate+map link+contact. MoH robots.txt returns 404 (no rules). Only Arabic names are published (the English site says content not available). Coordinates come from the Google Maps link on each row; links outside Jordan bounds (e.g. swapped lat/lon) were not used and are kept in extra.map_link. Ownership: rms for the خدمات طبية ملكية filter, moh for the level filters. The 10 rows under the \"وكالة الغوث\" (UNRWA) filter all also appear under a level filter and are mostly obvious non-UNRWA rows (MoH village centres in Ma'an, prison health centres), so they keep ownership moh; the label is preserved in extra.moh_list_category_ar (a row only under that filter would have been set to unknown - none exist). Many rows give 06/5008080 - 06/5004545 as contact, which are MoH call-centre/hotline numbers, not the centre (flagged extra.phones_are_moh_call_centre). One row has governorate \"شامل\" (a data-entry error in the source); governorate omitted there. Governorate mapped from the Arabic label to ISO 3166-2.",
+  "source": "moh_phc_centers",
+  "record_count": 599
+}

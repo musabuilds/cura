@@ -1,0 +1,19 @@
+{
+  "source": "hia_contracted_private",
+  "title": "Health Insurance Administration (Civil Health Insurance) — contracted private hospitals, dialysis units and dental centres",
+  "publisher": "Health Insurance Administration, Ministry of Health (إدارة التأمين الصحي)",
+  "urls": [
+    "https://hia.gov.jo/AR/List/%D8%A7%D9%84%D9%85%D8%B3%D8%AA%D8%B4%D9%81%D9%8A%D8%A7%D8%AA_%D8%A7%D9%84%D8%AE%D8%A7%D8%B5%D8%A9_%D8%A7%D9%84%D9%85%D8%AA%D8%B9%D8%A7%D9%82%D8%AF_%D9%85%D8%B9%D9%87%D8%A7?View=1067",
+    "https://hia.gov.jo/ebv4.0/root_storage/ar/eb_list_page/%D9%85%D8%B3%D8%AA%D8%B4%D9%81%D9%8A%D8%A7%D8%AA_%D9%83%D9%84%D9%89_2026-1.pdf",
+    "https://hia.gov.jo/ebv4.0/root_storage/ar/eb_list_page/%D9%85%D8%B3%D8%AA%D8%B4%D9%81%D9%8A%D8%A7%D8%AA_%D8%A7%D9%84%D9%85%D8%AA%D9%82%D8%A7%D8%B9%D8%AF_%D9%85%D8%B9%D9%87%D8%A7_%D9%84%D9%84%D8%AF%D8%B1%D8%AC%D8%A9_1.pdf",
+    "https://hia.gov.jo/ebv4.0/root_storage/ar/eb_list_page/%D9%85%D8%B3%D8%AA%D8%B4%D9%81%D9%8A%D8%A7%D8%AA_%D8%A7%D9%84%D8%AE%D8%A7%D8%B5_%D9%84%D9%84%D8%AF%D8%B1%D8%AC%D8%A9%D8%A7%D9%84%D8%AB%D8%A7%D9%86%D9%8A%D8%A9_11__%D8%A7%D9%84%D8%AB%D8%A7%D9%84%D8%AB%D8%A9_%282%29-0.pdf",
+    "https://hia.gov.jo/ebv4.0/root_storage/ar/eb_list_page/%D9%85%D8%B1%D8%A7%D9%83%D8%B2_%D9%88%D8%B9%D9%8A%D8%A7%D8%AF%D8%A7%D8%AA_%D8%A7%D9%84%D8%A7%D8%B3%D9%86%D8%A7%D9%862026_-_copy.pdf"
+  ],
+  "retrieved_at": "2026-10-24T09:22:02Z",
+  "method": "pdf_extract",
+  "license": "public-web (facts)",
+  "robots_respected": true,
+  "record_count": 145,
+  "effective_date": "2026-09-30",
+  "notes": "Four PDFs from the HIA 'contracted private hospitals' page. f2 = grade-1 government employees, admission + emergency, updated 2026-09-30 (48 rows; row numbering skips 27 in the source). f3 = grades 2 & 3, emergency department only (insured pays 20% of the ER bill), updated 2026-09-13. f1 = dialysis: page 1 'rented' dialysis units 2026, page 2 contracted dialysis units 2026; f1 is a scanned image and was transcribed by hand from the page images (names only, as printed, often without the word 'مستشفى'). f4 = dental centres/clinics contracted for senior grades, updated 2026-03-30; parsed by column position, multi-line cells joined. Arabic text was extracted in visual order and re-ordered (lam-alef ligatures fixed); tatweel removed. Names are as printed (f2 omits 'مستشفى'); the same hospital appears in several lists — one record per list row, dedupe downstream. No English names in the source. Phones as printed (spaces removed)."
+}

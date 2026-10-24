@@ -1,0 +1,15 @@
+{
+  "source": "moh_hospitals",
+  "title": "Ministry of Health - hospitals directory (المستشفيات), Arabic and English list pages",
+  "publisher": "Ministry of Health, Hashemite Kingdom of Jordan",
+  "urls": [
+    "https://moh.gov.jo/AR/List/المستشفيات___",
+    "https://moh.gov.jo/EN/List/Hospitals"
+  ],
+  "retrieved_at": "2026-10-24T09:22:12Z",
+  "method": "scrape",
+  "license": "public-web (facts)",
+  "robots_respected": true,
+  "record_count": 115,
+  "notes": "MoH website hospital directory, ALL sectors (MoH, RMS, university, private) - not only MoH hospitals; the list does not state sector, so ownership is omitted. 115 Arabic rows (12 pages, ASP.NET postback paging, 1.5 s between requests) and 111 English rows (separate list, different order and spellings). English rows were paired to Arabic rows by identical map link or two shared phone/fax numbers (50 pairs), the remaining 61 by name + governorate by hand; 4 Arabic rows have no English counterpart (الطفيلة, مستشفى الامير حسين بن عبدالله الثاني / البلقاء, البادية الشمالية, سارا). The list is old in places (undated): it includes مستشفى البوتاس, مستشفى النخبة / ميلاد, مستشفى البيادر and الرازي الجديد which the MoH 2024 report does not list as operating, and phone numbers differ between the AR and EN versions for many rows - both are kept (phones = union, raw strings in extra.contact_raw_ar/en). Some numbers are clearly wrong (e.g. Zarqa's Prince Hashem bin Al-Hussein row carries the Aqaba hospital's fax 032092043; Tafilah's switchboard \"798228844\" looks like a mobile). governorate = the first word(s) of the governorate cell before \"لواء\" (liwa kept in extra.liwa_ar). Map links are kept in extra.map_url only (mostly goo.gl short links; a few google.com/maps/@lat,lon links show a viewport centre, not a pin, so no lat/lon were set). \"زيارة الموقع\" links that point to directories (altibbi, justablejo, waze, maps) are kept in extra.listed_link, not as website. Same site also publishes \"اسماء العيادات و المراكز الطبية و المؤسسات الصحية المرخصة\" (licensed facilities) - not collected here."
+}

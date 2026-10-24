@@ -1,0 +1,19 @@
+{
+  "source": "kauh_doctors",
+  "title": "King Abdullah University Hospital (Irbid) — Our Doctors directory + facility pages",
+  "publisher": "King Abdullah University Hospital (Jordan University of Science and Technology)",
+  "urls": [
+    "https://www.kauh.edu.jo/doctors-list",
+    "https://www.kauh.edu.jo/قائمة-الأطباء",
+    "https://www.kauh.edu.jo/Sections-doctors",
+    "https://www.kauh.edu.jo/أقسام-الأطباء",
+    "https://www.kauh.edu.jo/Departments",
+    "https://www.kauh.edu.jo/Home"
+  ],
+  "retrieved_at": "2026-10-24T12:15:00Z",
+  "method": "scrape",
+  "license": "public-web (facts)",
+  "robots_respected": true,
+  "record_count": 222,
+  "notes": "221 practitioners = every doctor on the EN and AR 'Our Doctors' lists (same GUIDs); all EN+AR profile pages and all 'doctors sections' (department) pages fetched. The listing line is free text 'department [subspecialty] | ... | specialty | academic rank | grade', inconsistently filled; specialty = the segment before the rank (EN, AR in extra.specialty_ar), grade mapped from the last segment (Senior Consultant/استشاري أول -> consultant), omitted when EN and AR disagree; title from academic rank (Prof./Assoc. Prof./Asst. Prof.). Raw descriptors kept in extra. EN/AR sometimes disagree (e.g. EN 'Professor|Professor' vs AR 'استاذ|استشاري أول'). Profiles carry only admin position and a CV file link (cv_url, .doc/.pdf not parsed). No schedules, fees or per-doctor phones published. robots.txt is absent (404)."
+}

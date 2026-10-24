@@ -1,0 +1,16 @@
+{
+  "source": "mednet_network",
+  "title": "MedNet Jordan — Medical Network (Find a Provider map)",
+  "publisher": "MedNet Jordan",
+  "urls": [
+    "https://mednet.com/members/locateprovider",
+    "https://mednet.com/members/locateprovider/fetch"
+  ],
+  "retrieved_at": "2026-10-24T09:45:05Z",
+  "method": "api",
+  "license": "public-web (facts)",
+  "robots_respected": true,
+  "record_count": 3249,
+  "effective_date": null,
+  "notes": "One POST to the page's own fetch endpoint (view_mode=map) from a browser session (direct requests are blocked by the F5 WAF); it returns all 3,249 providers, every one with country 'Jordan'. The feed carries only name, category and coordinates: specialty, phone and address are empty for every row (address is literally 'Jordan'), and the /ar page returns identical English-only data, so there is no name_ar. No effective date. Category DOCTOR/DENTIST rows become practitioner records unless the name contains CENTER/CENTRE/CLINIC(S)/HOSPITAL/CORNER/AIDS/COMPLEX (then clinic / dental_clinic facility). Names kept verbatim including MedNet's internal annotations such as '(POTASH ONLY)', '(NEPCO ONLY)', '(PLZ USE D5412)', '( FT )' — these mark providers restricted to specific client groups and are also copied to extra.name_annotations. MedNet's site says it administers 7 insurers in Jordan; it does not say which network tier each insurer's members get. Counts: {\"hospital\": 81, \"practitioner\": 1867, \"clinic\": 121, \"pharmacy\": 676, \"dental_clinic\": 61, \"rehabilitation\": 86, \"laboratory\": 226, \"optician\": 69, \"imaging_center\": 62}"
+}

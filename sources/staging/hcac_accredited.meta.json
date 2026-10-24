@@ -1,0 +1,15 @@
+{
+  "source": "hcac_accredited",
+  "title": "Health Care Accreditation Council (HCAC) - Accredited Organizations",
+  "publisher": "Health Care Accreditation Council, Jordan",
+  "urls": [
+    "https://hcac.jo/en-us/Accreditation/Accredited-Organizations",
+    "https://hcac.jo/ar-jo/الاعتماد/مؤسساتنا-المعتمدة"
+  ],
+  "retrieved_at": "2026-10-24T09:22:12Z",
+  "method": "scrape",
+  "license": "public-web (facts)",
+  "robots_respected": true,
+  "record_count": 370,
+  "notes": "All tables on the \"Accredited Organizations\" page (EN + AR, fetched 2026-10-24): hospitals (MoH 21, RMS 8, university 2, NGO 1, private 17), MoH primary health care centres by governorate (+4 other-sector centres), certified breast-imaging units, medical laboratories, ambulatory centres, Baby-Friendly hospital certifications, blood banks and one prehospital organisation. One record per table row - a hospital accredited AND certified Baby-Friendly appears twice (one accreditation each) and must be merged downstream. Names and dates come from the English page; name_ar is paired from the Arabic page within the same table: same position AND same accreditation date, else the single unused Arabic row with the same date; otherwise name_ar is left empty (row order differs between the language versions, e.g. Istiklal is row 5 in Arabic and row 17 in English, and some dates disagree, e.g. Al Ramtha 2022 vs 2023). The Arabic date is kept in extra.date_ar_raw. Rows marked \"(The Accreditation is Suspended)\" carry status \"suspended\"; rows HCAC commented out of the HTML (expired/suspended history) were ignored. The date is the accreditation (or certification) date as listed - HCAC does not publish expiry, so accredited status is as-of the page, not verified per facility. Breast-imaging rows are certified units, typed \"other\" with extra.unit; their name is the host facility as written. Ownership comes from the HCAC sector tab; Biolab/MedLabs/private lab tabs are private. \"Al Ramtha GOVERNORATE\" and \"Petra\" PHC headings were mapped to Irbid and Ma'an governorates. A duplicate \"Military Cancer Center blood bank\" table under the prehospital heading was skipped. Unparseable dates are left in extra.date_raw. Unpaired English rows (no Arabic name): MedLabs Consultancy Group/Irbid 4; Al Tewal Al Janoubi Health Care Center"
+}

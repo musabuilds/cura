@@ -1,0 +1,18 @@
+{
+  "source": "juh_doctors",
+  "title": "Jordan University Hospital — doctors by department/section, clinicians directory and doctor detail pages",
+  "publisher": "Jordan University Hospital (The University of Jordan)",
+  "urls": [
+    "https://hospital.ju.edu.jo/Lists/ArabDepartments/All_Depts_copy(1).aspx",
+    "https://hospital.ju.edu.jo/medical/juhospital/Lists/ArabDepartments/All_Depts.aspx",
+    "https://hospital.ju.edu.jo/Lists/ArabDepartmentsDoctors/ALL_Doctors.aspx",
+    "https://hospital.ju.edu.jo/medical/juhospital/Lists/ArabDepartmentsDoctors/ALL_Doctors.aspx",
+    "https://hospital.ju.edu.jo/Documents/الدليل.pdf"
+  ],
+  "retrieved_at": "2026-10-24T12:25:00Z",
+  "method": "scrape",
+  "license": "public-web (facts)",
+  "robots_respected": true,
+  "record_count": 281,
+  "notes": "280 practitioners = union of doctor IDs linked from every department->section page (AR + EN) and both 'ALL_Doctors' clinician directories; EN and AR detail pages share the same list ID. Site is SharePoint; the default curl UA gets an F5 'Request Rejected', a browser UA works; robots.txt absent. EXCLUDED on purpose: the 'personal phone' field and non-institutional emails (gmail/hotmail/yahoo) published on profiles; only @ju.edu.jo emails kept (extra.institutional_email). clinic_phone_extension is an extension of the hospital switchboard (+962 6 5353666) as printed, not a full number. grade=consultant only when a rank/degree field says استشاري/Consultant; no 'specialist' grade is stated anywhere. title from EN 'Rank' / AR 'الرتبة العلمية' (Prof./Assoc. Prof./Asst. Prof.), dropped if they disagree. EN 'Subspecialty' is often Arabic text on the English page (kept as published). Some EN detail pages are SharePoint errors -> those doctors have no name_en. The 32-page PDF 'دليل أطباء الاختصاص' (raw/juh_doctors/specialists_guide.pdf) was downloaded but NOT parsed: its Arabic text layer is glyph-scrambled and would need OCR; the HTML directory covers the same purpose. Clinic schedules live in an app (apphosp.ju.edu.jo/Appointment/clinic_sch_query) and in morning/afternoon clinic PDFs, not captured."
+}

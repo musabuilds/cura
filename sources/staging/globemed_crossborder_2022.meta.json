@@ -1,0 +1,15 @@
+{
+  "source": "globemed_crossborder_2022",
+  "title": "GlobeMed Qatar — Cross Border Network, Jordan section (01/07/2022)",
+  "publisher": "GlobeMed Qatar (document hosted by Northwestern University in Qatar for its insured staff)",
+  "urls": [
+    "https://my.qatar.northwestern.edu/docs/insurance/globemed-full-cross-border-network.pdf"
+  ],
+  "retrieved_at": "2026-10-24T09:47:37Z",
+  "method": "pdf_extract",
+  "license": "unknown",
+  "robots_respected": true,
+  "record_count": 2396,
+  "effective_date": "2022-07-01",
+  "notes": "STALE: the document is dated 01/07/2022 and lists the Jordanian providers that accept GlobeMed Qatar cross-border members — it is not GlobeMed Jordan's domestic network (GlobeMed Jordan publishes its network only inside the GlobeMed FIT app). Only pages 1–27 (Jordan) parsed; other countries ignored. 'PRIVATE CLINICS' rows are individual doctors -> practitioner records with the specialty sub-heading they sit under; their mobile numbers (07x) omitted. City is the source's city column (sometimes a governorate). English only. Use as historical evidence of a network contract, not current acceptance. Counts: {\"hospital\": 57, \"practitioner\": 1432, \"laboratory\": 221, \"imaging_center\": 21, \"pharmacy\": 473, \"rehabilitation\": 30, \"dental_clinic\": 98, \"optician\": 41, \"clinic\": 23}"
+}

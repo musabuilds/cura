@@ -1,0 +1,22 @@
+{
+  "source": "khcc_doctors",
+  "title": "King Hussein Cancer Center — Our Doctors directory + facility pages",
+  "publisher": "King Hussein Cancer Center",
+  "urls": [
+    "https://www.khcc.jo/en/our-doctors",
+    "https://www.khcc.jo/ar/our-doctors",
+    "https://www.khcc.jo/en/webforms/contact-us",
+    "https://www.khcc.jo/en/accreditations",
+    "https://www.khcc.jo/en/clinics-and-departments",
+    "https://www.khcc.jo/en/insurance-companies",
+    "https://www.khcc.jo/en/emergency",
+    "https://www.khcc.jo/en/khcc1",
+    "https://www.khcc.jo/en/khcc-buildings-and-capacity"
+  ],
+  "retrieved_at": "2026-10-24T12:10:00Z",
+  "method": "scrape",
+  "license": "public-web (facts)",
+  "robots_respected": true,
+  "record_count": 159,
+  "notes": "158 practitioners = every doctor on the EN and AR directory listing (identical slug sets), each profile fetched in EN and AR. specialty = the directory's own 'Search By Speciality' grouping (POST filter, one group per doctor); free-text position kept in extra.position_en/ar. grade set only where the position text contains 'Consultant'/'Specialist'. clinic_phones is the number printed on the profile (KHCC switchboard/extension); 4 profiles printing a Jordanian mobile (07x) were dropped as possibly personal. qualifications = EN 'Education and Training' + 'Board Certifications'; AR versions in extra.qualifications_ar. Publications/awards not captured. Facility: no bed total published on fetched pages (only ER bed counts); site states no local insurer agreements, so insurance_accepted is empty. robots.txt disallows only query-string variants and /node/; none used."
+}

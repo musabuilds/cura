@@ -1,0 +1,18 @@
+{
+  "title": "Health insurers, TPAs and public health-coverage schemes in Jordan",
+  "publisher": "Central Bank of Jordan (insurance supervisor); MoH Health Insurance Administration; others as cited per record",
+  "urls": [
+    "https://www.cbj.gov.jo/ebv4.0/root_storage/ar/eb_list_page/%D8%A7%D8%B3%D9%85%D8%A7%D8%A1_%D9%88%D8%B9%D9%86%D8%A7%D9%88%D9%8A%D9%8A%D9%86_%D8%B4%D8%B1%D9%83%D8%A7%D8%AA_%D8%A7%D9%84%D8%AA%D8%A3%D9%85%D9%8A%D9%86.pdf",
+    "https://www.cbj.gov.jo/ebv4.0/root_storage/ar/eb_list_page/%D8%B4%D8%B1%D9%83%D8%A7%D8%AA_%D8%A5%D8%AF%D8%A7%D8%B1%D8%A9_%D8%A3%D8%B9%D9%85%D8%A7%D9%84_%D8%A7%D9%84%D8%AA%D8%A3%D9%85%D9%8A%D9%86_%D8%A7%D9%84%D9%85%D8%B1%D8%AE%D8%B5%D9%8A%D9%86.pdf",
+    "https://www.cbj.gov.jo/ebv4.0/root_storage/ar/eb_list_page/%D8%A5%D8%AD%D8%B5%D8%A7%D8%A1%D8%A7%D8%AA_%D8%A7%D9%84%D8%AA%D8%A3%D9%85%D9%8A%D9%86_%D8%A7%D9%84%D8%B7%D8%A8%D9%8A_%D8%B4%D8%B1%D9%83%D8%A7%D8%AA_%D8%A7%D9%84%D8%AA%D8%A3%D9%85%D9%8A%D9%86_%D9%88%D8%A7%D9%84%D9%85%D8%AD%D8%A7%D9%81%D8%B8_%D8%A7%D9%84%D8%B7%D8%A8%D9%8A%D8%A9_%D8%A7%D9%84%D9%85%D8%AF%D8%A7%D8%B1%D8%A9_%D9%85%D9%86_%D9%82%D8%A8%D9%84_%D8%B4%D8%B1%D9%83%D8%A7%D8%AA_%D8%A5%D8%AF%D8%A7%D8%B1%D8%A9_%D8%A3%D8%B9%D9%85%D8%A7%D9%84_%D8%A7%D9%84%D8%AA%D8%A3%D9%85%D9%8A%D9%86_%D9%81%D9%8A_%D8%A7%D9%84%D8%A3%D8%B1%D8%AF%D9%86_%D9%84%D8%B9%D8%A7%D9%85_2025_.pdf",
+    "https://www.cbj.gov.jo/AR/List/%D8%AF%D9%84%D9%8A%D9%84_%D9%82%D8%B7%D8%A7%D8%B9_%D8%A7%D9%84%D8%AA%D8%A3%D9%85%D9%8A%D9%86",
+    "https://hia.gov.jo/"
+  ],
+  "method": "pdf_extract",
+  "license": "public-web (facts)",
+  "robots_respected": true,
+  "notes": "19 licensed insurers (CBJ list; it does not flag the medical line, so medical activity is only confirmed where the CBJ 2025 medical-statistics market-share chart names the company or the site shows a medical network) + 8 licensed TPAs (CBJ, licensed to 2026-12-31) + 6 public/other schemes. The Jordan Insurance Federation site (joif.org) did not respond, so its member list was not used. name_en is only filled where a source shows it (TPA brand names in the CBJ list; insurer names from the company's own site title); otherwise null. Arabia Insurance - Jordan merged into Jerusalem Insurance (completed 2026-08-09 per jico.jo) but is still on the CBJ list. CBJ 2025 medical stats: ~89% of medical premiums are group policies; ~305k people covered by TPA-managed self-funded schemes. Network URLs collected from each homepage's links only (pages not crawled). Raw: sources/raw/insurers_jo/.",
+  "source": "insurers_jo",
+  "retrieved_at": "2026-10-24T09:18:56Z",
+  "record_count": 33
+}

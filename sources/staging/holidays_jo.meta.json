@@ -1,0 +1,18 @@
+{
+  "title": "Jordan official public holidays 2026 (announced) and 2027 (expected)",
+  "publisher": "Securities Depository Center (Jordan) holiday list; Wego Rahhal summaries of Prime Ministry notices",
+  "urls": [
+    "https://www.sdc.com.jo/ar/holidays",
+    "https://www.sdc.com.jo/en/holidays",
+    "https://rahhal.wego.com/blog/2026-%D8%A7%D9%84%D8%B9%D8%B7%D9%84-%D8%A7%D9%84%D8%B1%D8%B3%D9%85%D9%8A%D8%A9-%D9%81%D9%8A-%D8%A7%D9%84%D8%A7%D8%B1%D8%AF%D9%86/",
+    "https://rahhal.wego.com/blog/%D8%B9%D8%B7%D9%84%D8%A7%D8%AA-%D8%A7%D9%84%D8%A7%D8%B1%D8%AF%D9%86-%D8%A7%D9%84%D8%B7%D9%88%D9%8A%D9%84%D8%A9-2026-2027/",
+    "https://www.jsc.gov.jo/News/en/12678"
+  ],
+  "method": "scrape",
+  "license": "public-web (facts)",
+  "robots_respected": true,
+  "notes": "Official weekend: Friday and Saturday (SDC: closes 'Friday and Saturday of each week'; Wego: government working days Sunday-Thursday). Legal basis: Cabinet decision published as PM notice No. 6 of 2007 (Eid al-Fitr 4 days, Eid al-Adha 5 days incl. Arafah, Hijri New Year, Mawlid, Christmas, New Year, Independence Day 25 May, Labour Day 1 May); holidays are not moved except Labour Day. Isra and Mi'raj, Army Day, Arab Revolt Day, the King's birthday (30 Jan), Accession Day and King Hussein's birthday (14 Nov) are commemorated WITHOUT a day off (per the same decision, as summarised by Wego). One record per holiday day. 2026 = announced; 2027 = expected (lunar dates estimated by Wego; not official). Eastern-calendar Easter 2027 is not included (no source read). Wego is a commercial travel blog; it was used only where it cites the PM notices, and the SDC page is the primary 2026 source.",
+  "source": "holidays_jo",
+  "retrieved_at": "2026-10-24T09:18:56Z",
+  "record_count": 33
+}

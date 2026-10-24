@@ -1,0 +1,19 @@
+{
+  "title": "Ministry of Health treatment fees and Civil Health Insurance cost-sharing (Jordan)",
+  "publisher": "Ministry of Health - Health Insurance Administration; Cabinet decisions as reported in the press",
+  "urls": [
+    "https://hia.gov.jo/ebv4.0/root_storage/ar/eb_list_page/%D9%86%D8%B8%D8%A7%D9%85_%D8%A7%D9%84%D8%AA%D8%A3%D9%85%D9%8A%D9%86_%D8%A7%D9%84%D8%B5%D8%AD%D9%8A_%D8%A7%D9%84%D9%85%D8%AF%D9%86%D9%8A_%D9%88%D8%AA%D8%B9%D8%AF%D9%8A%D9%84%D8%A7%D8%AA%D9%87_%D9%88%D8%A7%D9%84%D8%AA%D8%B9%D9%84%D9%8A%D9%85%D8%A7%D8%AA_%D8%A7%D9%84%D8%B5%D8%A7%D8%AF%D8%B1%D8%A9_%D8%A8%D9%85%D9%88%D8%AC%D8%A8%D9%87.pdf",
+    "https://hia.gov.jo/ebv4.0/root_storage/ar/eb_list_page/%D8%A8%D8%B1%D9%88%D8%B4%D9%88%D8%B1_%D8%A7%D9%84%D8%AF%D8%B1%D8%AC%D8%A9_%D8%A7%D9%84%D8%A3%D9%88%D9%84%D9%89_%D9%88%D8%A7%D9%84%D8%AB%D8%A7%D9%86%D9%8A%D8%A9_%D9%88%D8%A7%D9%84%D8%AB%D8%A7%D9%84%D8%AB%D8%A9.pdf",
+    "https://www.khaberni.com/news/%D8%A3%D8%AC%D9%88%D8%B1-%D8%B3%D9%8A%D8%A7%D8%B1%D8%A7%D8%AA-%D8%A7%D9%84%D8%A5%D8%B3%D8%B9%D8%A7%D9%81-%D9%88%D9%85%D8%B1%D8%A7%D9%81%D9%82%D9%8A%D9%87%D8%A7-93561-93561",
+    "https://www.almamlakatv.com/news/52434",
+    "https://www.khaberni.com/news/699170",
+    "https://alanbatnews.net/article/185147"
+  ],
+  "method": "pdf_extract",
+  "license": "public-web (facts)",
+  "robots_respected": true,
+  "notes": "GAP: the MoH per-item treatment tariff for uninsured / non-Jordanian patients (consultation, bed-day by class, lab and imaging items) was NOT found online. Civil Health Insurance Regulation art. 14 says fees are set by Cabinet decision on the Minister's recommendation, and the 2016 HIA guide footnote says 'the fee schedules in force at the MoH are available on the HIA website (www.hia.gov.jo)', but no such schedule is listed on hia.gov.jo (regulations, instructions, services pages checked 2026-10-24). Bed classes are defined (first: one-bed room; second: two-bed room; third: room with 3+ beds; regulation art. 21) but no JD rate was found. What is here: Civil Health Insurance co-payments (2007 instructions), the private-hospital ER cap from an HIA brochure, a 2013 ambulance tariff (press report of a Cabinet decision) and the 2020 COVID private-hospital tariff (press report of an MoH announcement). MoH said in Feb 2018 that ER fees for Jordanians follow the health-centre rates (Al-Anbat). Raw files: sources/raw/moh_fees/.",
+  "source": "moh_fees",
+  "retrieved_at": "2026-10-24T09:18:56Z",
+  "record_count": 22
+}

@@ -1,0 +1,17 @@
+{
+  "source": "gig_jordan_network",
+  "title": "GIG Jordan (Arab Orient Insurance) — medical network (e-services 'Medical Network' map)",
+  "publisher": "Gulf Insurance Group – Jordan (formerly Arab Orient Insurance Co.)",
+  "urls": [
+    "https://e-services.gig.com.jo/medicalNetwork",
+    "https://e-services.gig.com.jo/api/meta/GetMedicalProvidersWithBranches?providerTypeId={1..15}",
+    "https://e-services.gig.com.jo/api/meta/ReportCategories"
+  ],
+  "retrieved_at": "2026-10-24T09:40:16Z",
+  "method": "api",
+  "license": "public-web (facts)",
+  "robots_respected": true,
+  "record_count": 4832,
+  "effective_date": null,
+  "notes": "Public, unauthenticated JSON endpoint behind the e-services Medical Network page (robots.txt allows all). No effective date published; treat as current at retrieval. Categories: 1 Hospital, 2 Doctors (-> practitioner), 3 Pharmacy, 4 Laboratory, 5 X-Ray (-> imaging_center), 6 Medical Center/مراكز متخصصة (-> clinic), 7 Physiotherapy (-> rehabilitation), 9 Dental (-> dental_clinic; many rows are named after the individual dentist), 10 Optics Centers (-> optician), 15 Eye Centers (-> clinic). Coordinates outside Jordan's bounding box dropped. lat/lon are as published by GIG (some are area centroids shared by several providers). Governorate not given separately; the 'city' field sometimes holds a governorate name (e.g. 'AL-balqaa''). Doctor mobile numbers (07x) omitted per the professional-data rule. A provider with several branches appears once per branch (same gig_provider_id). Counts: {\"hospital\": 53, \"practitioner\": 2209, \"pharmacy\": 1527, \"laboratory\": 348, \"imaging_center\": 75, \"clinic\": 49, \"rehabilitation\": 113, \"dental_clinic\": 398, \"optician\": 60}"
+}

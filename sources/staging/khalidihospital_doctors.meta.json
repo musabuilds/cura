@@ -1,0 +1,20 @@
+{
+  "source": "khalidihospital_doctors",
+  "retrieved_at": "2026-10-24T09:19:56Z",
+  "robots_respected": true,
+  "record_count": 62,
+  "title": "Al Khalidi Hospital & Medical Center — doctors listed on khmc.jo and hospital details",
+  "publisher": "Al Khalidi Hospital",
+  "urls": [
+    "https://www.khmc.jo/en/doctors/",
+    "https://www.khmc.jo/الاطباء/",
+    "https://www.khmc.jo/page-sitemap.xml",
+    "https://www.khmc.jo/en/about-us/",
+    "https://www.khmc.jo/en/contact-us/",
+    "https://www.khmc.jo/en/departments/diagnostic-and-interventional-radiology-department/",
+    "https://www.khmc.jo/en/quality-improvement-accreditation-clinical-guidelines/"
+  ],
+  "method": "scrape",
+  "license": "public-web (facts)",
+  "notes": "The site has no single complete directory: /en/doctors/ lists 44 (cardiology, pediatrics, anesthesia); other doctors appear only on specialty/department pages (urology, nephrology, GI, endocrinology, orthopedics AR-only) or as stand-alone profile pages in page-sitemap.xml. All 239 sitemap pages were fetched and every .team-member card harvested (296 cards, 132 distinct name strings in EN+AR), then EN and AR spellings of the same doctor were paired by hand (61 practitioners). The site spells the same doctor differently across pages (e.g. Rajai Samrin/Samreen, Aseel Qtaishat/Qutaishat, Ahmed Hashma/Ahmad Heshmeh) - kept in extra.name_en_variants/name_ar_variants. 5 doctors are AR-only (no EN listing). specialty = the published EN headline verbatim (e.g. \"Consultant Cardiologist\"), AR headline when no EN; grade only when the headline says consultant/specialist (or professor). Profile bios kept verbatim in extra.bio_en/bio_ar (qualifications not split out). Facility capacity figures conflict between pages (10 vs 7 ORs; 20 vs 25 ICU beds) - both recorded. No insurer list, schedules or fees published. robots.txt (Yoast) allows these pages."
+}

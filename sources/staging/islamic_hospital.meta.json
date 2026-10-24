@@ -1,0 +1,30 @@
+{
+  "source": "islamic_hospital",
+  "title": "Islamic Hospital (Amman) — facility pages",
+  "publisher": "Islamic Hospital",
+  "urls": [
+    "https://islamic-hospital.org/home_page.aspx",
+    "https://islamic-hospital.org/home_ar.aspx",
+    "https://islamic-hospital.org/Departments",
+    "https://islamic-hospital.org/Contact-Us",
+    "https://islamic-hospital.org/EN-article-9",
+    "https://islamic-hospital.org/EN-article-10",
+    "https://islamic-hospital.org/EN-article-11",
+    "https://islamic-hospital.org/EN-article-12",
+    "https://islamic-hospital.org/EN-article-13",
+    "https://islamic-hospital.org/EN-article-1035",
+    "https://islamic-hospital.org/EN-article-1036",
+    "https://islamic-hospital.org/EN-article-1037",
+    "https://islamic-hospital.org/EN-article-1038",
+    "https://islamic-hospital.org/EN-article-1039",
+    "https://islamic-hospital.org/EN-article-1040",
+    "https://islamic-hospital.org/EN-article-1041",
+    "https://islamic-hospital.org/EN-article-1042"
+  ],
+  "retrieved_at": "2026-10-24T12:30:00Z",
+  "method": "scrape",
+  "license": "public-web (facts)",
+  "robots_respected": true,
+  "record_count": 1,
+  "notes": "Site is islamic-hospital.org (no www; www. resolves elsewhere). It publishes NO doctor directory, so no practitioner records. Department pages for Heart/Tooth/Urology/etc. are empty shells. robots.txt absent (404). No bed total published; capacity figures are per-unit and kept in extra. 'Chemotherapy' page text actually describes nursing wards (kept department name as published)."
+}

@@ -1,0 +1,14 @@
+{
+  "title": "MedLabs Laboratories — Jordan branches",
+  "publisher": "MedLabs Consultancy Group",
+  "urls": [
+    "https://www.medlabsgroup.com/jordan/"
+  ],
+  "retrieved_at": "2026-10-24T09:03:48Z",
+  "method": "scrape",
+  "license": "public-web (facts)",
+  "robots_respected": true,
+  "notes": "robots.txt allows all. Branches come from the site's own country->city->branch selector (admin-ajax actions my_action / my_posts_action / my_post_content_action, country term 28 = Jordan); one record per address block, so posts titled \"(3 Branches)\" yield 3 records sharing name_en. name_en is the branch title as published (e.g. \"3rd Circle\"); parent carries the chain. city is the site's city grouping. Coordinates only when the Google Maps link embeds them (short goo.gl links kept in extra.map_link). Opening hours are free text as published. Arabic pages are machine-translated client-side by TranslatePress, so no name_ar was taken. Includes the Referral Lab and Head Office entries. home_visit_service_chain: the site menu offers House Calls Services chain-wide; per-branch availability not stated.",
+  "source": "medlabs_branches",
+  "record_count": 63
+}

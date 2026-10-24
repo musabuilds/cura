@@ -1,0 +1,19 @@
+{
+  "title": "Jordan Medical Association physician fee schedules (2008 Gazette schedule, 2024 Gazette schedule)",
+  "publisher": "Jordan Medical Association (نقابة الأطباء الأردنيين), published in the Official Gazette",
+  "urls": [
+    "https://psut.edu.jo/uploads/2023/10/pricelist-2008.pdf",
+    "https://jornews.com/post/103393",
+    "https://www.almamlakatv.com/news/155180",
+    "https://www.almamlakatv.com/news/155201",
+    "https://www.almamlakatv.com/news/155079",
+    "https://www.alwakeelnews.com/Section_1/أخبار-محلية/تدخل-حيز-التنفيذ-اليوم-أبرز-بنود-لائحة-الأجور-الطبية-الجديدة_710196"
+  ],
+  "method": "pdf_extract",
+  "license": "public-web (facts)",
+  "robots_respected": true,
+  "notes": "Two schedules. (1) 2008 schedule, full Gazette supplement (120 pages) read visually from page images: general rules, consultation and supervision fees, the 28-item GP procedure table, and the radiology/CT/MRI/ultrasound/angiography tariffs. Specialty procedure chapters (internal medicine, surgery, etc.) are priced in POINTS (value 2.800-3.500 JD/point) and were NOT transcribed. (2) 2024 schedule: only the general-rules pages (Gazette 5398-5402) were read; procedure annex not reached. The 2024 schedule has no separate 'consultant' grade: it splits specialists into surgical vs non-surgical. STATUS IS CONTESTED: MoH cancelled the June-2024 version in July 2024 and reverted to 2008; JMA re-published in Oct 2024 and says it has applied since 2024-11-16; insurers apply their own percentage uplift on 2008. No 2025/2026 settlement found. Arabic item_ar for radiology items is null because the source table is English-only. Raw files: sources/raw/jma_fees/.",
+  "source": "jma_fees",
+  "retrieved_at": "2026-10-24T09:18:56Z",
+  "record_count": 165
+}

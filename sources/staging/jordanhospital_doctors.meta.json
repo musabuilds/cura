@@ -1,0 +1,18 @@
+{
+  "source": "jordanhospital_doctors",
+  "retrieved_at": "2026-10-24T09:00:59Z",
+  "robots_respected": true,
+  "record_count": 101,
+  "title": "Jordan Hospital — Doctors directory and hospital details",
+  "publisher": "Jordan Hospital",
+  "urls": [
+    "https://www.jordan-hospital.com/doctors.html",
+    "https://www.jordan-hospital.com/assets/js/doctors-data.js",
+    "https://www.jordan-hospital.com/contact.html",
+    "https://www.jordan-hospital.com/departments.html",
+    "https://www.jordan-hospital.com/index.html"
+  ],
+  "method": "scrape",
+  "license": "public-web (facts)",
+  "notes": "Doctors from window.JH_DOCTORS in assets/js/doctors-data.js (195 entries = AR+EN translations of the same doctor, merged via the translations map into 100 practitioners; 5 EN entries have no AR twin). English names/descriptors look machine-translated (e.g. \"Dr. Al-Zahlaf Symposium\", \"Bone and joint comfort\") - prefer name_ar. EN trid 2210 \"Dr. Anwar Ahmed Jarad\" is an empty duplicate of 2097. grade derived only when the descriptor text says Consultant/استشاري or Specialist/أخصائي. No schedules or fees published. robots.txt returns 404 (no restrictions); terms page has no scraping prohibition. Facility equipment from homepage copy (3T MRI, CT, cath unit); no bed count, no accreditation and no insurer names published on the current site."
+}

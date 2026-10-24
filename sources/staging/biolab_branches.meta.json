@@ -1,0 +1,14 @@
+{
+  "title": "Biolab — Branch locations",
+  "publisher": "Biolab (Jordan)",
+  "urls": [
+    "https://biolab.jo/BranchLocations"
+  ],
+  "retrieved_at": "2026-10-24T09:05:00Z",
+  "method": "scrape",
+  "license": "public-web (facts)",
+  "robots_respected": true,
+  "notes": "Read from the JSON the public branch-locations page loads (rendered in a browser; values copied verbatim into raw/biolab_branches). Biolab is the Al Borg group's Jordan business, so no separate Al-Borg Jordan list exists. ownership private = commercial lab group. Days whose open/close are null in the source, or where open == close (e.g. \"Th 08:00-08:00\"), are left out of opening_hours and listed in extra.days_without_hours; raw string kept. One branch (Bayader) has swapped coordinates - not used. Most branches list the central number +962 6 5907000. home_visit_service_chain: the site advertises a chain-wide House Call Service; per-branch availability is not stated. No test list per branch is published.",
+  "source": "biolab_branches",
+  "record_count": 28
+}

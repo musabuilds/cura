@@ -1,0 +1,21 @@
+{
+  "source": "pha_members",
+  "title": "Private Hospitals Association (Jordan) - member hospitals by region",
+  "publisher": "Private Hospitals Association, Jordan (phajordan.org)",
+  "urls": [
+    "https://phajordan.org/Amman",
+    "https://phajordan.org/Zarqa",
+    "https://phajordan.org/Irbid",
+    "https://phajordan.org/Madaba",
+    "https://phajordan.org/Karak",
+    "https://phajordan.org/Aqaba",
+    "https://phajordan.org/Mafraq",
+    "https://phajordan.org/Other-Members"
+  ],
+  "retrieved_at": "2026-10-24T09:22:12Z",
+  "method": "scrape",
+  "license": "public-web (facts)",
+  "robots_respected": true,
+  "record_count": 57,
+  "notes": "Member tables from the region pages (Amman, Zarqa, Irbid, Madaba, Karak, Aqaba, Mafraq); robots.txt allows these paths; 1 request/s. Columns: Arabic name, English name, Tel, Fax, Email, Website. Undated - the pages carry no last-updated date, and some entries are clearly old (Al Bayader and Al Razi Modern are listed although the MoH 2024 report marks both closed; Palestine Hospital listed separately from Al Bayader). \"governorate\" is the region page the hospital is listed under. Phones are the source digits prefixed with \"+\" (no reformatting); one fax (AlJazeera) has a digit missing in the source. 10 email addresses that are named individuals (e.g. firstname.lastname@...) were dropped as personal data; generic/departmental addresses kept. Some websites are malformed in the source (www.abdalihospitalcom, www.alharamain.hospital.com, www.ammnhospital.com) and Al Mowasat lists an MSF Paris address/site - kept verbatim, verify before use. Abdali and Istiklal rows share data quirks (Istiklal lists the Istishari email). Ownership not stated by the source (membership is open to private hospitals; KHCC, Maqased and Italian are non-profits) so it is left empty. Skipped \"Other Members\" page (not hospitals): Jordan hearingTec / الشركة الاردنية لتكنولوجيا السمع. The site claims 58 members; 57 hospital rows are published (Amman numbering repeats 40)."
+}

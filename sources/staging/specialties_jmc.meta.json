@@ -1,0 +1,18 @@
+{
+  "title": "Jordan Medical Council recognised specialties (الإختصاصات الطبية)",
+  "publisher": "Jordan Medical Council (المجلس الطبي الأردني)",
+  "urls": [
+    "https://jmc.gov.jo/medical-specialties",
+    "https://jmc.gov.jo/medical-specialties?page=1",
+    "https://jmc.gov.jo/medical-specialties?page=2",
+    "https://jmc.gov.jo/medical-specialties?page=3",
+    "https://jmc.gov.jo/medical-specialties?page=4"
+  ],
+  "method": "scrape",
+  "license": "public-web (facts)",
+  "robots_respected": true,
+  "notes": "All 55 entries on jmc.gov.jo/medical-specialties (3 listing pages) plus their detail pages (1 req/s; robots.txt allows these paths). Includes dental specialties (e.g. Orthodontics, Endodontics, Prosthodontics) mixed in with medical ones - the source does not label them. Extra records: 3 haematology/oncology tracks, 6 laboratory-medicine tracks and 4 community-medicine branches listed inside their pages. parent is filled ONLY where the page states an entry requirement of a JMC certificate in one specialty (e.g. Gastroenterology <- Internal Medicine) or for the in-page tracks; specialties with alternative entry paths (Cardiology, Neurology, Cardiac Surgery, adult ICU) have parent null and the raw requirement text in extra.requirements_ar. name_en is the JMC's own English (typos kept, e.g. 'Recanstractive', 'Veneriology'). Three entries have empty detail pages (الأشعة العلاجية, الأمراض الإنتانية, الأمراض الرئوية) and may duplicate Radiation oncology / Infectious Diseases / Pulmonary Diseases - kept, not merged. The JMC page lists Jordanian Board programmes; it is not stated to be the complete legal list of recognised specialties under the JMC law.",
+  "source": "specialties_jmc",
+  "retrieved_at": "2026-10-24T09:18:56Z",
+  "record_count": 68
+}

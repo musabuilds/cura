@@ -1,0 +1,21 @@
+{
+  "source": "istiklal_doctors",
+  "title": "Istiklal Hospital (Amman) — doctors by clinic + facility pages",
+  "publisher": "Istiklal Hospital",
+  "urls": [
+    "https://www.istiklalhospital.com/Departments-en",
+    "https://www.istiklalhospital.com/About-Istiklal-Hospital-",
+    "https://www.istiklalhospital.com/Contact-Us",
+    "https://www.istiklalhospital.com/Diagnostic-and-Treatment-Units",
+    "https://www.istiklalhospital.com/Radiology",
+    "https://www.istiklalhospital.com/Intensive-Care-Unit",
+    "https://www.istiklalhospital.com/Dialysis-Unit",
+    "https://www.istiklalhospital.com/Emergency-(ER)"
+  ],
+  "retrieved_at": "2026-10-24T12:20:00Z",
+  "method": "scrape",
+  "license": "public-web (facts)",
+  "robots_respected": true,
+  "record_count": 73,
+  "notes": "72 practitioners = union of doctors shown on all 25 clinic pages (/The-Doctors redirects to the clinic index); EN profile + AR profile (ar-article-<id>) fetched for each. No specialty field set: the site only gives a free-text position line (extra.position_en) and the clinic the doctor is listed under (extra.clinic_en/ar; AR clinic names matched by position in the parallel EN/AR 'select section' dropdowns). grade only where the position text says Consultant/Specialist. clinic_phones = hospital switchboard + the doctor's extension as printed. Accreditations page is logos only. No insurance list found on the site. robots.txt absent (404)."
+}

@@ -1,0 +1,14 @@
+{
+  "title": "Ministry of Health — Pharmacies directory (الصيدليات): 24-hour and 12-hour pharmacies",
+  "publisher": "Ministry of Health, Jordan",
+  "urls": [
+    "https://www.moh.gov.jo/AR/List/_%D8%A7%D9%84%D8%B5%D9%8A%D8%AF%D9%84%D9%8A%D8%A7%D8%AA"
+  ],
+  "retrieved_at": "2026-10-24T09:08:07Z",
+  "method": "scrape",
+  "license": "public-web (facts)",
+  "robots_respected": true,
+  "notes": "The MoH pharmacies list only covers extended-hours pharmacies, filterable as \"24 ساعة\" (149) or \"12 ساعة\" (379); 528 rows unfiltered. Name strings are as published and often embed a licence/branch number and area (e.g. \"بوابة الجيزة /8/الجيزة\"). is_24h/opening_hours \"24/7\" only for the 24-hour filter; 12-hour rows carry no explicit times. Phones are published without leading zero (e.g. 796766252) and are mostly mobiles - they are the contact numbers MoH publishes for the pharmacy. Overlaps heavily with moh_licensed_register (public pharmacies).",
+  "source": "moh_pharmacies_duty_list",
+  "record_count": 524
+}
