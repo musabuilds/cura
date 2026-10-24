@@ -1,0 +1,32 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    env:
+      PYTHONUTF8: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+      - run: uv sync --frozen --extra dev
+      - name: Lint
+        run: uv run ruff check src tests && uv run ruff format --check src tests
+      - name: Unit + API tests
+        run: uv run pytest
+      - name: Validate dataset
+        run: uv run cura validate
+      - name: Dataset is reproducible from staging
+        # Re-running the merge on the committed staging files must not change the committed dataset.
+        run: |
+          uv run cura merge > /dev/null
+          git diff --stat --exit-code -- data/facilities.jsonl data/practitioners.jsonl data/roles.jsonl

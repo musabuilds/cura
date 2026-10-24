@@ -1,0 +1,52 @@
+name: refresh
+
+# Scripted sources daily; the LLM agent weekly. Nothing is pushed to main directly:
+# every refresh opens a pull request that CI validates and a maintainer merges.
+on:
+  schedule:
+    - cron: "17 2 * * *"   # daily 02:17 UTC (05:17 Amman): scripted sources
+    - cron: "43 3 * * 5"   # Fridays 03:43 UTC: scripted sources + LLM agent
+  workflow_dispatch:
+    inputs:
+      agent:
+        description: "Run the LLM refresh agent too"
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    env:
+      PYTHONUTF8: "1"
+      CURA_LLM_BASE_URL: ${{ secrets.CURA_LLM_BASE_URL }}
+      CURA_LLM_MODEL: ${{ vars.CURA_LLM_MODEL || 'Qwen/Qwen2.5-7B-Instruct' }}
+      CURA_LLM_API_KEY: ${{ secrets.CURA_LLM_API_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+      - run: uv sync --frozen
+      - name: Scripted collectors
+        run: |
+          uv run cura collect osm
+          uv run cura collect wikidata
+      - name: LLM agent (Fridays, or on demand)
+        if: ${{ inputs.agent || github.event.schedule == '43 3 * * 5' }}
+        run: uv run cura agent run --limit 60
+      - name: Merge + validate
+        run: |
+          uv run cura merge
+          uv run cura validate
+      - uses: peter-evans/create-pull-request@v7
+        with:
+          branch: data/refresh
+          delete-branch: true
+          commit-message: "data: scheduled refresh"
+          title: "data: scheduled refresh"
+          body: |
+            Automated refresh (scripted sources; the LLM agent on Fridays or when dispatched).
+            Review `data/manifest.json` counts and the diff before merging. CI re-validates.
+          labels: data
