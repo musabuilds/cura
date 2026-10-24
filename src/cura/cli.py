@@ -1,0 +1,94 @@
+"""`cura` command line.
+
+cura collect osm            refresh a scripted source into sources/staging/
+cura merge                  staging → data/*.jsonl (+ data/manifest.json)
+cura validate               schema + integrity checks (CI gate)
+cura export                 dist/: JSON Schema, GeoJSON, CSV, SQLite
+cura api                    run the HTTP API
+cura db seed                load data/*.jsonl into the API database
+cura db export-changes      API edits → sources/staging/cura_api.jsonl (feeds the next merge)
+cura agent run              the LLM-assisted refresh agent (proposes, never writes canonical data)
+"""
+
+from __future__ import annotations
+
+import argparse
+import json
+import sys
+
+from cura.paths import DATA_DIR
+
+COLLECTORS = ("osm", "wikidata")
+
+
+def _print(obj: object) -> None:
+    print(json.dumps(obj, ensure_ascii=False, indent=2, default=str))
+
+
+def main(argv: list[str] | None = None) -> int:
+    parser = argparse.ArgumentParser(
+        prog="cura", description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
+    )
+    sub = parser.add_subparsers(dest="cmd", required=True)
+    p_collect = sub.add_parser("collect", help="run a scripted collector")
+    p_collect.add_argument("source", choices=COLLECTORS)
+    sub.add_parser("merge", help="build the canonical dataset from staging")
+    sub.add_parser("validate", help="validate the canonical dataset")
+    sub.add_parser("export", help="build release artefacts in dist/")
+    p_api = sub.add_parser("api", help="serve the API")
+    p_api.add_argument("--host", default="127.0.0.1")
+    p_api.add_argument("--port", type=int, default=8000)
+    p_api.add_argument("--reload", action="store_true")
+    p_db = sub.add_parser("db", help="API database tasks")
+    p_db.add_argument("task", choices=("init", "seed", "export-changes", "create-admin"))
+    p_db.add_argument("--email")
+    p_db.add_argument("--password")
+    p_agent = sub.add_parser("agent", help="LLM refresh agent")
+    p_agent.add_argument("task", choices=("run",))
+    p_agent.add_argument("--limit", type=int, default=25)
+    p_agent.add_argument("--dry-run", action="store_true")
+    args = parser.parse_args(argv)
+
+    if args.cmd == "collect":
+        module = __import__(f"cura.collectors.{args.source}", fromlist=["run"])
+        print(f"{args.source}: {module.run()} records")
+    elif args.cmd == "merge":
+        from cura.pipeline import merge, stats
+
+        report = merge.run()
+        (DATA_DIR / "manifest.json").write_text(
+            json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+        )
+        (DATA_DIR / "STATS.md").write_text(stats.markdown(report), encoding="utf-8")
+        _print({k: v for k, v in report.items() if k != "sources"})
+    elif args.cmd == "validate":
+        from cura.pipeline import validate
+
+        rep = validate.run()
+        for w in rep.warnings[:50]:
+            print("warning:", w)
+        for e in rep.errors[:200]:
+            print("ERROR:", e)
+        _print(rep.stats)
+        return 0 if rep.ok else 1
+    elif args.cmd == "export":
+        from cura.pipeline import export
+
+        _print(export.run())
+    elif args.cmd == "api":
+        import uvicorn
+
+        uvicorn.run("cura.api.main:app", host=args.host, port=args.port, reload=args.reload)
+    elif args.cmd == "db":
+        from cura.api import admin
+
+        _print(admin.run(args.task, email=args.email, password=args.password))
+    elif args.cmd == "agent":
+        from cura.agent import runner
+
+        _print(runner.run(limit=args.limit, dry_run=args.dry_run))
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())
