@@ -13,7 +13,7 @@ from fastapi import APIRouter, Depends, Query, Request, Response
 from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
-from cura.api import live, store
+from cura.api import contact, live, store, verification, writes
 from cura.api.db import FacilityRow, PractitionerRow, RoleRow, get_session
 from cura.api.deps import Principal, principal
 from cura.api.errors import Problem
@@ -135,6 +135,8 @@ def get_facility(
     doc = dict(row.doc)
     doc["live"] = live.facility_live(db, [doc], live.now())[facility_id]
     doc["open_now"] = _open_now(doc["live"])
+    doc["verification"] = verification.verifications(db, "facility", [facility_id])[facility_id]
+    doc["version"] = row.version
     if expand == "practitioners":
         doc["practitioners"] = _roster(db, facility_id, include_all=False)
     return _project(doc, fields)
@@ -175,7 +177,7 @@ def get_practitioner(
     practitioner_id: str,
     response: Response,
     fields: Fields = None,
-    _: Principal = Depends(principal),
+    p: Principal = Depends(principal),
     db: Session = Depends(get_session),
 ) -> dict:
     """The doctor, every place they work or worked (`active`, `period`) and their availability at each now."""
@@ -183,16 +185,44 @@ def get_practitioner(
     if row is None:
         raise Problem(404, "Practitioner not found", practitioner_id)
     _etag(response, row)
-    roles = [r for r in store.roles_for(db, practitioner_id=practitioner_id) if r.get("confirmation") != "declined"]
-    facilities = {d["id"]: d for d in store.docs(db, "facility", {r["facility_id"] for r in roles})}
-    states = live.role_availability(db, roles, live.now())
-    out = row.doc | {
-        "roles": [
-            r | {"facility": store.summary(facilities.get(r["facility_id"])), "availability": states[r["id"]]}
-            for r in roles
-        ]
-    }
+    out = practitioner_view(db, row, p)
+    if out.get("contact_visibility") == "owner":
+        # The owner's view carries private contact details: never cache it where others could read it.
+        response.headers["Cache-Control"] = "private, no-store"
+        response.headers["Vary"] = "Authorization"
     return _project(out, fields)
+
+
+def practitioner_view(db: Session, row, p: Principal | None) -> dict:
+    """The doctor, every place they work or worked, availability at each now, and the summary fields
+    apps draw. `contact` is the public part, except for the profile's owner, who sees everything."""
+    roles = [
+        (r.doc, r.version)
+        for r in db.scalars(select(RoleRow).where(RoleRow.practitioner_id == row.id).order_by(RoleRow.id))
+        if r.doc.get("confirmation") != "declined"
+    ]
+    docs = [d for d, _ in roles]
+    facilities = {
+        s["id"]: s
+        for s in verification.facility_summaries(db, store.docs(db, "facility", {d["facility_id"] for d in docs}))
+    }
+    states = live.role_availability(db, docs, live.now())
+    summary = verification.practitioner_summary(db, row.doc)
+    out = row.doc | {
+        "specialty_label": summary["specialty_label"],
+        "facilities_count": summary["facilities_count"],
+        "verification": summary["verification"],
+        "version": row.version,
+        "contact_visibility": "public",
+        "roles": [
+            d | {"facility": facilities.get(d["facility_id"]), "availability": states[d["id"]], "version": v}
+            for d, v in roles
+        ],
+    }
+    if p is not None and p.user is not None and (p.is_moderator or writes.owns(db, p, "practitioner", row.doc)):
+        out["contact"] = contact.private_contact(db, row.id) or {"phones": [], "public_email": False}
+        out["contact_visibility"] = "owner"
+    return out
 
 
 @router.get("/roles/{role_id}", tags=["registry"])

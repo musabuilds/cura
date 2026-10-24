@@ -44,6 +44,27 @@ def owns(db: Session, p: Principal, kind: str, doc: dict) -> bool:
     return doc["id"] in owned[kind]
 
 
+def unverified_owner(db: Session, p: Principal, kind: str, rid: str) -> bool:
+    """The caller owns the record only through having created it (`created`, nothing proven yet).
+
+    Such an owner manages their own record, but cannot put their side of a role on someone else's
+    public roster on their own say-so: the other side, or a verification, has to come first."""
+    if p.is_moderator or p.user is None:
+        return False
+    levels = {
+        c.level or ("unverified" if c.method == "created" else "reviewed")
+        for c in db.scalars(
+            select(Claim).where(
+                Claim.user_id == p.user.id,
+                Claim.subject_type == kind,
+                Claim.subject_id == rid,
+                Claim.status == "approved",
+            )
+        )
+    }
+    return bool(levels) and levels <= {"unverified"}
+
+
 def has_owner(db: Session, kind: str, rid: str) -> bool:
     return (
         db.scalar(

@@ -105,7 +105,7 @@ def test_stranger_edit_becomes_proposal_and_moderator_applies_it(client):
     r = client.patch(
         "/v1/facilities/JO-AM-HSP-00001", json={"patch": {"beds": 120}, "reason": "hospital website"}, headers=user
     )
-    assert r.status_code == 202 and r.json()["status"] == "pending"
+    assert r.status_code == 202 and r.json()["status"] == "proposed" and r.json()["proposal_id"]
     assert client.get("/v1/facilities/JO-AM-HSP-00001").json()["beds"] is None
     mod = moderator(client)
     queue = client.get("/v1/proposals", headers=mod).json()["data"]
@@ -139,7 +139,7 @@ def test_verified_doctor_edits_own_schedule_directly(client):
         },
         headers=doc_user,
     )
-    assert claim.status_code == 202
+    assert claim.status_code == 201 and claim.json()["status"] == "pending"
     # Before approval: still only a proposal.
     r = client.patch(
         "/v1/roles/JO-ROL-0000001",

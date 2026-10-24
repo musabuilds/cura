@@ -11,6 +11,7 @@ Nothing here decides. It returns ranked candidates with reasons; a person picks,
 from __future__ import annotations
 
 import math
+import re
 
 from rapidfuzz import fuzz
 from sqlalchemy import and_, or_, select
@@ -117,6 +118,24 @@ def facility_matches(db: Session, record: dict, *, exclude_id: str | None = None
     return out[:limit]
 
 
+_PARTICLES = {"al", "el", "al-", "bin", "ibn", "abu"}
+
+
+def _skeleton(key: str) -> tuple[str, ...] | None:
+    """Latin transliterations of one Arabic name differ in their vowels (Musab, Mosab, Mus'ab; Jabiri, Jabri)
+    and in the article (Al-Jabiri, Jabiri). Their consonant skeletons agree: msb jbr."""
+    tokens = [t for t in key.split() if t not in _PARTICLES]
+    if len(tokens) < 2 or not all(t.isascii() and t.isalpha() for t in tokens):
+        return None
+    out = []
+    for t in tokens:
+        t = re.sub(r"(.)\1+", r"\1", re.sub(r"[aeiouyw']", "", t))
+        if len(t) < 2:
+            return None
+        out.append(t)
+    return tuple(out)
+
+
 def _person_similarity(a: str, b: str) -> float:
     """Name chains: "Rami Haddad" is "Rami Khalil Haddad" with the father's name dropped, as sources do.
     Same given and family name with one chain inside the other scores as a near match."""
@@ -125,6 +144,9 @@ def _person_similarity(a: str, b: str) -> float:
     short, long_ = (ta, tb) if len(ta) <= len(tb) else (tb, ta)
     if len(short) >= 2 and short[0] == long_[0] and short[-1] == long_[-1] and set(short) <= set(long_):
         sim = max(sim, 95 - 3 * (len(long_) - len(short)))
+    sa, sb = _skeleton(a), _skeleton(b)
+    if sa and sa == sb:
+        sim = max(sim, 90)
     return sim
 
 
@@ -152,6 +174,22 @@ def practitioner_matches(
         .where(or_(*[PractitionerRow.search.like(f"% {t} %") for t in tokens]), PractitionerRow.status != "merged")
         .limit(3000)
     ).all()
+    # Latin spellings of one Arabic name share their opening letters far more often than their vowels
+    # (Jabiri / Jabri, Haddad / Hadad): a second, prefix-widened pass, scored by the same rules (skeletons).
+    prefixes = {t[:3] for t in tokens if t.isascii() and t.isalpha() and len(t) >= 4 and t not in _PARTICLES}
+    if prefixes:
+        have = {r.id for r in rows}
+        rows += [
+            r
+            for r in db.scalars(
+                select(PractitionerRow)
+                .where(
+                    or_(*[PractitionerRow.search.like(f"% {p}%") for p in prefixes]), PractitionerRow.status != "merged"
+                )
+                .limit(2000)
+            )
+            if r.id not in have
+        ]
     workplaces: dict[str, set[str]] = {}
     if facility_id and rows:
         for pid, fid in db.execute(

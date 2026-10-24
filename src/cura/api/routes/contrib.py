@@ -12,7 +12,7 @@ from pydantic import BaseModel, Field
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from cura.api import matching, policy, ratings, store, writes
+from cura.api import contact, guard, matching, policy, ratings, store, writes
 from cura.api.db import Change, Claim, Review, ReviewReport, RoleRow, get_session, utcnow
 from cura.api.deps import Principal, owned_subjects, require_moderator, require_user
 from cura.api.errors import Problem
@@ -41,12 +41,6 @@ class CreateIn(BaseModel):
         description="Facilities and practitioners are checked for duplicates first. If the 409 lists none of "
         "yours, resend with true: it then goes to a moderator with the candidates attached.",
     )
-
-
-class ClaimIn(BaseModel):
-    subject_type: Literal["practitioner", "facility"]
-    subject_id: str
-    evidence: dict[str, Any] = Field(description="e.g. {license_number, work_email, document_url, note}")
 
 
 class ReviewIn(BaseModel):
@@ -94,6 +88,13 @@ def edit(
     if row.doc.get("status") == "merged":
         raise Problem(409, f"{kind} was merged", f"Edit {row.doc.get('replaced_by')} instead.")
     owns = writes.owns(db, p, kind, row.doc)
+    patch = dict(body.patch)
+    if kind == "practitioner" and "contact" in patch:
+        # Private numbers never reach the Change log or the record: store them aside, keep the public part.
+        if not (owns or p.is_moderator):
+            raise Problem(403, "Not your profile", "Only the doctor can change their contact details.")
+        patch["contact"] = contact.apply(db, rid, patch["contact"], p.user.id)
+    body = body.model_copy(update={"patch": patch})
     decision = policy.decide(kind, body.patch, is_moderator=p.is_moderator, owns=owns)
     if decision == "propose" and "proposals:write" not in p.scopes:
         raise Problem(403, "Insufficient scope", "Proposing a change needs the proposals:write scope.")
@@ -117,7 +118,12 @@ def edit(
         return {"status": "applied", "change_id": change.id, "version": row.version, "record": doc}
     db.commit()
     response.status_code = 202
-    return {"status": "pending", "change_id": change.id, "detail": "Queued for moderator review."}
+    return {
+        "status": "proposed",
+        "proposal_id": change.id,
+        "change_id": change.id,
+        "detail": "Queued for moderator review.",
+    }
 
 
 @collection_router.post("/{collection}", status_code=202, tags=["contribute"])
@@ -204,9 +210,15 @@ def role_confirmation(db: Session, p: Principal, rec: dict, *, owns_p: bool, own
     """Who still has to agree. A side with no verified owner cannot object, so it does not hold the role."""
     if p.is_moderator or (owns_p and owns_f):
         return "confirmed"
-    if owns_p and writes.has_owner(db, "facility", rec["facility_id"]):
+    if owns_p and (
+        writes.has_owner(db, "facility", rec["facility_id"])
+        or writes.unverified_owner(db, p, "practitioner", rec["practitioner_id"])
+    ):
         return "pending_facility"
-    if owns_f and writes.has_owner(db, "practitioner", rec["practitioner_id"]):
+    if owns_f and (
+        writes.has_owner(db, "practitioner", rec["practitioner_id"])
+        or writes.unverified_owner(db, p, "facility", rec["facility_id"])
+    ):
         return "pending_practitioner"
     return "confirmed"
 
@@ -273,30 +285,7 @@ def reject(
 
 
 # --- claims ----------------------------------------------------------------------------------------
-
-
-@router.post("/claims", status_code=202, tags=["claims"])
-def create_claim(
-    body: ClaimIn, p: Principal = Depends(require_user("practitioner:manage")), db: Session = Depends(get_session)
-) -> dict:
-    """Ask to manage a doctor profile (yours) or a facility (you administer it). A moderator checks the
-    evidence — e.g. Jordan Medical Association membership / MoH licence number, or a work email on the
-    facility's domain — before granting edit rights."""
-    if store.get(db, body.subject_type, body.subject_id) is None:
-        raise Problem(404, f"{body.subject_type} not found", body.subject_id)
-    if not body.evidence:
-        raise Problem(422, "Evidence required", "Provide e.g. license_number, work_email or document_url.")
-    dup = db.scalar(
-        select(Claim).where(
-            Claim.user_id == p.user.id, Claim.subject_id == body.subject_id, Claim.status.in_(["pending", "approved"])
-        )
-    )
-    if dup:
-        raise Problem(409, "Claim already exists", f"Claim {dup.id} is {dup.status}.")
-    claim = Claim(user_id=p.user.id, subject_type=body.subject_type, subject_id=body.subject_id, evidence=body.evidence)
-    db.add(claim)
-    db.commit()
-    return {"id": claim.id, "status": claim.status}
+# POST /v1/claims lives in routes/onboarding.py (phone match, evidence, disputes).
 
 
 @router.get("/claims", tags=["claims"])
@@ -319,6 +308,7 @@ def list_claims(
                 "evidence": c.evidence if p.is_moderator or c.user_id == p.user.id else None,
                 "status": c.status,
                 "method": c.method,
+                "level": c.level,
                 "note": c.note,
                 "created_at": c.created_at,
             }
@@ -340,9 +330,31 @@ def decide_claim(
         raise Problem(404, "No pending claim with that id")
     claim.status = "approved" if decision == "approve" else "rejected"
     claim.reviewed_by, claim.reviewed_at, claim.note = p.user.id, utcnow(), body.note
+    if claim.status == "approved":
+        claim.level, claim.verified_at = "reviewed", utcnow()
+        # The moderator's decision is the ownership: a won dispute takes the record from its previous owner,
+        # and a reviewed claim replaces the claimant's own `created` claim.
+        others = select(Claim).where(
+            Claim.subject_type == claim.subject_type,
+            Claim.subject_id == claim.subject_id,
+            Claim.status == "approved",
+            Claim.id != claim.id,
+        )
+        for other in db.scalars(others):
+            if other.user_id == claim.user_id or claim.method == "dispute":
+                other.status, other.note = "superseded", f"superseded by claim {claim.id}"
     if claim.status == "approved" and claim.subject_type == "practitioner":
         row = store.get(db, "practitioner", claim.subject_id)
         store.put(db, "practitioner", row.doc | {"license_verified": True, "updated_at": writes.now_iso()})
+    guard.audit(
+        db,
+        f"claim.{claim.status}",
+        actor_id=p.user.id,
+        subject_type=claim.subject_type,
+        subject_id=claim.subject_id,
+        method=claim.method,
+        claimant=claim.user_id,
+    )
     db.commit()
     return {"id": claim.id, "status": claim.status}
 

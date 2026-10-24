@@ -165,7 +165,7 @@ def add_to_roster(
         if existing.doc.get("active") is not False and existing.doc.get("confirmation") != "declined":
             raise Problem(409, "Already on the roster", existing.id, existing_id=existing.id)
         patch = body.role | {"active": True, "period": {"start": date.today().isoformat(), "end": None}}
-        system = {"confirmation": _confirmation(db, p, pid)}
+        system = {"confirmation": _confirmation(db, p, pid, facility_id)}
         writes.check_update("role", existing.doc, patch | system)
         change = writes.record_change(
             db, p, "role", existing.id, "update", patch | system, base_version=existing.version
@@ -177,18 +177,23 @@ def add_to_roster(
         record.setdefault("period", {"start": date.today().isoformat()})
         writes.check_create("role", record)
         change = writes.record_change(db, p, "role", None, "create", record)
-        role = writes.apply_create(db, "role", record, change.id, system={"confirmation": _confirmation(db, p, pid)})
+        role = writes.apply_create(
+            db, "role", record, change.id, system={"confirmation": _confirmation(db, p, pid, facility_id)}
+        )
         change.subject_id = role["id"]
     writes.mark_applied(change)
     db.commit()
     return {"status": "applied", "practitioner_created": created, "role": role}
 
 
-def _confirmation(db: Session, p: Principal, practitioner_id: str) -> str:
-    """A doctor with their own verified account agrees before a facility lists them."""
+def _confirmation(db: Session, p: Principal, practitioner_id: str, facility_id: str) -> str:
+    """A doctor with their own verified account agrees before a facility lists them. A facility that has
+    not proven itself yet (created by its owner, unverified) cannot list anyone on its own say-so."""
     if p.is_moderator or practitioner_id in owned_subjects(db, p.user)["practitioner"]:
         return "confirmed"
-    return "pending_practitioner" if writes.has_owner(db, "practitioner", practitioner_id) else "confirmed"
+    if writes.has_owner(db, "practitioner", practitioner_id) or writes.unverified_owner(db, p, "facility", facility_id):
+        return "pending_practitioner"
+    return "confirmed"
 
 
 # --- invitations ---------------------------------------------------------------------------------
@@ -230,6 +235,13 @@ def invite(
     """Invite a doctor on this facility's roster to own their Cura profile. The `token` is shown once:
     deliver the `url` to the doctor (email, SMS, WhatsApp). Accepting it needs a Cura account."""
     _facility_admin(db, p, facility_id)
+    if writes.unverified_owner(db, p, "facility", facility_id):
+        raise Problem(
+            403,
+            "Verify the facility first",
+            "An invitation hands over a doctor's profile; prove you run "
+            "this facility (POST /v1/facilities/{id}/claims) before sending one.",
+        )
     role = db.scalar(
         select(RoleRow).where(RoleRow.practitioner_id == body.practitioner_id, RoleRow.facility_id == facility_id)
     )
