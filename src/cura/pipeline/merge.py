@@ -24,7 +24,7 @@ from rapidfuzz import fuzz
 from cura import geo, model
 from cura import normalize as nz
 from cura import reference as ref
-from cura.paths import DATA_DIR, STAGING_DIR
+from cura.paths import CURATION_DIR, DATA_DIR, STAGING_DIR
 
 TYPE_SEGMENT = {row["code"]: row["id_segment"] for row in ref.read_csv("facility_types.csv")}
 
@@ -126,6 +126,29 @@ def load_staging() -> tuple[dict[str, list[dict]], dict[str, dict]]:
                 if rec.get("kind") and isinstance(rec.get("data"), dict):
                     by_kind[rec["kind"]].append(rec)
     return by_kind, metas
+
+
+def load_merge_decisions() -> dict[str, dict[str, str]]:
+    """Moderator merges from the API (`sources/curation/merges.jsonl`), as {kind: {from: into}}.
+
+    Chains are followed (A→B, B→C gives A→C) so a record merged twice lands on the survivor.
+    """
+    out: dict[str, dict[str, str]] = {"facility": {}, "practitioner": {}}
+    path = CURATION_DIR / "merges.jsonl"
+    if path.exists():
+        with path.open(encoding="utf-8") as fh:
+            for line in fh:
+                if line.strip():
+                    d = json.loads(line)
+                    out[d["kind"]][d["from"]] = d["into"]
+    for redirect in out.values():
+        for src in list(redirect):
+            seen, dst = {src}, redirect[src]
+            while dst in redirect and dst not in seen:
+                seen.add(dst)
+                dst = redirect[dst]
+            redirect[src] = dst
+    return out
 
 
 def load_canonical(name: str) -> list[dict]:
@@ -236,7 +259,7 @@ def facility_candidate(rec: dict, metas: dict[str, dict]) -> Candidate | None:
     )
 
 
-def _name_sim(a: Candidate, b: Candidate) -> float:
+def name_similarity(a: Candidate, b: Candidate) -> float:
     best = 0.0
     for ka in a.keys:
         for kb in b.keys:
@@ -256,12 +279,12 @@ def _compatible(a: str, b: str) -> bool:
     return a == b or frozenset({a, b}) in COMPATIBLE
 
 
-def _is_match(a: Candidate, b: Candidate) -> bool:
+def is_match(a: Candidate, b: Candidate) -> bool:
     if not _compatible(a.type, b.type):
         return False
     if a.source == b.source and a.source != "osm":
         return False  # a single non-OSM source lists each place once; same-name rows are branches
-    sim = _name_sim(a, b)
+    sim = name_similarity(a, b)
     if a.lat is not None and b.lat is not None and not (a.shared_point or b.shared_point):
         dist = geo.haversine_m(a.lat, a.lon, b.lat, b.lon)
         limit = 1200 if a.type == "hospital" else 250
@@ -327,7 +350,7 @@ def cluster(cands: list[Candidate], crosswalk: dict[tuple[str, str], str]) -> li
                 if (i, j) in compared:
                     continue
                 compared.add((i, j))
-                if _is_match(cands[i], cands[j]):
+                if is_match(cands[i], cands[j]):
                     dsu.union(i, j)
     groups: dict[int, list[int]] = defaultdict(list)
     for i in range(len(cands)):
@@ -591,6 +614,8 @@ def merge_facilities(
         for s in r.get("sources", []):
             if s.get("ref"):
                 crosswalk.setdefault((s["source"], s["ref"]), r["id"])
+    redirect = load_merge_decisions()["facility"]
+    crosswalk = {k: redirect.get(v, v) for k, v in crosswalk.items()}
     cands = [c for rec in staged if (c := facility_candidate(rec, metas))]
     points = Counter((c.source, round(c.lat, 4), round(c.lon, 4)) for c in cands if c.lat is not None)
     for c in cands:
@@ -625,6 +650,9 @@ def merge_facilities(
         out[fid] = fuse_facility(members, fid, previous.get(fid), now)
         for c in members:
             ident_to_id[c.ident] = fid
+    for src, dst in redirect.items():
+        if src in previous:
+            out[src] = previous[src] | {"status": "merged", "replaced_by": dst}
     # Records no source mentions any more are kept, not deleted: absence of evidence is not closure.
     for pid, prev in previous.items():
         out.setdefault(pid, prev)
@@ -735,13 +763,16 @@ def merge_practitioners(
     now: datetime,
 ) -> tuple[list[dict], list[dict]]:
     resolver = FacilityResolver(facilities)
+    decisions = load_merge_decisions()
+    redirect_p, redirect_f = decisions["practitioner"], decisions["facility"]
     prev_p = {r["id"]: r for r in load_canonical("practitioners")}
-    prev_roles = {(r["practitioner_id"], r["facility_id"]): r for r in load_canonical("roles")}
+    prev_roles, superseded = _rekey_roles(load_canonical("roles"), redirect_p, redirect_f)
     crosswalk = {(k, v): r["id"] for r in prev_p.values() for k, v in r.get("identifiers", {}).items()}
     for rec in staged:
         if rec["source"] == "cura_api" and re.match(model.PRACTITIONER_ID_PATTERN, str(rec.get("source_ref", ""))):
             crosswalk[("cura_api", rec["source_ref"])] = rec["source_ref"]
-    facility_ids = {f["id"] for f in facilities}
+    crosswalk = {k: redirect_p.get(v, v) for k, v in crosswalk.items()}
+    facility_ids = {f["id"] for f in facilities if f.get("status") != "merged"}
 
     rows = []
     for rec in staged:
@@ -759,8 +790,8 @@ def merge_practitioners(
         fid = None
         if derived:
             fid = ident_to_id.get((rec["source"], derived["source_ref"]))
-        if d.get("facility_id") in facility_ids:
-            fid = d["facility_id"]
+        if redirect_f.get(d.get("facility_id"), d.get("facility_id")) in facility_ids:
+            fid = redirect_f.get(d["facility_id"], d["facility_id"])
         fid = fid or resolver.resolve(d.get("facility_name"), d.get("facility_website"))
         ident = (rec["source"], str(rec.get("source_ref") or _h(en or ar, d.get("facility_name"), d.get("specialty"))))
         rows.append(
@@ -921,6 +952,7 @@ def merge_practitioners(
                 role["consultation_fee"] = role["consultation_fee"] or (
                     fee if isinstance(fee, dict) and "amount" in fee else None
                 )
+                role.update(_role_lifecycle(d))
                 continue
             prev_role = prev_roles.get(key, {})
             hours = nz.parse_opening_hours(schedule) if schedule else {}
@@ -944,7 +976,10 @@ def merge_practitioners(
                 "profile_url": d.get("profile_url"),
                 "sources": [{"source": m["rec"]["source"], "url": d.get("profile_url")}],
                 "updated_at": now,
-            }
+            } | _role_lifecycle(d)
+    for src, dst in redirect_p.items():
+        if src in prev_p:
+            practitioners[src] = prev_p[src] | {"status": "merged", "replaced_by": dst}
     for pid, prev in prev_p.items():
         practitioners.setdefault(pid, prev)
     role_list = []
@@ -956,7 +991,39 @@ def merge_practitioners(
         role_list.append(_stable(prev_role, model.Role.model_validate(role).model_dump(mode="json")))
     known = {(r["practitioner_id"], r["facility_id"]) for r in role_list}
     role_list += [r for k, r in prev_roles.items() if k not in known and k[0] in practitioners]
+    role_list += superseded  # roles a merge made redundant: ended, never dropped
     return list(practitioners.values()), role_list
+
+
+def _role_lifecycle(data: dict) -> dict:
+    """Role state set through the API (doctor left, awaiting confirmation) travels in cura_api records."""
+    keys = {"role_active": "active", "role_period": "period", "role_confirmation": "confirmation"}
+    return {field: data[key] for key, field in keys.items() if key in data}
+
+
+def _rekey_roles(
+    roles: list[dict], redirect_p: dict[str, str], redirect_f: dict[str, str]
+) -> tuple[dict[tuple[str, str], dict], list[dict]]:
+    """Point previous roles at merge survivors. A role both records had keeps the survivor's; the
+    duplicate is returned ended, so it stays in the dataset."""
+    out: dict[tuple[str, str], dict] = {}
+    moved = []
+    for r in roles:
+        key = (
+            redirect_p.get(r["practitioner_id"], r["practitioner_id"]),
+            redirect_f.get(r["facility_id"], r["facility_id"]),
+        )
+        if key == (r["practitioner_id"], r["facility_id"]):
+            out[key] = r
+        else:
+            moved.append((key, r))
+    superseded = []
+    for key, r in moved:
+        if key in out:
+            superseded.append(r | {"active": False})  # stays on the tombstone, as the API merge leaves it
+        else:
+            out[key] = r | {"practitioner_id": key[0], "facility_id": key[1]}
+    return out, superseded
 
 
 # --- reference kinds ---------------------------------------------------------------------------

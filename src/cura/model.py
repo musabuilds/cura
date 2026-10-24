@@ -71,6 +71,15 @@ class Grade(StrEnum):
     unknown = "unknown"
 
 
+class Confirmation(StrEnum):
+    """Whether both sides agree that a practitioner works at a facility."""
+
+    confirmed = "confirmed"
+    pending_facility = "pending_facility"  # the doctor added this workplace; its verified admin has not confirmed
+    pending_practitioner = "pending_practitioner"  # the facility added a claimed doctor who has not confirmed
+    declined = "declined"
+
+
 class LocationPrecision(StrEnum):
     exact = "exact"  # surveyed point / building (OSM, the facility itself)
     approximate = "approximate"  # neighbourhood-level or user-reported
@@ -125,6 +134,11 @@ class Hours(Strict):
     always_open: bool | None = None
     text: str | None = None  # as published when it could not be parsed
     observes_public_holidays: bool | None = None
+
+
+class Period(Strict):
+    start: date | None = None
+    end: date | None = None  # the last day; a role that ended is kept, never deleted
 
 
 class BusyLevel(Strict):
@@ -240,12 +254,18 @@ class Practitioner(Strict):
 
 
 class Role(Strict):
-    """A practitioner working at a facility — one per (practitioner, facility) pair."""
+    """A practitioner working at a facility — one per (practitioner, facility) pair.
+
+    A doctor leaving a facility ends the role (`active: false`, `period.end`); the record stays so the
+    history of who worked where, and when, survives.
+    """
 
     id: Annotated[str, Field(pattern=ROLE_ID_PATTERN)]
     practitioner_id: Annotated[str, Field(pattern=PRACTITIONER_ID_PATTERN)]
     facility_id: Annotated[str, Field(pattern=ID_PATTERN)]
     active: bool | None = True
+    period: Period | None = None
+    confirmation: Confirmation = Confirmation.confirmed
     specialty: str | None = None
     hours: Hours = Hours()
     consultation_fee: Money | None = None

@@ -1,5 +1,16 @@
 {
   "$defs": {
+    "Confirmation": {
+      "description": "Whether both sides agree that a practitioner works at a facility.",
+      "enum": [
+        "confirmed",
+        "pending_facility",
+        "pending_practitioner",
+        "declined"
+      ],
+      "title": "Confirmation",
+      "type": "string"
+    },
     "Hours": {
       "additionalProperties": false,
       "properties": {
@@ -129,6 +140,39 @@
       "title": "Money",
       "type": "object"
     },
+    "Period": {
+      "additionalProperties": false,
+      "properties": {
+        "start": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Start"
+        },
+        "end": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "End"
+        }
+      },
+      "title": "Period",
+      "type": "object"
+    },
     "SourceRef": {
       "additionalProperties": false,
       "properties": {
@@ -209,7 +253,7 @@
     }
   },
   "additionalProperties": false,
-  "description": "A practitioner working at a facility — one per (practitioner, facility) pair.",
+  "description": "A practitioner working at a facility — one per (practitioner, facility) pair.\n\nA doctor leaving a facility ends the role (`active: false`, `period.end`); the record stays so the\nhistory of who worked where, and when, survives.",
   "properties": {
     "id": {
       "pattern": "^JO-ROL-\\d{7}$",
@@ -237,6 +281,21 @@
       ],
       "default": true,
       "title": "Active"
+    },
+    "period": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Period"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "confirmation": {
+      "$ref": "#/$defs/Confirmation",
+      "default": "confirmed"
     },
     "specialty": {
       "anyOf": [

@@ -12,6 +12,7 @@ REFERENCE_DIR = DATA_DIR / "reference"
 GEO_DIR = REFERENCE_DIR / "geo"
 SOURCES_DIR = ROOT / "sources"
 STAGING_DIR = SOURCES_DIR / "staging"
+CURATION_DIR = SOURCES_DIR / "curation"  # human decisions the pipeline must honour (merges)
 RAW_DIR = SOURCES_DIR / "raw"
 DIST_DIR = ROOT / "dist"
 SCHEMA_DIR = ROOT / "schema"
