@@ -1,0 +1,34 @@
+date,name_en,name_ar,kind,observed_by,lunar,source
+2026-01-01,New Year,رأس السنة الميلادية,public,government,false,holidays_jo
+2026-03-20,Eid Al- Fiter,عيد الفطر السعيد,religious_islamic,government,true,holidays_jo
+2026-03-21,Eid Al- Fiter,عيد الفطر السعيد,religious_islamic,government,true,holidays_jo
+2026-03-22,Eid Al- Fiter,عيد الفطر السعيد,religious_islamic,government,true,holidays_jo
+2026-03-23,Eid Al- Fiter,عيد الفطر السعيد,religious_islamic,government,true,holidays_jo
+2026-04-05,Palm Sunday (Christian employees),أحد الشعانين,religious_christian,government,false,holidays_jo
+2026-04-12,Easter Sunday (Christian employees),عيد الفصح,religious_christian,government,false,holidays_jo
+2026-04-13,Easter Monday (Christian employees),عيد الفصح,religious_christian,government,false,holidays_jo
+2026-04-30,Labor Day,عيد العمال,public,government,false,holidays_jo
+2026-05-25,Jordan Independence Day,عيد استقلال المملكة الأردنية الهاشمية,public,government,false,holidays_jo
+2026-05-26,Eid Al-Adha,عيد الاضحى المبارك,religious_islamic,government,true,holidays_jo
+2026-05-27,Eid Al-Adha,عيد الاضحى المبارك,religious_islamic,government,true,holidays_jo
+2026-05-28,Eid Al-Adha,عيد الاضحى المبارك,religious_islamic,government,true,holidays_jo
+2026-05-29,Eid Al-Adha,عيد الاضحى المبارك,religious_islamic,government,true,holidays_jo
+2026-05-30,Eid Al-Adha,عيد الاضحى المبارك,religious_islamic,government,true,holidays_jo
+2026-06-16,Islamic New Year,رأس السنة الهجرية,religious_islamic,government,true,holidays_jo
+2026-08-25,Anniversary of Prophet Mohammad's Birth,ذكرى المولد النبوي الشريف,religious_islamic,government,true,holidays_jo
+2026-12-25,Christmas,عيد الميلاد المجيد,religious_christian,government,false,holidays_jo
+2027-01-01,New Year,رأس السنة الميلادية,public,government,false,holidays_jo
+2027-03-09,Eid al-Fitr,عيد الفطر,religious_islamic,government,true,holidays_jo
+2027-03-10,Eid al-Fitr,عيد الفطر,religious_islamic,government,true,holidays_jo
+2027-03-11,Eid al-Fitr,عيد الفطر,religious_islamic,government,true,holidays_jo
+2027-03-12,Eid al-Fitr,عيد الفطر,religious_islamic,government,true,holidays_jo
+2027-05-01,Labour Day,عيد العمال,public,government,false,holidays_jo
+2027-05-15,Eid al-Adha (Day of Arafah),عيد الأضحى (يوم عرفة),religious_islamic,government,true,holidays_jo
+2027-05-16,Eid al-Adha,عيد الأضحى,religious_islamic,government,true,holidays_jo
+2027-05-17,Eid al-Adha,عيد الأضحى,religious_islamic,government,true,holidays_jo
+2027-05-18,Eid al-Adha,عيد الأضحى,religious_islamic,government,true,holidays_jo
+2027-05-19,Eid al-Adha,عيد الأضحى,religious_islamic,government,true,holidays_jo
+2027-05-25,Independence Day,عيد الاستقلال,public,government,false,holidays_jo
+2027-06-06,Islamic New Year,رأس السنة الهجرية,religious_islamic,government,true,holidays_jo
+2027-08-14,Prophet's Birthday (Mawlid),المولد النبوي الشريف,religious_islamic,government,true,holidays_jo
+2027-12-25,Christmas,عيد الميلاد المجيد,religious_christian,government,false,holidays_jo

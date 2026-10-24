@@ -1,0 +1,340 @@
+{
+  "$defs": {
+    "Hours": {
+      "additionalProperties": false,
+      "properties": {
+        "opening_hours": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Opening Hours"
+        },
+        "weekly": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/TimeRange"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Weekly"
+        },
+        "always_open": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Always Open"
+        },
+        "text": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Text"
+        },
+        "observes_public_holidays": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Observes Public Holidays"
+        }
+      },
+      "title": "Hours",
+      "type": "object"
+    },
+    "InsuranceLink": {
+      "additionalProperties": false,
+      "properties": {
+        "insurer": {
+          "title": "Insurer",
+          "type": "string"
+        },
+        "network": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Network"
+        },
+        "source": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source"
+        }
+      },
+      "required": [
+        "insurer"
+      ],
+      "title": "InsuranceLink",
+      "type": "object"
+    },
+    "Money": {
+      "additionalProperties": false,
+      "properties": {
+        "amount": {
+          "minimum": 0,
+          "title": "Amount",
+          "type": "number"
+        },
+        "currency": {
+          "default": "JOD",
+          "pattern": "^[A-Z]{3}$",
+          "title": "Currency",
+          "type": "string"
+        }
+      },
+      "required": [
+        "amount"
+      ],
+      "title": "Money",
+      "type": "object"
+    },
+    "SourceRef": {
+      "additionalProperties": false,
+      "properties": {
+        "source": {
+          "title": "Source",
+          "type": "string"
+        },
+        "ref": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Ref"
+        },
+        "url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Url"
+        },
+        "retrieved_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Retrieved At"
+        }
+      },
+      "required": [
+        "source"
+      ],
+      "title": "SourceRef",
+      "type": "object"
+    },
+    "TimeRange": {
+      "additionalProperties": false,
+      "properties": {
+        "day": {
+          "pattern": "^(mo|tu|we|th|fr|sa|su)$",
+          "title": "Day",
+          "type": "string"
+        },
+        "opens": {
+          "pattern": "^\\d{2}:\\d{2}$",
+          "title": "Opens",
+          "type": "string"
+        },
+        "closes": {
+          "pattern": "^\\d{2}:\\d{2}$",
+          "title": "Closes",
+          "type": "string"
+        }
+      },
+      "required": [
+        "day",
+        "opens",
+        "closes"
+      ],
+      "title": "TimeRange",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "description": "A practitioner working at a facility — one per (practitioner, facility) pair.",
+  "properties": {
+    "id": {
+      "pattern": "^JO-ROL-\\d{7}$",
+      "title": "Id",
+      "type": "string"
+    },
+    "practitioner_id": {
+      "pattern": "^JO-PRC-\\d{6}$",
+      "title": "Practitioner Id",
+      "type": "string"
+    },
+    "facility_id": {
+      "pattern": "^JO-(AM|BA|AZ|MD|IR|MA|JA|AJ|KA|AT|MN|AQ|XX)-[A-Z]{3}-\\d{5}$",
+      "title": "Facility Id",
+      "type": "string"
+    },
+    "active": {
+      "anyOf": [
+        {
+          "type": "boolean"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": true,
+      "title": "Active"
+    },
+    "specialty": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Specialty"
+    },
+    "hours": {
+      "$ref": "#/$defs/Hours",
+      "default": {
+        "opening_hours": null,
+        "weekly": null,
+        "always_open": null,
+        "text": null,
+        "observes_public_holidays": null
+      }
+    },
+    "consultation_fee": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Money"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "insurance": {
+      "anyOf": [
+        {
+          "items": {
+            "$ref": "#/$defs/InsuranceLink"
+          },
+          "type": "array"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Insurance"
+    },
+    "phones": {
+      "anyOf": [
+        {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Phones"
+    },
+    "profile_url": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Profile Url"
+    },
+    "sources": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/SourceRef"
+      },
+      "title": "Sources",
+      "type": "array"
+    },
+    "updated_at": {
+      "format": "date-time",
+      "title": "Updated At",
+      "type": "string"
+    }
+  },
+  "required": [
+    "id",
+    "practitioner_id",
+    "facility_id",
+    "updated_at"
+  ],
+  "title": "Role",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/NextMoveIntl/cura/main/schema/role.schema.json"
+}

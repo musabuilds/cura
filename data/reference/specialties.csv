@@ -1,0 +1,85 @@
+code,name_en,name_ar,parent,aliases
+general_practice,General Practice,طب عام,,general practitioner;GP;family physician;طبيب عام;ممارس عام
+family_medicine,Family Medicine,طب الأسرة,,family medicine;طب اسرة;family practice;طب الاسرة
+internal_medicine,Internal Medicine,الباطني,,internal medicine;internist;باطنية;أمراض باطنية;الأمراض الباطنية;الامراض الداخلية العامة;الامراض الداخلية;consultant in internal medicine
+cardiology,Cardiology,أمراض القلب,internal_medicine,cardiologist;cardiac;heart;قلب;القلب والأوعية الدموية;قلبية;امراض القلب والشرايين;القلب والشرايين
+interventional_cardiology,Interventional Cardiology,القسطرة القلبية,cardiology,interventional cardiology
+endocrinology,Endocrinology,الغدد الصماء والسكري,internal_medicine,endocrinology;diabetes;غدد;السكري;endocrine
+gastroenterology,Gastroenterology,الجهاز الهضمي,internal_medicine,gastroenterologist;GI;hepatology;جهاز هضمي;الكبد;gastroenterology care
+nephrology,Nephrology,الكلى,internal_medicine,nephrologist;kidney;كلى;أمراض الكلى
+pulmonology,Pulmonology,الأمراض الصدرية,internal_medicine,pulmonary;chest;respiratory;صدرية;الصدر;أمراض صدرية
+rheumatology,Rheumatology,الروماتيزم,internal_medicine,rheumatologist;روماتيزم;مفاصل
+hematology,Hematology,أمراض الدم,internal_medicine,haematology;blood diseases;الدم;hematology oncology;oncology and haematology;oncology and hematology
+oncology,Oncology,الأورام,internal_medicine,medical oncology;cancer;أورام;oncologist
+infectious_disease,Infectious Diseases,الأمراض المعدية,internal_medicine,infectious disease;الأمراض السارية
+allergy_immunology,Allergy & Immunology,الحساسية والمناعة,internal_medicine,allergy;immunology;حساسية;مناعة
+geriatrics,Geriatrics,طب الشيخوخة,internal_medicine,geriatric;كبار السن
+neurology,Neurology,الأعصاب,internal_medicine,neurologist;أمراض الأعصاب;اعصاب;الدماغ والأعصاب
+dermatology,Dermatology,الجلدية,,dermatologist;skin;venereology;جلدية;الجلد;الأمراض الجلدية والتناسلية;الأمراض الجلدية والتناسلية;جلدية وتناسلية;الجلدية والتناسلية;امراض جلدية وتناسلية
+psychiatry,Psychiatry,الطب النفسي,,psychiatrist;mental health;نفسية;الطب النفسي;الامراض النفسية;الطب النفسي
+pediatrics,Pediatrics,طب الأطفال,,paediatrics;pediatrician;children;أطفال;الاطفال;امراض الاطفال;امراض اطفال;pediatrician
+neonatology,Neonatology,حديثي الولادة,pediatrics,neonatal;خداج;حديثي الولادة
+pediatric_cardiology,Pediatric Cardiology,قلب الأطفال,pediatrics,paediatric cardiology
+pediatric_surgery,Pediatric Surgery,جراحة الأطفال,surgery,paediatric surgery
+obstetrics_gynecology,Obstetrics & Gynecology,النسائية والتوليد,,obgyn;ob/gyn;gynaecology;gynecology;obstetrics;نسائية وتوليد;نسائية;توليد;النسائية;امراض النساء والتوليد;النساء والتوليد;نسائية وتوليد;gynecologist;obstetrics and gynecology;obstetrician
+reproductive_medicine,Reproductive Medicine & IVF,العقم وأطفال الأنابيب,obstetrics_gynecology,infertility;IVF;fertility;عقم;أطفال أنابيب;ivf and genetics
+surgery,General Surgery,الجراحة العامة,,general surgery;surgeon;جراحة عامة;الجراحة;general surgeon;جراحة عامة;الجراحة العامة
+laparoscopic_surgery,Laparoscopic Surgery,جراحة المناظير,surgery,laparoscopic;bariatric;جراحة السمنة;مناظير
+vascular_surgery,Vascular Surgery,جراحة الأوعية الدموية,surgery,vascular;أوعية دموية;شرايين
+cardiothoracic_surgery,Cardiothoracic Surgery,جراحة القلب والصدر,surgery,cardiac surgery;thoracic surgery;heart surgery;جراحة القلب;جراحة الصدر;cardiovascular surgery;جراحة القلب والشرايين
+neurosurgery,Neurosurgery,جراحة الدماغ والأعصاب,surgery,neurosurgeon;spine surgery;جراحة الأعصاب;جراحة الدماغ
+orthopedics,Orthopedics,جراحة العظام,surgery,orthopaedics;orthopedic surgery;bones;عظام;جراحة العظام والمفاصل;جراحة العظام والمفاصل;جراحة عظام ومفاصل;orthopedic surgeon
+plastic_surgery,Plastic Surgery,الجراحة التجميلية,surgery,plastic;reconstructive;cosmetic surgery;تجميل;الجراحة التجميلية والترميمية;plastic reconstructive surgery
+urology,Urology,المسالك البولية,surgery,urologist;مسالك بولية;المسالك;جراحة الكلى والمسالك البولية;الكلى والمسالك البولية
+ent,Otolaryngology (ENT),الأنف والأذن والحنجرة,surgery,ENT;ear nose throat;otorhinolaryngology;أنف وأذن وحنجرة;انف واذن;Otorhinolaryngology (Ear Nose & Throat);أمراض وجراحة الأنف والاذن والحنجره;ear nose and throat ent;انف واذن وحنجرة
+ophthalmology,Ophthalmology,طب وجراحة العيون,surgery,ophthalmologist;eye;eyes;عيون;العيون;امراض وجراحة العيون;طب وجراحة العيون
+maxillofacial_surgery,Oral & Maxillofacial Surgery,جراحة الفم والوجه والفكين,dentistry,maxillofacial;oral surgery;فكين;جراحة الفم والفكين
+anesthesiology,Anesthesiology,التخدير,,anaesthesia;anesthesia;تخدير;الإنعاش;Anaesthesia and Intensive care;التخدير والعناية المركزه;anesthesiology and pain management;anesthesia and pain;anesthesia and resuscitation;anesthesiology and resuscitation
+emergency_medicine,Emergency Medicine,طب الطوارئ,,emergency;ER;طوارئ;الطوارئ;Accident & Emergency Medicine;طب الطوارئ والحوادث
+critical_care,Critical Care,العناية المركزة,,ICU;intensive care;عناية حثيثة;العناية الحثيثة;Intensive care for adults;العناية الحثيثة للكبار
+radiology,Radiology,الأشعة,,radiologist;diagnostic radiology;imaging;أشعة;الأشعة التشخيصية;radiology specialist;radiology department;الاشعة التشخيصية;radiology and nuclear medicines
+nuclear_medicine,Nuclear Medicine,الطب النووي,radiology,nuclear;طب نووي
+radiation_oncology,Radiation Oncology,العلاج الإشعاعي,oncology,radiotherapy;علاج إشعاعي
+pathology,Pathology,علم الأمراض,,pathologist;histopathology;clinical pathology;علم الأمراض;باثولوجي;pathology and laboratory medicine;pathologist and laboratory specialist
+laboratory_medicine,Laboratory Medicine,المختبرات الطبية,pathology,laboratory;clinical laboratory;مختبرات
+physical_medicine,Physical Medicine & Rehabilitation,الطب الطبيعي والتأهيل,,physiatry;rehabilitation;physiotherapy;physical therapy;علاج طبيعي;التأهيل
+sports_medicine,Sports Medicine,الطب الرياضي,physical_medicine,sports
+dentistry,Dentistry,طب الأسنان,,dental;dentist;أسنان;طب الاسنان;طب اسنان عام;طب الاسنان العام;general dentistry;general dentist;dental clinics;dental clinic
+orthodontics,Orthodontics,تقويم الأسنان,dentistry,orthodontist;تقويم
+endodontics,Endodontics,علاج الجذور,dentistry,endodontist;root canal;عصب;معالجة لبية;المعالجة اللبية
+periodontics,Periodontics,أمراض اللثة,dentistry,periodontist;لثة;امراض الفم وجراحة اللثه;جراحة اللثة
+prosthodontics,Prosthodontics,تركيبات الأسنان,dentistry,prosthodontist;تركيبات;الاستعاضات السنية;الاستعاضة السنية
+pediatric_dentistry,Pediatric Dentistry,أسنان الأطفال,dentistry,pedodontics;paediatric dentistry;طب اسنان الاطفال
+nutrition,Clinical Nutrition,التغذية العلاجية,,dietitian;nutritionist;تغذية
+psychology,Clinical Psychology,علم النفس العيادي,,psychologist;أخصائي نفسي
+audiology,Audiology,السمعيات,ent,audiologist;hearing;سمع;النطق
+pain_medicine,Pain Medicine,علاج الألم,anesthesiology,pain management;الألم
+genetics,Medical Genetics,الوراثة الطبية,,genetics;وراثة
+forensic_medicine,Forensic Medicine,الطب الشرعي,,forensic
+occupational_medicine,Occupational Medicine,طب الصناعات,,occupational health
+pharmacy,Pharmacy,الصيدلة,,pharmacist;clinical pharmacy;صيدلة
+nursing,Nursing,التمريض,,nurse;تمريض
+oral_and_maxillofacial_radiology,Oral and maxillofacial radiology,أشعة الفم والوجه والفكين,,
+palliative_care,palliative care,العلاج التلطيفي,internal_medicine,palliative medicine
+allergy_and_immunology_diseases,Allergy and Immunology diseases,أمراض الحساسية والمناعة,,
+pediatrics_hematology_and_oncology,Pediatrics Hematology and Oncology,امراض الدم والأورام عند الأطفال,pediatrics,
+pediatrics_neurology,Pediatrics Neurology,امراض الأعصاب عند الأطفال,pediatrics,
+restorative_dentistry,Restorative Dentistry,المعالجة التحفظية,,
+clinical_hematology,Clinical Hematology,امراض الدم السريرية,internal_medicine,
+clinical_oncology,Clinical Oncology,امراض الأورام السريرية,internal_medicine,
+medical_hematology,Medical Hematology,أمراض الدم والاورام,internal_medicine,
+plastic_and_recanstractive_surgery,Plastic and Recanstractive Surgery,جراحة الترميم والتجميل,surgery,
+colorectal_surgery,Colorectal Surgery,جراحة القولون والمستقيم,surgery,
+hepatobiliary_and_pancreatic_surgery,Hepatobiliary and pancreatic surgery,جراحة الكبد والقنوات الصفراوية والبنكرياس,,
+oral_medicine,Oral Medicine,طب الفم,,
+histopathology_and_cytopathology,Histopathology and Cytopathology,الأنسجة المرضية والخلايا,pathology,
+clinical_pathology_hematopathology,Clinical Pathology - Hematopathology,طب المختبرات السريري - أمراض الدم,pathology,
+clinical_pathology_clinical_chemistry,Clinical Pathology - Clinical chemistry,طب المختبرات السريري - الكيمياء السريرية,pathology,
+clinical_pathology_microbiology,Clinical Pathology - Microbiology,طب المختبرات السريري - الأحياء الدقيقة,pathology,
+clinical_pathology_immunology,Clinical Pathology - Immunology,طب المختبرات- السريري المناعة,pathology,
+clinical_pathology_microbiology_and_immunology,Clinical Pathology - Microbiology and Immunology,طب المختبرات السريري - الأحياء الدقيقة والمناعة,pathology,
+community_medicine,Community medicine,طب المجتمع,,
+public_health,Public Health,الصحة العامة,,
+maternity_childhood,Maternity & Childhood,الأمومة والطفولة,,
+epidemiology,Epidemiology,الوبائيات,,
+aviation_and_aerospace_medicine,Aviation and Aerospace Medicine,طب الطيران والفضاء,,

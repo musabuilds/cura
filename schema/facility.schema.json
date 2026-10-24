@@ -1,0 +1,1113 @@
+{
+  "$defs": {
+    "Accreditation": {
+      "additionalProperties": false,
+      "properties": {
+        "body": {
+          "title": "Body",
+          "type": "string"
+        },
+        "status": {
+          "default": "accredited",
+          "title": "Status",
+          "type": "string"
+        },
+        "year": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Year"
+        },
+        "valid_until": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Valid Until"
+        }
+      },
+      "required": [
+        "body"
+      ],
+      "title": "Accreditation",
+      "type": "object"
+    },
+    "Address": {
+      "additionalProperties": false,
+      "properties": {
+        "governorate": {
+          "anyOf": [
+            {
+              "pattern": "^JO-[A-Z]{2}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Governorate"
+        },
+        "district": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "District"
+        },
+        "city": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "City"
+        },
+        "neighborhood": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Neighborhood"
+        },
+        "street": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Street"
+        },
+        "building": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Building"
+        },
+        "floor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Floor"
+        },
+        "postcode": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Postcode"
+        },
+        "text": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Text"
+        }
+      },
+      "title": "Address",
+      "type": "object"
+    },
+    "BusyLevel": {
+      "additionalProperties": false,
+      "properties": {
+        "day": {
+          "pattern": "^(mo|tu|we|th|fr|sa|su)$",
+          "title": "Day",
+          "type": "string"
+        },
+        "hour": {
+          "maximum": 23,
+          "minimum": 0,
+          "title": "Hour",
+          "type": "integer"
+        },
+        "level": {
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Level",
+          "type": "number"
+        }
+      },
+      "required": [
+        "day",
+        "hour",
+        "level"
+      ],
+      "title": "BusyLevel",
+      "type": "object"
+    },
+    "Contact": {
+      "additionalProperties": false,
+      "properties": {
+        "phones": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Phones"
+        },
+        "emails": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Emails"
+        },
+        "website": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Website"
+        }
+      },
+      "title": "Contact",
+      "type": "object"
+    },
+    "Equipment": {
+      "additionalProperties": false,
+      "properties": {
+        "code": {
+          "title": "Code",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "count": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Count"
+        },
+        "available": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Available"
+        }
+      },
+      "required": [
+        "code"
+      ],
+      "title": "Equipment",
+      "type": "object"
+    },
+    "FacilityType": {
+      "enum": [
+        "hospital",
+        "clinic",
+        "primary_care_center",
+        "doctor_office",
+        "dental_clinic",
+        "pharmacy",
+        "laboratory",
+        "imaging_center",
+        "blood_bank",
+        "rehabilitation",
+        "optician",
+        "dialysis_center",
+        "emergency_medical_service",
+        "other"
+      ],
+      "title": "FacilityType",
+      "type": "string"
+    },
+    "Hours": {
+      "additionalProperties": false,
+      "properties": {
+        "opening_hours": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Opening Hours"
+        },
+        "weekly": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/TimeRange"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Weekly"
+        },
+        "always_open": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Always Open"
+        },
+        "text": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Text"
+        },
+        "observes_public_holidays": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Observes Public Holidays"
+        }
+      },
+      "title": "Hours",
+      "type": "object"
+    },
+    "InsuranceLink": {
+      "additionalProperties": false,
+      "properties": {
+        "insurer": {
+          "title": "Insurer",
+          "type": "string"
+        },
+        "network": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Network"
+        },
+        "source": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source"
+        }
+      },
+      "required": [
+        "insurer"
+      ],
+      "title": "InsuranceLink",
+      "type": "object"
+    },
+    "Location": {
+      "additionalProperties": false,
+      "properties": {
+        "lat": {
+          "maximum": 33.5,
+          "minimum": 29.0,
+          "title": "Lat",
+          "type": "number"
+        },
+        "lon": {
+          "maximum": 39.4,
+          "minimum": 34.8,
+          "title": "Lon",
+          "type": "number"
+        },
+        "precision": {
+          "$ref": "#/$defs/LocationPrecision",
+          "default": "unknown"
+        },
+        "source": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source"
+        }
+      },
+      "required": [
+        "lat",
+        "lon"
+      ],
+      "title": "Location",
+      "type": "object"
+    },
+    "LocationPrecision": {
+      "enum": [
+        "exact",
+        "approximate",
+        "unknown"
+      ],
+      "title": "LocationPrecision",
+      "type": "string"
+    },
+    "Money": {
+      "additionalProperties": false,
+      "properties": {
+        "amount": {
+          "minimum": 0,
+          "title": "Amount",
+          "type": "number"
+        },
+        "currency": {
+          "default": "JOD",
+          "pattern": "^[A-Z]{3}$",
+          "title": "Currency",
+          "type": "string"
+        }
+      },
+      "required": [
+        "amount"
+      ],
+      "title": "Money",
+      "type": "object"
+    },
+    "Name": {
+      "additionalProperties": false,
+      "properties": {
+        "en": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "En"
+        },
+        "ar": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Ar"
+        },
+        "aliases": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "title": "Aliases",
+          "type": "array"
+        }
+      },
+      "title": "Name",
+      "type": "object"
+    },
+    "Ownership": {
+      "enum": [
+        "moh",
+        "rms",
+        "university",
+        "other_gov",
+        "private",
+        "ngo",
+        "unrwa",
+        "unknown"
+      ],
+      "title": "Ownership",
+      "type": "string"
+    },
+    "PriceItem": {
+      "additionalProperties": false,
+      "properties": {
+        "item": {
+          "title": "Item",
+          "type": "string"
+        },
+        "item_ar": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Item Ar"
+        },
+        "category": {
+          "default": "other",
+          "title": "Category",
+          "type": "string"
+        },
+        "price": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Money"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "min": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Money"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "max": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Money"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "effective_from": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Effective From"
+        },
+        "source": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source"
+        }
+      },
+      "required": [
+        "item"
+      ],
+      "title": "PriceItem",
+      "type": "object"
+    },
+    "Quality": {
+      "additionalProperties": false,
+      "properties": {
+        "completeness": {
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Completeness",
+          "type": "number"
+        },
+        "confidence": {
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Confidence",
+          "type": "number"
+        },
+        "last_verified_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Last Verified At"
+        }
+      },
+      "required": [
+        "completeness",
+        "confidence"
+      ],
+      "title": "Quality",
+      "type": "object"
+    },
+    "RatingSummary": {
+      "additionalProperties": false,
+      "description": "Aggregated from Cura's own reviews (`/v1/.../reviews`). Never copied from Google.",
+      "properties": {
+        "overall": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Overall"
+        },
+        "count": {
+          "default": 0,
+          "title": "Count",
+          "type": "integer"
+        },
+        "dimensions": {
+          "additionalProperties": {
+            "type": "number"
+          },
+          "default": {},
+          "title": "Dimensions",
+          "type": "object"
+        }
+      },
+      "title": "RatingSummary",
+      "type": "object"
+    },
+    "SourceRef": {
+      "additionalProperties": false,
+      "properties": {
+        "source": {
+          "title": "Source",
+          "type": "string"
+        },
+        "ref": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Ref"
+        },
+        "url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Url"
+        },
+        "retrieved_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Retrieved At"
+        }
+      },
+      "required": [
+        "source"
+      ],
+      "title": "SourceRef",
+      "type": "object"
+    },
+    "Status": {
+      "enum": [
+        "active",
+        "temporarily_closed",
+        "permanently_closed",
+        "merged",
+        "unknown"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "TimeRange": {
+      "additionalProperties": false,
+      "properties": {
+        "day": {
+          "pattern": "^(mo|tu|we|th|fr|sa|su)$",
+          "title": "Day",
+          "type": "string"
+        },
+        "opens": {
+          "pattern": "^\\d{2}:\\d{2}$",
+          "title": "Opens",
+          "type": "string"
+        },
+        "closes": {
+          "pattern": "^\\d{2}:\\d{2}$",
+          "title": "Closes",
+          "type": "string"
+        }
+      },
+      "required": [
+        "day",
+        "opens",
+        "closes"
+      ],
+      "title": "TimeRange",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "id": {
+      "pattern": "^JO-(AM|BA|AZ|MD|IR|MA|JA|AJ|KA|AT|MN|AQ|XX)-[A-Z]{3}-\\d{5}$",
+      "title": "Id",
+      "type": "string"
+    },
+    "status": {
+      "$ref": "#/$defs/Status",
+      "default": "active"
+    },
+    "replaced_by": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Replaced By"
+    },
+    "type": {
+      "$ref": "#/$defs/FacilityType"
+    },
+    "name": {
+      "$ref": "#/$defs/Name"
+    },
+    "ownership": {
+      "$ref": "#/$defs/Ownership",
+      "default": "unknown"
+    },
+    "operator": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Operator"
+    },
+    "parent": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Parent"
+    },
+    "address": {
+      "$ref": "#/$defs/Address",
+      "default": {
+        "governorate": null,
+        "district": null,
+        "city": null,
+        "neighborhood": null,
+        "street": null,
+        "building": null,
+        "floor": null,
+        "postcode": null,
+        "text": null
+      }
+    },
+    "location": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Location"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "contact": {
+      "$ref": "#/$defs/Contact",
+      "default": {
+        "phones": null,
+        "emails": null,
+        "website": null
+      }
+    },
+    "hours": {
+      "$ref": "#/$defs/Hours",
+      "default": {
+        "opening_hours": null,
+        "weekly": null,
+        "always_open": null,
+        "text": null,
+        "observes_public_holidays": null
+      }
+    },
+    "emergency": {
+      "anyOf": [
+        {
+          "type": "boolean"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Emergency"
+    },
+    "beds": {
+      "anyOf": [
+        {
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Beds"
+    },
+    "specialties": {
+      "anyOf": [
+        {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Specialties"
+    },
+    "departments": {
+      "anyOf": [
+        {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Departments"
+    },
+    "services": {
+      "anyOf": [
+        {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Services"
+    },
+    "equipment": {
+      "anyOf": [
+        {
+          "items": {
+            "$ref": "#/$defs/Equipment"
+          },
+          "type": "array"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Equipment"
+    },
+    "insurance": {
+      "anyOf": [
+        {
+          "items": {
+            "$ref": "#/$defs/InsuranceLink"
+          },
+          "type": "array"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Insurance"
+    },
+    "accreditations": {
+      "anyOf": [
+        {
+          "items": {
+            "$ref": "#/$defs/Accreditation"
+          },
+          "type": "array"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Accreditations"
+    },
+    "prices": {
+      "anyOf": [
+        {
+          "items": {
+            "$ref": "#/$defs/PriceItem"
+          },
+          "type": "array"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Prices"
+    },
+    "languages": {
+      "anyOf": [
+        {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Languages"
+    },
+    "amenities": {
+      "additionalProperties": {
+        "anyOf": [
+          {
+            "type": "boolean"
+          },
+          {
+            "type": "string"
+          }
+        ]
+      },
+      "default": {},
+      "title": "Amenities",
+      "type": "object"
+    },
+    "busy_hours": {
+      "anyOf": [
+        {
+          "items": {
+            "$ref": "#/$defs/BusyLevel"
+          },
+          "type": "array"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Busy Hours"
+    },
+    "rating": {
+      "$ref": "#/$defs/RatingSummary",
+      "default": {
+        "overall": null,
+        "count": 0,
+        "dimensions": {}
+      }
+    },
+    "identifiers": {
+      "additionalProperties": {
+        "type": "string"
+      },
+      "default": {},
+      "title": "Identifiers",
+      "type": "object"
+    },
+    "sources": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/SourceRef"
+      },
+      "title": "Sources",
+      "type": "array"
+    },
+    "quality": {
+      "$ref": "#/$defs/Quality"
+    },
+    "created_at": {
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "updated_at": {
+      "format": "date-time",
+      "title": "Updated At",
+      "type": "string"
+    }
+  },
+  "required": [
+    "id",
+    "type",
+    "name",
+    "quality",
+    "created_at",
+    "updated_at"
+  ],
+  "title": "Facility",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/NextMoveIntl/cura/main/schema/facility.schema.json"
+}
