@@ -27,7 +27,14 @@ Open registry of Jordan's hospitals, clinics, doctors, pharmacies, labs and thei
 
 @asynccontextmanager
 async def lifespan(_: FastAPI):
-    db.init()
+    if settings().is_production:
+        # Replicas never migrate on boot (they would race); `cura db upgrade` runs once, before them.
+        from cura.api import migrate
+
+        if (rev := migrate.current(db.engine())) != migrate.head():
+            raise RuntimeError(f"database is at revision {rev}, expected {migrate.head()}: run `cura db upgrade`")
+    else:
+        db.init()
     yield
 
 

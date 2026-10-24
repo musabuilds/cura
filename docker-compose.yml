@@ -15,10 +15,20 @@ services:
       interval: 5s
       retries: 10
 
-  api:
+  # One-shot: brings the schema to the latest migration before any API replica starts.
+  migrate:
     build: .
     depends_on:
       db: { condition: service_healthy }
+    environment:
+      CURA_DATABASE_URL: postgresql+psycopg://cura:cura@db:5432/cura
+    command: ["cura", "db", "upgrade"]
+    restart: "no"
+
+  api:
+    build: .
+    depends_on:
+      migrate: { condition: service_completed_successfully }
     environment:
       CURA_DATABASE_URL: postgresql+psycopg://cura:cura@db:5432/cura
       CURA_JWT_SECRET: ${CURA_JWT_SECRET:?set CURA_JWT_SECRET in .env}

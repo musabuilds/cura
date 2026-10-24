@@ -172,9 +172,17 @@ def create_admin(email: str, password: str) -> dict:
         return {"id": user.id, "email": user.email, "role": user.role}
 
 
-def run(task: str, email: str | None = None, password: str | None = None) -> dict:
-    if task == "init":
+def run(task: str, email: str | None = None, password: str | None = None, message: str | None = None) -> dict:
+    from cura.api import migrate
+
+    if task in ("init", "upgrade"):
         db.init()
+        return {"revision": migrate.current(db.engine())}
+    if task == "revision":
+        if not message:
+            raise SystemExit("-m/--message is required")
+        db.init()
+        migrate.revision(db.engine(), message)
         return {"ok": True}
     if task == "seed":
         return seed()

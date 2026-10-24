@@ -221,7 +221,10 @@ def engine():
 
 
 def init() -> None:
-    Base.metadata.create_all(engine())
+    """Bring the schema to the latest migration (see `cura.api.migrate`)."""
+    from cura.api import migrate
+
+    migrate.upgrade(engine())
 
 
 def reset_engine() -> None:

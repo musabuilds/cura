@@ -5,6 +5,7 @@ cura merge                  staging → data/*.jsonl (+ data/manifest.json)
 cura validate               schema + integrity checks (CI gate)
 cura export                 dist/: JSON Schema, GeoJSON, CSV, SQLite
 cura api                    run the HTTP API
+cura db upgrade             apply pending schema migrations
 cura db seed                load data/*.jsonl into the API database
 cura db export-changes      API edits → sources/staging/cura_api.jsonl (feeds the next merge)
 """
@@ -39,7 +40,8 @@ def main(argv: list[str] | None = None) -> int:
     p_api.add_argument("--port", type=int, default=8000)
     p_api.add_argument("--reload", action="store_true")
     p_db = sub.add_parser("db", help="API database tasks")
-    p_db.add_argument("task", choices=("init", "seed", "export-changes", "create-admin"))
+    p_db.add_argument("task", choices=("init", "upgrade", "revision", "seed", "export-changes", "create-admin"))
+    p_db.add_argument("-m", "--message", help="revision: what the migration does")
     p_db.add_argument("--email")
     p_db.add_argument("--password")
     args = parser.parse_args(argv)
@@ -77,7 +79,7 @@ def main(argv: list[str] | None = None) -> int:
     elif args.cmd == "db":
         from cura.api import admin
 
-        _print(admin.run(args.task, email=args.email, password=args.password))
+        _print(admin.run(args.task, email=args.email, password=args.password, message=args.message))
     return 0
 
 
