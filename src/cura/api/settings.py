@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from functools import cache
+from typing import Literal
 
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
@@ -23,6 +24,15 @@ class Settings(BaseSettings):
     rate_anonymous_per_min: int = 60
     rate_app_per_min: int = 600
     environment: str = "development"
+    # Semantic search. "openai" = any OpenAI-compatible /embeddings endpoint (Ollama, vLLM, TEI, hosted);
+    # "hashing" = offline n-gram stand-in; "none" = lexical search only.
+    embed_provider: Literal["none", "hashing", "openai"] = "none"
+    embed_base_url: str = "http://localhost:11434/v1"
+    embed_model: str = "bge-m3"
+    embed_api_key: str | None = None
+    embed_timeout_s: float = 60.0
+    embed_query_prefix: str = ""  # e5-style models want "query: " / "passage: "; BGE-M3 wants nothing
+    embed_document_prefix: str = ""
 
     @property
     def is_production(self) -> bool:

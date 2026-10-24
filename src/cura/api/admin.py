@@ -2,7 +2,8 @@
 
 The loop that keeps git and the live database in step:
 
-    cura db export-changes   # applied API edits → sources/staging/cura_api.jsonl
+    cura db export-changes   # applied API edits → sources/staging/cura_api.jsonl,
+                             # moderator merges → sources/curation/merges.jsonl
     cura merge               # cura_api is the most trusted source, so edits win
     cura db seed             # canonical → database (rows edited since the export are left alone)
 """
@@ -17,7 +18,7 @@ from sqlalchemy import select
 
 from cura.api import db, security, store
 from cura.api.db import Change, User
-from cura.paths import STAGING_DIR
+from cura.paths import CURATION_DIR, STAGING_DIR
 from cura.pipeline.merge import load_canonical
 
 # canonical doc path → staging field (inverse of pipeline.merge.fuse_facility)
@@ -88,11 +89,25 @@ def seed(force: bool = False) -> dict:
 
 
 def export_changes() -> dict:
-    """Write every applied API change as staging records, carrying only the fields that were edited."""
+    """Write every applied API change as staging records, carrying only the fields that were edited,
+    and every moderator merge as a curation decision the pipeline replays."""
     now = datetime.now(UTC).replace(microsecond=0).isoformat().replace("+00:00", "Z")
     touched: dict[tuple[str, str], set[str]] = defaultdict(set)
+    merges: list[dict] = []
     with next(db.get_session()) as session:
         for c in session.scalars(select(Change).where(Change.status == "applied").order_by(Change.id)):
+            if c.op == "merge":
+                merges.append(
+                    {
+                        "kind": c.subject_type,
+                        "from": c.subject_id,
+                        "into": c.patch["into"],
+                        "reason": c.reason,
+                        "decided_at": c.applied_at.isoformat() if c.applied_at else now,
+                        "change_id": c.id,
+                    }
+                )
+                continue
             fields = {k for k in c.patch if not k.startswith("_")}
             touched[(c.subject_type, c.subject_id)] |= fields if c.op == "update" else {"*"}
         records = []
@@ -119,6 +134,9 @@ def export_changes() -> dict:
                     "consultation_fee": doc.get("consultation_fee"),
                     "clinic_phones": doc.get("phones"),
                     "profile_url": doc.get("profile_url"),
+                    "role_active": doc.get("active"),
+                    "role_period": doc.get("period"),
+                    "role_confirmation": doc.get("confirmation"),
                 }
                 rid = doc["practitioner_id"]
             for f in mapping if "*" in fields else fields:
@@ -157,7 +175,25 @@ def export_changes() -> dict:
         + "\n",
         encoding="utf-8",
     )
-    return {"records": len(records)}
+    return {"records": len(records), "merges": _write_merges(merges)}
+
+
+def _write_merges(new: list[dict]) -> int:
+    """Union with the committed decisions: the file is the durable record, the database one writer."""
+    path = CURATION_DIR / "merges.jsonl"
+    decisions: dict[tuple[str, str], dict] = {}
+    if path.exists():
+        for line in path.read_text(encoding="utf-8").splitlines():
+            if line.strip():
+                d = json.loads(line)
+                decisions[(d["kind"], d["from"])] = d
+    for d in new:
+        decisions[(d["kind"], d["from"])] = d
+    CURATION_DIR.mkdir(parents=True, exist_ok=True)
+    with path.open("w", encoding="utf-8", newline="\n") as fh:
+        for _, d in sorted(decisions.items()):
+            fh.write(json.dumps(d, ensure_ascii=False, sort_keys=True) + "\n")
+    return len(decisions)
 
 
 def create_admin(email: str, password: str) -> dict:

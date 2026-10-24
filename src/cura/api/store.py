@@ -10,9 +10,9 @@ from zoneinfo import ZoneInfo
 from sqlalchemy import and_, or_, select
 from sqlalchemy.orm import Session
 
-from cura import model
+from cura import availability, model
 from cura import normalize as nz
-from cura.api.db import FacilityRow, PractitionerRow, RoleRow, utcnow
+from cura.api.db import FacilityRow, PractitionerRow, RecordVersion, RoleRow, utcnow
 from cura.geo import haversine_m
 
 AMMAN = ZoneInfo("Asia/Amman")
@@ -58,24 +58,111 @@ def validate(kind: str, doc: dict) -> dict:
     return KINDS[kind][1].model_validate(doc).model_dump(mode="json")
 
 
-def put(db: Session, kind: str, doc: dict, *, bump: bool = True, dirty: bool = True):
-    """Insert or replace a document. Validates against the canonical model first."""
+def put(
+    db: Session,
+    kind: str,
+    doc: dict,
+    *,
+    bump: bool = True,
+    dirty: bool = True,
+    change_id: int | None = None,
+    origin: str = "api",
+):
+    """Insert or replace a document. Validates against the canonical model first.
+
+    Every new version is also appended to `record_versions` (see `RecordVersion`): the row holds the
+    present, the history table holds every past.
+    """
     row_cls, _ = KINDS[kind]
     doc = validate(kind, doc)
     row = db.get(row_cls, doc["id"])
     values = row_values(kind, doc)
+    now = utcnow()
     if row is None:
-        row = row_cls(id=doc["id"], doc=doc, version=1, dirty=dirty, updated_at=utcnow(), **values)
+        row = row_cls(id=doc["id"], doc=doc, version=1, dirty=dirty, updated_at=now, **values)
         db.add(row)
-    else:
-        row.doc = doc
-        for k, v in values.items():
-            setattr(row, k, v)
-        if bump:
-            row.version += 1
-            row.updated_at = utcnow()
-        row.dirty = row.dirty or dirty
+        db.add(_version(kind, row, now, change_id, origin))
+        return row
+    if row.doc == doc:
+        return row
+    current = _open_version(db, kind, row.id)
+    if bump:
+        if current is None:  # a record that predates history: keep the version being replaced
+            current = _version(kind, row, row.updated_at, None, "seed")
+            db.add(current)
+        current.valid_to = now
+        row.version += 1
+        row.updated_at = now
+    row.doc = doc
+    for k, v in values.items():
+        setattr(row, k, v)
+    row.dirty = row.dirty or dirty
+    if bump:
+        db.add(_version(kind, row, now, change_id, origin))
+    elif current is not None:
+        current.doc = doc  # an in-place correction of the same version
     return row
+
+
+def _version(kind: str, row, valid_from: datetime, change_id: int | None, origin: str) -> RecordVersion:
+    return RecordVersion(
+        kind=kind,
+        record_id=row.id,
+        version=row.version,
+        doc=row.doc,
+        valid_from=valid_from,
+        change_id=change_id,
+        origin=origin,
+    )
+
+
+def _open_version(db: Session, kind: str, rid: str) -> RecordVersion | None:
+    db.flush()  # versions added earlier in this transaction must be visible
+    return db.scalar(
+        select(RecordVersion).where(
+            RecordVersion.kind == kind, RecordVersion.record_id == rid, RecordVersion.valid_to.is_(None)
+        )
+    )
+
+
+def history(db: Session, kind: str, rid: str, *, limit: int = 50, before: int | None = None) -> list[RecordVersion]:
+    stmt = select(RecordVersion).where(RecordVersion.kind == kind, RecordVersion.record_id == rid)
+    if before is not None:
+        stmt = stmt.where(RecordVersion.version < before)
+    return list(db.scalars(stmt.order_by(RecordVersion.version.desc()).limit(limit)))
+
+
+def as_of(db: Session, kind: str, rid: str, at: datetime) -> RecordVersion | None:
+    """The version that was current at `at`."""
+    return db.scalar(
+        select(RecordVersion)
+        .where(
+            RecordVersion.kind == kind,
+            RecordVersion.record_id == rid,
+            RecordVersion.valid_from <= at,
+            or_(RecordVersion.valid_to.is_(None), RecordVersion.valid_to > at),
+        )
+        .order_by(RecordVersion.version.desc())
+        .limit(1)
+    )
+
+
+def diff_paths(old: dict | None, new: dict, prefix: str = "") -> list[str]:
+    """Dotted paths whose value differs between two documents (objects recurse; lists compare whole)."""
+    old = old or {}
+    out = []
+    for key in sorted(set(old) | set(new)):
+        if key == "updated_at":
+            continue
+        a, b = old.get(key), new.get(key)
+        if a == b:
+            continue
+        path = f"{prefix}{key}"
+        if isinstance(a, dict) and isinstance(b, dict):
+            out += diff_paths(a, b, f"{path}.")
+        else:
+            out.append(path)
+    return out
 
 
 def get(db: Session, kind: str, rid: str):
@@ -147,7 +234,8 @@ def search_facilities(
         )
         scored = [(d, r) for d, r in scored if d <= radius_km * 1000]
         if open_now:
-            scored = [(d, r) for d, r in scored if is_open(r.doc)]
+            opened = _open_ids(db, [r.doc for _, r in scored])
+            scored = [(d, r) for d, r in scored if r.id in opened]
         offset = int(cursor or 0)
         page = scored[offset : offset + limit]
         distances = {r.id: round(d) for d, r in page}
@@ -157,11 +245,20 @@ def search_facilities(
         conds.append(FacilityRow.id > cursor)
     stmt = stmt.where(and_(*conds)).order_by(FacilityRow.id)
     if open_now:
-        rows = [r for r in db.scalars(stmt.limit(limit * 10)).all() if is_open(r.doc)][:limit]
+        batch = db.scalars(stmt.limit(limit * 10)).all()
+        opened = _open_ids(db, [r.doc for r in batch])
+        rows = [r for r in batch if r.id in opened][:limit]
     else:
         rows = db.scalars(stmt.limit(limit + 1)).all()
     nxt = rows[limit - 1].id if len(rows) > limit else None
     return [r.doc for r in rows[:limit]], nxt, distances
+
+
+def _open_ids(db: Session, docs: list[dict]) -> set[str]:
+    from cura.api import live  # imported here: live depends on db only, store stays importable alone
+
+    states = live.facility_live(db, docs, live.now())
+    return {fid for fid, s in states.items() if s["state"] in ("open", "limited")}
 
 
 def search_practitioners(
@@ -181,6 +278,29 @@ def search_practitioners(
     return [r.doc for r in rows[:limit]], nxt
 
 
+def docs(db: Session, kind: str, ids) -> list[dict]:
+    row_cls, _ = KINDS[kind]
+    ids = list(ids)
+    return [r.doc for r in db.scalars(select(row_cls).where(row_cls.id.in_(ids)))] if ids else []
+
+
+def summary(doc: dict | None) -> dict | None:
+    if not doc:
+        return None
+    return {
+        "id": doc["id"],
+        "type": doc["type"],
+        "name": doc["name"],
+        "address": doc["address"],
+        "location": doc["location"],
+    }
+
+
+def is_listed(role: dict) -> bool:
+    """Shown on a facility's public roster: confirmed by both sides and not ended."""
+    return role.get("active") is not False and role.get("confirmation", "confirmed") == "confirmed"
+
+
 def roles_for(db: Session, *, practitioner_id: str | None = None, facility_id: str | None = None) -> list[dict]:
     stmt = select(RoleRow)
     if practitioner_id:
@@ -190,26 +310,9 @@ def roles_for(db: Session, *, practitioner_id: str | None = None, facility_id: s
     return [r.doc for r in db.scalars(stmt.order_by(RoleRow.id))]
 
 
-_DAY = ["mo", "tu", "we", "th", "fr", "sa", "su"]
-
-
 def is_open(doc: dict, at: datetime | None = None) -> bool:
-    hours = doc.get("hours") or {}
-    if hours.get("always_open"):
-        return True
-    weekly = hours.get("weekly")
-    if not weekly:
-        return False  # unknown hours: never claim "open"
-    now = (at or datetime.now(AMMAN)).astimezone(AMMAN)
-    day, hhmm = _DAY[now.weekday()], now.strftime("%H:%M")
-    prev = _DAY[(now.weekday() - 1) % 7]
-    for span in weekly:
-        o, c = span["opens"], span["closes"]
-        if span["day"] == day and (o <= hhmm < c or (c <= o and hhmm >= o)):
-            return True
-        if span["day"] == prev and c <= o and hhmm < c:  # past-midnight span from yesterday
-            return True
-    return False
+    """Published hours only; `availability.resolve_facility` adds closures and other live events."""
+    return bool(availability.within_hours(doc.get("hours"), at or datetime.now(AMMAN)))
 
 
 def parse_near(value: str | None) -> tuple[float, float] | None:

@@ -28,8 +28,8 @@ SYSTEM = {
     "created_at",
     "updated_at",
     "replaced_by",
-    "busy_hours",
     "license_verified",
+    "confirmation",  # POST /v1/roles/{id}/confirmation
     "practitioner_id",
     "facility_id",
 }
@@ -48,9 +48,11 @@ OWNER_EDITABLE = {
         "emergency",
         "beds",
         "specialties",
+        "busy_hours",  # the facility's own declared busy times; live load comes from /load samples
     },
     "practitioner": {"title", "languages", "qualifications", "subspecialties"},
-    "role": {"hours", "consultation_fee", "insurance", "phones", "active", "profile_url", "specialty"},
+    # Either side owns a role: the doctor, or the facility's admin (who can end it when a doctor leaves).
+    "role": {"hours", "consultation_fee", "insurance", "phones", "active", "period", "profile_url", "specialty"},
 }
 REVIEWED = {
     "facility": {"name", "type", "ownership", "operator", "parent", "address", "location", "status", "accreditations"},

@@ -9,7 +9,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from cura import __version__
 from cura.api import db, errors
-from cura.api.routes import auth, contrib, registry
+from cura.api.routes import auth, contrib, history, identity, live, registry, roster, search
 from cura.api.settings import settings
 
 DESCRIPTION = """
@@ -19,7 +19,10 @@ Open registry of Jordan's hospitals, clinics, doctors, pharmacies, labs and thei
 * **Write** — on behalf of a signed-in user via OAuth 2.0 authorization code + PKCE
   (`/oauth/authorize` → `/oauth/token`). Verified owners (doctors, facility admins) edit their own records
   directly; everything else becomes a proposal reviewed by moderators.
-* **Sync** — poll `GET /v1/changes?since=` to keep a local copy current.
+* **Live** — doctors and facilities set availability and closures themselves (`POST /v1/availability`);
+  every read resolves schedule + events into what is true now.
+* **History** — nothing is overwritten: `GET /v1/{collection}/{id}/history`.
+* **Sync** — poll `GET /v1/changes?since=` and `GET /v1/availability/changes?since=`.
 
 `null` means *unknown*. Data © OpenStreetMap contributors and the sources listed per record, ODbL-1.0.
 """
@@ -50,6 +53,11 @@ app = FastAPI(
         {"name": "sync", "description": "Incremental change feed"},
         {"name": "contribute", "description": "Edits and additions (OAuth user token)"},
         {"name": "claims", "description": "Doctors and facility admins claiming their records"},
+        {"name": "availability", "description": "Live state: who is available where, closures, load"},
+        {"name": "roster", "description": "Who works where: adding, confirming and ending roles; invitations"},
+        {"name": "identity", "description": "Finding existing records before creating; merging duplicates"},
+        {"name": "history", "description": "Every version of every record"},
+        {"name": "search", "description": "Hybrid lexical + semantic search"},
         {"name": "reviews", "description": "Ratings by dimension"},
         {"name": "moderation", "description": "Moderator queue"},
         {"name": "auth", "description": "Accounts"},
@@ -61,7 +69,7 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=settings().cors_origins,
     allow_methods=["GET", "POST", "PATCH", "OPTIONS"],
-    allow_headers=["Authorization", "X-API-Key", "Content-Type", "If-Match"],
+    allow_headers=["Authorization", "X-API-Key", "Content-Type", "If-Match", "Idempotency-Key"],
     expose_headers=["ETag", "X-RateLimit-Limit", "X-RateLimit-Remaining"],
 )
 errors.install(app)
@@ -82,6 +90,12 @@ def health() -> dict:
 
 
 app.include_router(auth.router)
+# Fixed paths (/practitioners/match, /reference/availability, /search) before the {id} routes they resemble.
+app.include_router(identity.router)
+app.include_router(live.router)
+app.include_router(search.router)
 app.include_router(registry.router)
+app.include_router(roster.router)
 app.include_router(contrib.router)
+app.include_router(history.router)
 app.include_router(contrib.collection_router)

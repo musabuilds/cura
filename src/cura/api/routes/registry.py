@@ -7,13 +7,13 @@ from __future__ import annotations
 
 import json
 from datetime import datetime
-from typing import Annotated
+from typing import Annotated, Literal
 
 from fastapi import APIRouter, Depends, Query, Request, Response
 from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
-from cura.api import store
+from cura.api import live, store
 from cura.api.db import FacilityRow, PractitionerRow, RoleRow, get_session
 from cura.api.deps import Principal, principal
 from cura.api.errors import Problem
@@ -43,6 +43,35 @@ def _page(data: list, next_cursor: str | None, **extra) -> dict:
     return {"data": data, "next_cursor": next_cursor, "count": len(data), **extra}
 
 
+Fields = Annotated[
+    str | None,
+    Query(description="Comma-separated top-level fields to return (id is always included), e.g. `name,location`"),
+]
+
+
+def _project(doc: dict, fields: str | None) -> dict:
+    """Sparse fieldsets: a mobile list screen asks for what it draws. Nothing is removed from the record."""
+    if not fields:
+        return doc
+    keep = {"id", *(f.strip() for f in fields.split(",") if f.strip())}
+    return {k: v for k, v in doc.items() if k in keep}
+
+
+def _open_now(state: dict) -> bool | None:
+    return None if state["state"] == "unknown" else state["state"] in ("open", "limited")
+
+
+def _roster(db: Session, facility_id: str, include_all: bool) -> list[dict]:
+    roles = store.roles_for(db, facility_id=facility_id)
+    if not include_all:
+        roles = [r for r in roles if store.is_listed(r)]
+    states = live.role_availability(db, roles, live.now())
+    people = {d["id"]: d for d in store.docs(db, "practitioner", {r["practitioner_id"] for r in roles})}
+    return [
+        {"role": r | {"availability": states[r["id"]]}, "practitioner": people.get(r["practitioner_id"])} for r in roles
+    ]
+
+
 @router.get("/facilities", tags=["registry"])
 def list_facilities(
     q: str | None = None,
@@ -60,9 +89,11 @@ def list_facilities(
     include_closed: bool = False,
     cursor: str | None = None,
     limit: Limit = 50,
+    fields: Fields = None,
     _: Principal = Depends(principal),
     db: Session = Depends(get_session),
 ) -> dict:
+    """`open_now` honours live closures and openings set by the facility, not only its published hours."""
     point = store.parse_near(near)
     if near and point is None:
         raise Problem(422, "Invalid near", "Use near=<lat>,<lon>, e.g. near=31.9539,35.9106")
@@ -84,7 +115,7 @@ def list_facilities(
     )
     if dist:
         data = [d | {"distance_m": dist[d["id"]]} for d in data]
-    return _page(data, nxt)
+    return _page([_project(d, fields) for d in data], nxt)
 
 
 @router.get("/facilities/{facility_id}", tags=["registry"])
@@ -92,41 +123,36 @@ def get_facility(
     facility_id: str,
     response: Response,
     expand: str | None = None,
+    fields: Fields = None,
     _: Principal = Depends(principal),
     db: Session = Depends(get_session),
 ) -> dict:
+    """The record, plus `live` — what is happening now (schedule + closures/events) — and `open_now`."""
     row = store.get(db, "facility", facility_id)
     if row is None:
         raise Problem(404, "Facility not found", facility_id)
     _etag(response, row)
     doc = dict(row.doc)
-    doc["open_now"] = store.is_open(doc) if (doc["hours"].get("weekly") or doc["hours"].get("always_open")) else None
+    doc["live"] = live.facility_live(db, [doc], live.now())[facility_id]
+    doc["open_now"] = _open_now(doc["live"])
     if expand == "practitioners":
-        roles = store.roles_for(db, facility_id=facility_id)
-        people = {
-            r.id: r.doc
-            for r in db.scalars(
-                select(PractitionerRow).where(PractitionerRow.id.in_([x["practitioner_id"] for x in roles]))
-            )
-        }
-        doc["practitioners"] = [{"role": r, "practitioner": people.get(r["practitioner_id"])} for r in roles]
-    return doc
+        doc["practitioners"] = _roster(db, facility_id, include_all=False)
+    return _project(doc, fields)
 
 
 @router.get("/facilities/{facility_id}/practitioners", tags=["registry"])
 def facility_practitioners(
-    facility_id: str, _: Principal = Depends(principal), db: Session = Depends(get_session)
+    facility_id: str,
+    include: Annotated[
+        Literal["listed", "all"],
+        Query(description="`all` adds doctors who left and roles awaiting confirmation (the admin roster)"),
+    ] = "listed",
+    _: Principal = Depends(principal),
+    db: Session = Depends(get_session),
 ) -> dict:
     if store.get(db, "facility", facility_id) is None:
         raise Problem(404, "Facility not found", facility_id)
-    roles = store.roles_for(db, facility_id=facility_id)
-    people = {
-        r.id: r.doc
-        for r in db.scalars(
-            select(PractitionerRow).where(PractitionerRow.id.in_([x["practitioner_id"] for x in roles]))
-        )
-    }
-    return _page([{"role": r, "practitioner": people.get(r["practitioner_id"])} for r in roles], None)
+    return _page(_roster(db, facility_id, include_all=include == "all"), None)
 
 
 @router.get("/practitioners", tags=["registry"])
@@ -136,39 +162,37 @@ def list_practitioners(
     facility: str | None = None,
     cursor: str | None = None,
     limit: Limit = 50,
+    fields: Fields = None,
     _: Principal = Depends(principal),
     db: Session = Depends(get_session),
 ) -> dict:
     data, nxt = store.search_practitioners(db, q=q, specialty=specialty, facility=facility, cursor=cursor, limit=limit)
-    return _page(data, nxt)
+    return _page([_project(d, fields) for d in data], nxt)
 
 
 @router.get("/practitioners/{practitioner_id}", tags=["registry"])
 def get_practitioner(
-    practitioner_id: str, response: Response, _: Principal = Depends(principal), db: Session = Depends(get_session)
+    practitioner_id: str,
+    response: Response,
+    fields: Fields = None,
+    _: Principal = Depends(principal),
+    db: Session = Depends(get_session),
 ) -> dict:
+    """The doctor, every place they work or worked (`active`, `period`) and their availability at each now."""
     row = store.get(db, "practitioner", practitioner_id)
     if row is None:
         raise Problem(404, "Practitioner not found", practitioner_id)
     _etag(response, row)
-    roles = store.roles_for(db, practitioner_id=practitioner_id)
-    facilities = {
-        r.id: r.doc
-        for r in db.scalars(select(FacilityRow).where(FacilityRow.id.in_([x["facility_id"] for x in roles])))
+    roles = [r for r in store.roles_for(db, practitioner_id=practitioner_id) if r.get("confirmation") != "declined"]
+    facilities = {d["id"]: d for d in store.docs(db, "facility", {r["facility_id"] for r in roles})}
+    states = live.role_availability(db, roles, live.now())
+    out = row.doc | {
+        "roles": [
+            r | {"facility": store.summary(facilities.get(r["facility_id"])), "availability": states[r["id"]]}
+            for r in roles
+        ]
     }
-    return row.doc | {"roles": [r | {"facility": _summary(facilities.get(r["facility_id"]))} for r in roles]}
-
-
-def _summary(doc: dict | None) -> dict | None:
-    if not doc:
-        return None
-    return {
-        "id": doc["id"],
-        "type": doc["type"],
-        "name": doc["name"],
-        "address": doc["address"],
-        "location": doc["location"],
-    }
+    return _project(out, fields)
 
 
 @router.get("/roles/{role_id}", tags=["registry"])

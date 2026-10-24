@@ -12,6 +12,7 @@ from collections.abc import Iterator
 from datetime import UTC, datetime
 from pathlib import Path
 
+import numpy as np
 from sqlalchemy import (
     JSON,
     Boolean,
@@ -20,8 +21,10 @@ from sqlalchemy import (
     ForeignKey,
     Index,
     Integer,
+    LargeBinary,
     String,
     Text,
+    TypeDecorator,
     UniqueConstraint,
     create_engine,
     event,
@@ -153,6 +156,8 @@ class Claim(Base):
     subject_id: Mapped[str] = mapped_column(String(20), index=True)
     evidence: Mapped[dict] = mapped_column(JSONDoc, default=dict)  # licence no., work email, document url
     status: Mapped[str] = mapped_column(String(16), default="pending", index=True)
+    # evidence (a moderator checked it) | facility_invite (the facility vouched) | with_profile
+    method: Mapped[str] = mapped_column(String(16), default="evidence", server_default="evidence")
     reviewed_by: Mapped[str | None] = mapped_column(String(36))
     reviewed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     note: Mapped[str | None] = mapped_column(Text)
@@ -166,7 +171,7 @@ class Change(Base):
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     subject_type: Mapped[str] = mapped_column(String(16), index=True)  # facility | practitioner | role
     subject_id: Mapped[str | None] = mapped_column(String(20), index=True)  # None until a create is applied
-    op: Mapped[str] = mapped_column(String(8))  # create | update
+    op: Mapped[str] = mapped_column(String(8))  # create | update | merge
     patch: Mapped[dict] = mapped_column(JSONDoc)  # RFC 7396 JSON Merge Patch
     reason: Mapped[str | None] = mapped_column(Text)
     evidence_url: Mapped[str | None] = mapped_column(Text)
@@ -195,6 +200,165 @@ class Review(Base):
     status: Mapped[str] = mapped_column(String(16), default="visible")
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
     __table_args__ = (UniqueConstraint("subject_type", "subject_id", "user_id"),)
+
+
+class ReviewReport(Base):
+    """A flag on a review. Owners cannot edit or delete reviews; they report them to a moderator."""
+
+    __tablename__ = "review_reports"
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=new_uuid)
+    review_id: Mapped[str] = mapped_column(ForeignKey("reviews.id"), index=True)
+    reporter_id: Mapped[str] = mapped_column(ForeignKey("users.id"))
+    reason: Mapped[str] = mapped_column(String(24))  # spam | abusive | conflict_of_interest | personal_data | off_topic
+    note: Mapped[str | None] = mapped_column(Text)
+    status: Mapped[str] = mapped_column(String(16), default="open", index=True)  # open | upheld | dismissed
+    resolved_by: Mapped[str | None] = mapped_column(String(36))
+    resolved_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
+    __table_args__ = (UniqueConstraint("review_id", "reporter_id"),)
+
+
+class RecordVersion(Base):
+    """Append-only history of every registry record.
+
+    Each applied change writes the full new document and closes the previous version's interval, so
+    the registry can answer "what were this doctor's hours on 1 July?" and a model can learn from how
+    schedules move over seasons. Rows are never updated except to set `valid_to`, and never deleted.
+    """
+
+    __tablename__ = "record_versions"
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    kind: Mapped[str] = mapped_column(String(16))
+    record_id: Mapped[str] = mapped_column(String(20))
+    version: Mapped[int] = mapped_column(Integer)
+    doc: Mapped[dict] = mapped_column(JSONDoc)
+    valid_from: Mapped[datetime] = mapped_column(DateTime(timezone=True))
+    valid_to: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))  # None → current
+    change_id: Mapped[int | None] = mapped_column(ForeignKey("changes.id"))
+    origin: Mapped[str] = mapped_column(String(8))  # seed | api
+    __table_args__ = (
+        UniqueConstraint("kind", "record_id", "version"),
+        Index("ix_record_versions_subject_time", "kind", "record_id", "valid_from"),
+    )
+
+
+class AvailabilityEvent(Base):
+    """A time-bounded override of a schedule: a doctor on leave, a hospital closed for a storm.
+
+    The regular schedule (`hours` on the role or facility) says when a place is normally open; events
+    say what is actually happening. They are append-only: ending one early sets `ends_at`, withdrawing
+    one sets `cancelled_at`, and nothing is deleted, so absence patterns stay learnable.
+
+    `practitioner_id` and `facility_id` are denormalised from the subject so the resolver can fetch
+    every event that touches a role (the role's own, its practitioner's, its facility's) in one query.
+    """
+
+    __tablename__ = "availability_events"
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=new_uuid)
+    subject_type: Mapped[str] = mapped_column(String(16))  # practitioner | role | facility
+    subject_id: Mapped[str] = mapped_column(String(20), index=True)
+    practitioner_id: Mapped[str | None] = mapped_column(String(20), index=True)
+    facility_id: Mapped[str | None] = mapped_column(String(20), index=True)
+    state: Mapped[str] = mapped_column(String(16))
+    reason: Mapped[str | None] = mapped_column(String(24))
+    note: Mapped[str | None] = mapped_column(String(160))
+    details: Mapped[dict] = mapped_column(JSONDoc, default=dict)
+    starts_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
+    ends_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))  # None → until changed
+    author_id: Mapped[str | None] = mapped_column(ForeignKey("users.id"), index=True)
+    client_id: Mapped[str | None] = mapped_column(String(64))
+    idempotency_key: Mapped[str | None] = mapped_column(String(64))
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow, index=True)
+    cancelled_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    cancelled_by: Mapped[str | None] = mapped_column(String(36))
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow, index=True)  # feed cursor
+    __table_args__ = (
+        UniqueConstraint("author_id", "idempotency_key"),
+        Index("ix_availability_window", "starts_at", "ends_at"),
+    )
+
+
+class LoadSample(Base):
+    """How busy a facility is at a moment (0–1), reported by its staff. Feeds `busy_hours` patterns."""
+
+    __tablename__ = "load_samples"
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    facility_id: Mapped[str] = mapped_column(ForeignKey("facilities.id"))
+    at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
+    level: Mapped[float] = mapped_column(Float)
+    author_id: Mapped[str | None] = mapped_column(ForeignKey("users.id"))
+    __table_args__ = (Index("ix_load_samples_facility_at", "facility_id", "at"),)
+
+
+class Invitation(Base):
+    """A facility onboarding one of its doctors: a one-time link that lets an account own that profile.
+
+    Cura does not send email. The facility's app delivers the link; only its hash is stored.
+    """
+
+    __tablename__ = "invitations"
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=new_uuid)
+    token_hash: Mapped[str] = mapped_column(String(64), unique=True)
+    facility_id: Mapped[str] = mapped_column(ForeignKey("facilities.id"), index=True)
+    practitioner_id: Mapped[str] = mapped_column(ForeignKey("practitioners.id"), index=True)
+    email: Mapped[str | None] = mapped_column(String(254))
+    created_by: Mapped[str] = mapped_column(ForeignKey("users.id"))
+    expires_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
+    accepted_by: Mapped[str | None] = mapped_column(String(36))
+    accepted_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    revoked_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
+
+
+class Vector(TypeDecorator):
+    """A float32 embedding: pgvector's `vector(dim)` on Postgres, packed little-endian bytes elsewhere."""
+
+    impl = LargeBinary
+    cache_ok = True
+
+    def __init__(self, dim: int):
+        super().__init__()
+        self.dim = dim
+
+    def load_dialect_impl(self, dialect):
+        if dialect.name == "postgresql":
+            from pgvector.sqlalchemy import VECTOR
+
+            return dialect.type_descriptor(VECTOR(self.dim))
+        return dialect.type_descriptor(LargeBinary())
+
+    def process_bind_param(self, value, dialect):
+        if value is None or dialect.name == "postgresql":
+            return value
+        return np.asarray(value, dtype="<f4").tobytes()
+
+    def process_result_value(self, value, dialect):
+        if value is None:
+            return None
+        if dialect.name == "postgresql":
+            return np.asarray(value, dtype=np.float32)
+        return np.frombuffer(value, dtype="<f4")
+
+
+EMBEDDING_DIM = 1024  # bge-m3. Changing the model's dimension needs a migration (the column is typed).
+
+
+class Embedding(Base):
+    """The semantic index: one vector per registry record, derived from its document.
+
+    `source_version` is the record version the vector was computed from; the embedding worker
+    re-embeds any record whose `version` has moved past it, and skips the model call when the
+    embedded text (`content_hash`) did not change — an hours edit does not change what a place *is*.
+    """
+
+    __tablename__ = "embeddings"
+    kind: Mapped[str] = mapped_column(String(16), primary_key=True)
+    record_id: Mapped[str] = mapped_column(String(20), primary_key=True)
+    model: Mapped[str] = mapped_column(String(80))
+    source_version: Mapped[int] = mapped_column(Integer)
+    content_hash: Mapped[str] = mapped_column(String(64))
+    vector: Mapped[np.ndarray] = mapped_column(Vector(EMBEDDING_DIM))
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
 
 
 _engine = None

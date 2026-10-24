@@ -7,7 +7,8 @@ cura export                 dist/: JSON Schema, GeoJSON, CSV, SQLite
 cura api                    run the HTTP API
 cura db upgrade             apply pending schema migrations
 cura db seed                load data/*.jsonl into the API database
-cura db export-changes      API edits → sources/staging/cura_api.jsonl (feeds the next merge)
+cura db export-changes      API edits → sources/staging/cura_api.jsonl, merges → sources/curation/
+cura embed sync             embed records whose version moved (--watch to keep running)
 """
 
 from __future__ import annotations
@@ -44,6 +45,12 @@ def main(argv: list[str] | None = None) -> int:
     p_db.add_argument("-m", "--message", help="revision: what the migration does")
     p_db.add_argument("--email")
     p_db.add_argument("--password")
+    p_embed = sub.add_parser("embed", help="semantic index")
+    p_embed.add_argument("task", choices=("sync",))
+    p_embed.add_argument("--batch", type=int, default=32)
+    p_embed.add_argument("--limit", type=int)
+    p_embed.add_argument("--rebuild", action="store_true", help="recheck every record, not only changed ones")
+    p_embed.add_argument("--watch", type=float, metavar="SECONDS", help="keep syncing at this interval")
     args = parser.parse_args(argv)
 
     if args.cmd == "collect":
@@ -80,7 +87,31 @@ def main(argv: list[str] | None = None) -> int:
         from cura.api import admin
 
         _print(admin.run(args.task, email=args.email, password=args.password, message=args.message))
+    elif args.cmd == "embed":
+        _embed(args)
     return 0
+
+
+def _embed(args) -> None:
+    import time
+
+    from cura.api import db
+    from cura.search import embedder, index
+
+    model = embedder.from_settings()
+    if model is None:
+        raise SystemExit("Set CURA_EMBED_PROVIDER (openai or hashing) first; see docs/search.md")
+    db.init()
+    while True:
+        with next(db.get_session()) as session:
+            counts = index.sync(session, model, batch=args.batch, limit=args.limit, rebuild=args.rebuild)
+        if args.watch is None:
+            _print(counts | {"model": model.model})
+            return
+        if counts["embedded"] or counts["removed"]:
+            _print(counts | {"model": model.model})
+        args.rebuild = False
+        time.sleep(args.watch)
 
 
 if __name__ == "__main__":
