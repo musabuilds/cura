@@ -1,0 +1,28 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+.pytest_cache/
+.ruff_cache/
+*.egg-info/
+build/
+
+# Local state
+.env
+var/
+*.db
+*.sqlite
+
+# Build artefacts — published as GitHub release assets, never committed
+dist/
+
+# Raw source captures can be large and some sources' terms allow use of facts but not
+# redistribution of their pages. Staging files (facts, with provenance) are committed instead.
+sources/raw/
+
+# OS / editors
+.DS_Store
+Thumbs.db
+desktop.ini
+.idea/
+.vscode/

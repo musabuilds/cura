@@ -1,0 +1,7 @@
+* text=auto eol=lf
+*.jsonl text eol=lf linguist-generated=true
+*.geojson text eol=lf linguist-generated=true
+data/manifest.json linguist-generated=true
+schema/*.json linguist-generated=true
+*.png binary
+*.pdf binary
