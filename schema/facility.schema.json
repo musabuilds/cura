@@ -1087,6 +1087,18 @@
     "quality": {
       "$ref": "#/$defs/Quality"
     },
+    "demo": {
+      "anyOf": [
+        {
+          "type": "boolean"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Demo"
+    },
     "created_at": {
       "format": "date-time",
       "title": "Created At",

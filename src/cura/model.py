@@ -199,6 +199,27 @@ class Quality(Strict):
     last_verified_at: datetime | None = None
 
 
+class Bio(Strict):
+    """A doctor's own words about their practice, in each language. Public."""
+
+    en: Annotated[str | None, Field(max_length=2000)] = None
+    ar: Annotated[str | None, Field(max_length=2000)] = None
+
+
+class PublicPhone(Strict):
+    number: Annotated[str, Field(pattern=r"^\+[1-9]\d{6,14}$")]  # E.164
+    label: Annotated[str | None, Field(max_length=40)] = None
+
+
+class PractitionerContact(Strict):
+    """Only what the doctor chose to publish. Private numbers and a private email never enter the record
+    (they live in `practitioner_private`, readable by the owner only), so they cannot leak through a
+    read, the change feed, the history or the open dataset."""
+
+    phones: list[PublicPhone] | None = None
+    email: Annotated[str | None, Field(max_length=254)] = None
+
+
 class Facility(Strict):
     id: Annotated[str, Field(pattern=ID_PATTERN)]
     status: Status = Status.active
@@ -228,6 +249,7 @@ class Facility(Strict):
     identifiers: dict[str, str] = {}  # crosswalk: {"osm": "node/1", "wikidata": "Q1", "moh": "..."}
     sources: list[SourceRef] = []
     quality: Quality
+    demo: bool | None = None  # seeded by `cura demo seed`; removed by `cura demo reset`
     created_at: datetime
     updated_at: datetime
 
@@ -244,11 +266,15 @@ class Practitioner(Strict):
     subspecialties: list[str] | None = None
     languages: list[str] | None = None
     qualifications: list[str] | None = None
+    bio: Bio | None = None
+    photo_url: Annotated[str | None, Field(max_length=500, pattern=r"^https://[^\s<>\"']+$")] = None
+    contact: PractitionerContact | None = None  # public parts only, see PractitionerContact
     license_verified: bool = False  # set by the API when a claim is approved
     rating: RatingSummary = RatingSummary()
     identifiers: dict[str, str] = {}
     sources: list[SourceRef] = []
     quality: Quality
+    demo: bool | None = None
     created_at: datetime
     updated_at: datetime
 
@@ -273,4 +299,5 @@ class Role(Strict):
     phones: list[str] | None = None
     profile_url: str | None = None
     sources: list[SourceRef] = []
+    demo: bool | None = None
     updated_at: datetime

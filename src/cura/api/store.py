@@ -169,13 +169,26 @@ def get(db: Session, kind: str, rid: str):
     return db.get(KINDS[kind][0], rid)
 
 
+WIDTH = {"facility": 5, "practitioner": 6, "role": 7}
+# The last 100 numbers of each reserved range hold the demo records (`cura demo seed`), so a reset can
+# find them by id alone and API-created records never collide with them.
+DEMO_FLOOR = {kind: 10**w - 100 for kind, w in WIDTH.items()}
+
+
+def is_demo_id(kind: str, rid: str) -> bool:
+    try:
+        return int(rid.rsplit("-", 1)[1]) >= DEMO_FLOOR[kind]
+    except (ValueError, IndexError):
+        return False
+
+
 def next_reserved_id(db: Session, kind: str, prefix: str) -> str:
     """IDs for API-created records come from the reserved top range (see pipeline IdAllocator)."""
     row_cls, _ = KINDS[kind]
-    width = {"facility": 5, "practitioner": 6, "role": 7}[kind]
+    width = WIDTH[kind]
     floor = 9 * 10 ** (width - 1)
     ids = db.scalars(select(row_cls.id).where(row_cls.id.like(f"{prefix}-%"))).all()
-    nums = [int(i.rsplit("-", 1)[1]) for i in ids if int(i.rsplit("-", 1)[1]) >= floor]
+    nums = [n for n in (int(i.rsplit("-", 1)[1]) for i in ids) if floor <= n < DEMO_FLOOR[kind]]
     return f"{prefix}-{(max(nums) + 1) if nums else floor:0{width}d}"
 
 

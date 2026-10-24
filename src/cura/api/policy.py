@@ -29,6 +29,7 @@ SYSTEM = {
     "updated_at",
     "replaced_by",
     "license_verified",
+    "demo",
     "confirmation",  # POST /v1/roles/{id}/confirmation
     "practitioner_id",
     "facility_id",
@@ -50,7 +51,8 @@ OWNER_EDITABLE = {
         "specialties",
         "busy_hours",  # the facility's own declared busy times; live load comes from /load samples
     },
-    "practitioner": {"title", "languages", "qualifications", "subspecialties"},
+    # contact: only its public projection reaches the record (see cura.api.contact)
+    "practitioner": {"title", "languages", "qualifications", "subspecialties", "bio", "photo_url", "contact"},
     # Either side owns a role: the doctor, or the facility's admin (who can end it when a doctor leaves).
     "role": {"hours", "consultation_fee", "insurance", "phones", "active", "period", "profile_url", "specialty"},
 }

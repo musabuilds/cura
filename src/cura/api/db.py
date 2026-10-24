@@ -46,6 +46,15 @@ def new_uuid() -> str:
     return str(uuid.uuid4())
 
 
+def prefixed_id(prefix: str):
+    """Typed opaque ids (`usr_…`, `clm_…`): readable in logs, still 128 random bits."""
+
+    def make() -> str:
+        return f"{prefix}_{uuid.uuid4().hex}"
+
+    return make
+
+
 class Base(DeclarativeBase):
     pass
 
@@ -92,11 +101,19 @@ class RoleRow(Base):
 
 
 class User(Base):
+    """An account. Developers sign in with email + password; doctors and facility staff with a verified
+    mobile number (`phone`). A phone account has no password and its `email` column holds an
+    unroutable `phone:+962…` placeholder (the column predates phone sign-in and is unique, not null);
+    the address a phone user gives us is `contact_email`, private and never a login."""
+
     __tablename__ = "users"
-    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=new_uuid)
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=prefixed_id("usr"))
     email: Mapped[str] = mapped_column(String(254), unique=True)
     password_hash: Mapped[str] = mapped_column(String(255))
     display_name: Mapped[str | None] = mapped_column(String(120))
+    phone: Mapped[str | None] = mapped_column(String(16), unique=True, index=True)  # E.164, verified by OTP
+    phone_verified_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    contact_email: Mapped[str | None] = mapped_column(String(254))
     # user < moderator < admin. Practitioner / facility rights come from approved claims, not roles.
     role: Mapped[str] = mapped_column(String(16), default="user")
     disabled: Mapped[bool] = mapped_column(Boolean, default=False)
@@ -144,13 +161,20 @@ class RefreshToken(Base):
     expires_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
     rotated: Mapped[bool] = mapped_column(Boolean, default=False)
     revoked: Mapped[bool] = mapped_column(Boolean, default=False)
+    device_name: Mapped[str | None] = mapped_column(String(120))
 
 
 class Claim(Base):
-    """ "I am this doctor" / "I manage this facility". Approved by a moderator after evidence checks."""
+    """ "I am this doctor" / "I manage this facility". An approved claim is the only source of edit rights.
+
+    `method` says how it was proven and `level` how strongly (see `cura.api.verification`):
+    phone_match / registered_phone / work_email / website_token / facility_invite -> verified (instant);
+    evidence / documents / with_profile -> reviewed (a moderator); created -> unverified (the account made
+    the record itself and has proven nothing yet); dispute -> always a moderator.
+    """
 
     __tablename__ = "claims"
-    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=new_uuid)
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=prefixed_id("clm"))
     user_id: Mapped[str] = mapped_column(ForeignKey("users.id"), index=True)
     subject_type: Mapped[str] = mapped_column(String(16))  # practitioner | facility
     subject_id: Mapped[str] = mapped_column(String(20), index=True)
@@ -161,6 +185,8 @@ class Claim(Base):
     reviewed_by: Mapped[str | None] = mapped_column(String(36))
     reviewed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     note: Mapped[str | None] = mapped_column(Text)
+    level: Mapped[str | None] = mapped_column(String(12))  # unverified | pending | verified | reviewed
+    verified_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
 
 
@@ -310,6 +336,120 @@ class Invitation(Base):
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
 
 
+class OtpChallenge(Base):
+    """A one-time code in flight: phone sign-in (`pc_…`) or proving control of a facility (`fc_…`).
+
+    The code is never stored: `code_hash` is HMAC-SHA256 keyed with a server secret over the challenge id
+    and the code, so a database leak does not become a table of six-digit codes to replay, and a hash
+    from one challenge is useless for another. For `website_token` it is the hash of the token.
+    """
+
+    __tablename__ = "otp_challenges"
+    id: Mapped[str] = mapped_column(String(40), primary_key=True)
+    purpose: Mapped[str] = mapped_column(String(16))  # login | facility_claim
+    target: Mapped[str] = mapped_column(String(254), index=True)  # E.164 phone, email, or website host
+    channel: Mapped[str] = mapped_column(String(8))  # sms | voice | email | web
+    code_hash: Mapped[str] = mapped_column(String(64))
+    claim_id: Mapped[str | None] = mapped_column(String(36), index=True)
+    attempts: Mapped[int] = mapped_column(Integer, default=0)
+    max_attempts: Mapped[int] = mapped_column(Integer, default=5)
+    expires_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
+    consumed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    ip: Mapped[str | None] = mapped_column(String(64))
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
+
+
+class PractitionerPrivate(Base):
+    """A doctor's full contact details, including numbers they did not publish. Owner-only.
+
+    The record (`practitioners.doc.contact`) holds the public projection of this row and nothing else.
+    """
+
+    __tablename__ = "practitioner_private"
+    practitioner_id: Mapped[str] = mapped_column(ForeignKey("practitioners.id"), primary_key=True)
+    contact: Mapped[dict] = mapped_column(JSONDoc, default=dict)
+    updated_by: Mapped[str | None] = mapped_column(String(36))
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
+
+
+class MergeCase(Base):
+    """A record created over the matcher's objection ("this may be the same doctor"), queued for a
+    moderator with the candidates it resembled. Resolved by `POST /v1/{collection}/{id}/merge` or dismissed."""
+
+    __tablename__ = "merge_cases"
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=prefixed_id("mc"))
+    kind: Mapped[str] = mapped_column(String(16))
+    record_id: Mapped[str] = mapped_column(String(20), index=True)
+    candidates: Mapped[list] = mapped_column(JSONDoc, default=list)
+    status: Mapped[str] = mapped_column(String(12), default="open", index=True)  # open | merged | dismissed
+    created_by: Mapped[str | None] = mapped_column(String(36))
+    resolved_by: Mapped[str | None] = mapped_column(String(36))
+    resolved_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
+
+
+class Webhook(Base):
+    """A facility's endpoint that receives signed change notifications. The signing secret is shown once
+    and stored encrypted (Fernet): Cura has to sign with it, so a hash would not do."""
+
+    __tablename__ = "webhooks"
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=prefixed_id("wh"))
+    facility_id: Mapped[str] = mapped_column(ForeignKey("facilities.id"), index=True)
+    url: Mapped[str] = mapped_column(String(2048))
+    events: Mapped[list] = mapped_column(JSONDoc, default=list)
+    secret_enc: Mapped[str] = mapped_column(Text)
+    created_by: Mapped[str] = mapped_column(String(36))
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
+    disabled_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+
+
+class WebhookDelivery(Base):
+    __tablename__ = "webhook_deliveries"
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=prefixed_id("dlv"))
+    webhook_id: Mapped[str] = mapped_column(ForeignKey("webhooks.id"), index=True)
+    event: Mapped[str] = mapped_column(String(40))
+    payload: Mapped[dict] = mapped_column(JSONDoc)
+    status: Mapped[str] = mapped_column(String(12), default="pending", index=True)  # pending|delivered|failed
+    attempts: Mapped[int] = mapped_column(Integer, default=0)
+    next_attempt_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), index=True)
+    response_status: Mapped[int | None] = mapped_column(Integer)
+    error: Mapped[str | None] = mapped_column(String(300))
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
+    delivered_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+
+
+class FacilityApiKey(Base):
+    """A read-only key a facility gives its own website: identifies the caller and raises its rate limit.
+    Only the SHA-256 is stored; `prefix` finds the row."""
+
+    __tablename__ = "facility_api_keys"
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=prefixed_id("key"))
+    facility_id: Mapped[str] = mapped_column(ForeignKey("facilities.id"), index=True)
+    name: Mapped[str] = mapped_column(String(80))
+    prefix: Mapped[str] = mapped_column(String(16), unique=True)
+    key_hash: Mapped[str] = mapped_column(String(64))
+    scope: Mapped[str] = mapped_column(String(32), default="read")
+    created_by: Mapped[str] = mapped_column(String(36))
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
+    last_used_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    revoked_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+
+
+class AuditLog(Base):
+    """Security-relevant actions: sign-ins, lockouts, token reuse, ownership granted, keys and webhooks.
+    Append-only. `detail` never holds a code, a token, a secret or a full phone number."""
+
+    __tablename__ = "audit_log"
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow, index=True)
+    actor_id: Mapped[str | None] = mapped_column(String(36), index=True)
+    action: Mapped[str] = mapped_column(String(48), index=True)
+    subject_type: Mapped[str | None] = mapped_column(String(16))
+    subject_id: Mapped[str | None] = mapped_column(String(40))
+    ip: Mapped[str | None] = mapped_column(String(64))
+    detail: Mapped[dict] = mapped_column(JSONDoc, default=dict)
+
+
 class Vector(TypeDecorator):
     """A float32 embedding: pgvector's `vector(dim)` on Postgres, packed little-endian bytes elsewhere."""
 
@@ -381,6 +521,9 @@ def engine():
                 dbapi_conn.execute("PRAGMA foreign_keys=ON")
 
         _Session = sessionmaker(_engine, expire_on_commit=False)
+        from cura.api import sync  # every committed registry write is announced (SSE, webhooks)
+
+        sync.install(_Session)
     return _engine
 
 
@@ -396,6 +539,12 @@ def reset_engine() -> None:
     if _engine is not None:
         _engine.dispose()
     _engine, _Session = None, None
+
+
+def new_session() -> Session:
+    engine()
+    assert _Session is not None
+    return _Session()
 
 
 def get_session() -> Iterator[Session]:

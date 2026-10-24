@@ -1,5 +1,39 @@
 {
   "$defs": {
+    "Bio": {
+      "additionalProperties": false,
+      "description": "A doctor's own words about their practice, in each language. Public.",
+      "properties": {
+        "en": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "En"
+        },
+        "ar": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Ar"
+        }
+      },
+      "title": "Bio",
+      "type": "object"
+    },
     "Grade": {
       "enum": [
         "consultant",
@@ -48,6 +82,70 @@
         }
       },
       "title": "Name",
+      "type": "object"
+    },
+    "PractitionerContact": {
+      "additionalProperties": false,
+      "description": "Only what the doctor chose to publish. Private numbers and a private email never enter the record\n(they live in `practitioner_private`, readable by the owner only), so they cannot leak through a\nread, the change feed, the history or the open dataset.",
+      "properties": {
+        "phones": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/PublicPhone"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Phones"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "maxLength": 254,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Email"
+        }
+      },
+      "title": "PractitionerContact",
+      "type": "object"
+    },
+    "PublicPhone": {
+      "additionalProperties": false,
+      "properties": {
+        "number": {
+          "pattern": "^\\+[1-9]\\d{6,14}$",
+          "title": "Number",
+          "type": "string"
+        },
+        "label": {
+          "anyOf": [
+            {
+              "maxLength": 40,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Label"
+        }
+      },
+      "required": [
+        "number"
+      ],
+      "title": "PublicPhone",
       "type": "object"
     },
     "Quality": {
@@ -293,6 +391,42 @@
       "default": null,
       "title": "Qualifications"
     },
+    "bio": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Bio"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "photo_url": {
+      "anyOf": [
+        {
+          "maxLength": 500,
+          "pattern": "^https://[^\\s<>\\\"']+$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Photo Url"
+    },
+    "contact": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/PractitionerContact"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
     "license_verified": {
       "default": false,
       "title": "License Verified",
@@ -324,6 +458,18 @@
     },
     "quality": {
       "$ref": "#/$defs/Quality"
+    },
+    "demo": {
+      "anyOf": [
+        {
+          "type": "boolean"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Demo"
     },
     "created_at": {
       "format": "date-time",

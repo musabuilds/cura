@@ -380,6 +380,18 @@
       "title": "Sources",
       "type": "array"
     },
+    "demo": {
+      "anyOf": [
+        {
+          "type": "boolean"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Demo"
+    },
     "updated_at": {
       "format": "date-time",
       "title": "Updated At",
